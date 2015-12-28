@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">VideoEditor</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="ffmpeg_cmd_hint"></string>
+    <string name="device_not_supported">Device not supported</string>
+    <string name="device_not_supported_message">FFmpeg is not supported on your device</string>
+    <string name="run">Run</string>
+    <string name="empty_command_toast">You cannot execute empty command</string>
+    <string name="permission_request">This App needs permission for camera and audio recording.</string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <string name="label_total_length">Total Length: </string>
+    <string name="edit_your_video">Edit Your Video</string>
+    <string name="edit_video_description">Add captions, change your job title and when you’re ready, encode your video.</string>
+
+    <string name="label_thumbnail">Thumbnail</string>
+    <string name="label_top">Top</string>
+    <string name="label_tail">Tail</string>
+    <string name="label_tutorial">Tutorial</string>
+    <string name="label_add_text_to_timeline">Tap here to add a caption</string>
+    <string name="init_timeline">Initializing timeline now</string>
+    <string name="str_alert_title_information">Information</string>
+    <string name="str_alert_okay">Ok</string>
+    <string name="str_title_already_exist">Title already exist in current timeline. Please select another timeline and add it.</string>
+    <string name="str_add">Add</string>
+    <string name="str_delete_time_line">Do you want delete selected title now?</string>
+    <string name="str_yes">Yes</string>
+    <string name="str_no">No</string>
+    <string name="str_cancel">Cancel</string>
+    <string name="str_convert_camera_unique_format">Converting recorded video...</string>
+    <string name="str_extract_audio">Extract audio from recorded video...</string>
+    <string name="str_convert_asset_top_video">Converting asset Top video...</string>
+    <string name="str_convert_asset_tail_video">Converting asset Tail video...</string>
+    <string name="str_encoding_video">Encoding video using title caption...</string>
+    <string name="str_merge_videos">Merging encoded video with top-tail videos</string>
+</resources>

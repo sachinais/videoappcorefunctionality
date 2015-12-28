@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.nick.sampleffmpeg.ui.view.ChildTextTimelineLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_marginLeft="0sp"
+    android:layout_width="60sp"
+    android:layout_height="match_parent"
+    android:background="@drawable/rounded_thumb_title">
+    
+    <TextView
+        android:id="@+id/txt_title"
+        android:layout_marginTop="2sp"
+        android:layout_marginBottom="2sp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:gravity="center"
+        android:textColor="#ececec"
+        android:text="Text"
+        />
+</com.nick.sampleffmpeg.ui.view.ChildTextTimelineLayout>

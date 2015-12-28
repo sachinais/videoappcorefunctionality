@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+
+    <com.nick.sampleffmpeg.ui.view.VideoCaptureView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/surface_view" />
+    <ImageView
+        android:id="@+id/img_theme_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/template_1"
+        android:scaleType="fitXY"
+        android:alpha="0.3"
+        android:visibility="visible"
+        />
+
+    <ImageView
+        android:id="@+id/img_recording_frame_border"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/frame_recording_border"
+        android:scaleType="fitXY"
+        android:alpha="1"
+        android:visibility="gone"
+        />
+
+    <ImageView
+        android:id="@+id/img_status_recording"
+        android:layout_width="30sp"
+        android:layout_height="30sp"
+        android:layout_marginTop="30sp"
+        android:layout_marginLeft="40sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/status_recording"/>
+
+    <ImageView
+        android:id="@+id/btnStartCapture"
+        android:layout_width="70sp"
+        android:layout_height="70sp"
+        android:layout_marginBottom="40sp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/btn_recording"/>
+
+    <ImageView
+        android:id="@+id/btnStopCapture"
+        android:layout_width="200sp"
+        android:layout_height="40sp"
+        android:layout_marginBottom="55sp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:scaleType="fitXY"
+        android:visibility="visible"
+        android:src="@drawable/btn_stop_recording" />
+
+    <TextView
+        android:id="@+id/txt_recording_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btnStopCapture"
+        android:layout_centerHorizontal="true"
+        android:textColor="#e98841"
+        android:shadowColor="#000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2.0"
+        android:textSize="15sp"
+        android:layout_marginBottom="10sp"
+        android:text="00:00"/>
+
+    <ImageView
+        android:id="@+id/btnRestartCapture"
+        android:layout_width="100sp"
+        android:layout_height="40sp"
+        android:layout_marginBottom="55sp"
+        android:layout_marginRight="30sp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:scaleType="fitXY"
+        android:visibility="gone"
+        android:src="@drawable/btn_cancel_recording" />
+
+    <ImageView
+        android:id="@+id/btnSwitchCamera"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="20sp"
+        android:layout_marginRight="30sp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/btn_switch_camera"/>
+</RelativeLayout>
