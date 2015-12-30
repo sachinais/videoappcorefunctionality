@@ -11,16 +11,22 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bigkoo.pickerview.OptionsPickerView;
 import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.R;
+import com.nick.sampleffmpeg.bean.ProvinceBean;
 import com.nick.sampleffmpeg.ui.control.UITouchButton;
 import com.nick.sampleffmpeg.ui.view.VideoCaptureView;
 import com.nick.sampleffmpeg.utils.FileUtils;
 import com.nick.sampleffmpeg.utils.LogFile;
 import com.nick.sampleffmpeg.utils.StringUtils;
 import com.nick.sampleffmpeg.utils.ffmpeg.FFMpegUtils;
+
+import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -29,7 +35,8 @@ import butterknife.InjectView;
  * Created by baebae on 12/22/15.
  */
 public class RecordingVideo extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
-
+    private ArrayList<ProvinceBean> options1Items = new ArrayList<ProvinceBean>();
+    private OptionsPickerView pvOptions;
     @InjectView(R.id.btnStartCapture)
     ImageView btnStartCapture;
 
@@ -53,6 +60,8 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
 
     @InjectView(R.id.txt_recording_time)
     TextView txtRecordingTime;
+    @InjectView(R.id.rl_Menu)
+    RelativeLayout rl_Menu;
 
     private boolean isRecording = false;
     private static final String TAG = "Recorder";
@@ -104,6 +113,14 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
         }));
 
         timerThread.start();
+
+        rl_Menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDilaog();
+            }
+        });
+        showPicker();
     }
 
     @Override
@@ -311,6 +328,8 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
         ((Button)optionDialog.findViewById(R.id.btnChangeTemplate)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                optionDialog.dismiss();
+                pvOptions.show();
 
 
             }
@@ -321,9 +340,44 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
 
             }
         });
+        ((Button)optionDialog.findViewById(R.id.btnCancel)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                optionDialog.dismiss();
+            }
+        });
 
         optionDialog.show();
 
 
     }
+    private void showPicker(){
+        options1Items.add(new ProvinceBean(0,"Rose Gold","2","3"));
+        options1Items.add(new ProvinceBean(1, "Space Gray", "2", "3"));
+        options1Items.add(new ProvinceBean(3,"Silver","3",""));
+        options1Items.add(new ProvinceBean(0,"Rose Gold","2","3"));
+        options1Items.add(new ProvinceBean(1, "Space Gray", "2", "3"));
+        options1Items.add(new ProvinceBean(3, "Silver", "3", ""));
+        pvOptions = new OptionsPickerView(this);
+        pvOptions.setPicker(options1Items);
+        pvOptions.setTitle("Select a Template");
+        pvOptions.setCyclic(false, true, true);
+        pvOptions.setSelectOptions(1, 1, 1);
+        pvOptions.setOnoptionsSelectListener(new OptionsPickerView.OnOptionsSelectListener() {
+
+            @Override
+            public void onOptionsSelect(int options1, int option2, int options3) {
+                //返回的分别是三个级别的选中位置
+               /* String tx = options1Items.get(options1).getPickerViewText()
+                        + options2Items.get(options1).get(option2)
+                        + options3Items.get(options1).get(option2).get(options3);
+                tvOptions.setText(tx);
+                vMasker.setVisibility(View.GONE);*/
+                Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
+            }
+        });
+        //点击弹出选项选择器
+
+    }
+
 }
