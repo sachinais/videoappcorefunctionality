@@ -38,5 +38,6 @@
   <color name="color_blue">#00BFFF</color>
   <color name="color_white">#FFFFFF</color>
   <color name="color_black">#000000</color>
+    <color name="color_greyish">#5d5d5d</color>
 
 </resources>
