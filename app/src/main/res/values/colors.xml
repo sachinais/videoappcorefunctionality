@@ -34,4 +34,9 @@
   <drawable name="type_bkgnd_music">#88000000</drawable>
   <drawable name="type_bkgnd_unsupported">#88cccccc</drawable>
 
+  <color name="transparent_color">#00000000</color>
+  <color name="color_blue">#00BFFF</color>
+  <color name="color_white">#FFFFFF</color>
+  <color name="color_black">#000000</color>
+
 </resources>

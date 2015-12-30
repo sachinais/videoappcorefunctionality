@@ -1,11 +1,15 @@
 package com.nick.sampleffmpeg.ui.activity;
 
-import android.app.ProgressDialog;
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
-import android.view.TextureView;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,8 +21,6 @@ import com.nick.sampleffmpeg.utils.FileUtils;
 import com.nick.sampleffmpeg.utils.LogFile;
 import com.nick.sampleffmpeg.utils.StringUtils;
 import com.nick.sampleffmpeg.utils.ffmpeg.FFMpegUtils;
-
-import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -58,7 +60,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
 
     private int recordingTime = 0;
     private Thread timerThread = null;
-
+    private Dialog optionDialog;
 
 
     @Override
@@ -295,5 +297,33 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                 }
             }
         });
+    }
+
+    private void showDilaog() {
+        optionDialog = new Dialog(RecordingVideo.this, R.style.DialogSlideAnim);
+        optionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(optionDialog.getWindow().getAttributes());
+        lp.gravity = Gravity.BOTTOM;
+        optionDialog.getWindow().setAttributes(lp);
+        optionDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        optionDialog.setContentView(R.layout.dialog_menu_options);
+        ((Button)optionDialog.findViewById(R.id.btnChangeTemplate)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+            }
+        });
+        ((Button)optionDialog.findViewById(R.id.btnOpenDashboard)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        optionDialog.show();
+
+
     }
 }
