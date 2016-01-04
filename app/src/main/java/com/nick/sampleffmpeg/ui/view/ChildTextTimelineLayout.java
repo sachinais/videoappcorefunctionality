@@ -80,14 +80,25 @@ public class ChildTextTimelineLayout extends LinearLayout{
         endTime = right / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
     }
 
+    /**
+     * get timeline object (caption timeline area)'s left position
+     * @return left position of selected caption
+     */
     public double getLayoutLeft() {
         return left;
     }
 
+    /**
+     * get timeline object (caption timeline area)'s right position
+     * @return right position of selected caption
+     */
     public double getLayoutRight() {
         return right;
     }
 
+    /**
+     * set timeline object (caption timeline area)'s left position
+     */
     public void setLayoutLeft(double left) {
         if (left < right - displayMetrics.scaledDensity * 30 ) {
             this.left = left;
@@ -95,12 +106,26 @@ public class ChildTextTimelineLayout extends LinearLayout{
         }
     }
 
+    /**
+     * set timeline object (caption timeline area)'s right position
+     */
     public void setLayoutRight(double right) {
         if (right > left + displayMetrics.scaledDensity * 30 ) {
             this.right = right;
             setLayoutParameters();
         }
     }
+
+    /**
+     * move timeline object (caption timeline area)'s left position
+     */
+    public void moveLayout(double x) {
+        double offset = x - this.left;
+        this.left = x;
+        this.right = this.right + offset;
+        setLayoutParameters();
+    }
+
 
     public long getChildTagID() {
         return childTagID;
