@@ -117,7 +117,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
         rl_Menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDilaog();
+                showDialog();
             }
         });
         showPicker();
@@ -179,8 +179,8 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                             isRecording = false;
                             cameraView.stopPreview();
                             showReadyForRecordingLayout();
-
-                            convertVideoToUniqueFormat();
+                            extractAudioFromVideo();
+                            //convertVideoToUniqueFormat();
                         }
                     }
                 });
@@ -222,77 +222,13 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
     }
 
     /**
-     * Convert recording video into unique video format 1280 * 720 720p format
-     */
-    private void convertVideoToUniqueFormat() {
-
-        String commands = "-y -threads 5 -i src.mp4 -crf 30 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s 1280x720 -r 30 -force_key_frames expr:gte(t,n_forced*1) -c:v libx264 dst.mp4";
-
-        String srcVideoFilePath = Constant.getCameraVideo();
-        String dstVideoFilePath = Constant.getConvertedVideo();
-
-        commands = commands.replace("src.mp4", srcVideoFilePath);
-        commands = commands.replace("dst.mp4", dstVideoFilePath);
-
-        String[] command = commands.split(" ");
-
-        progressDialog.show();
-        progressDialog.setMessage(getString(R.string.str_convert_camera_unique_format));
-        FFMpegUtils.execFFmpegBinary(command, new Runnable() {
-            @Override
-            public void run() {
-                progressDialog.dismiss();
-                extractAudioFromVideo();
-            }
-        });
-    }
-
-    /**
-     * Convert recording video into unique video format 1280 * 720 720p format
-     */
-    private void convertTopTailVideoToUniqueFormat(final boolean flagTop) {
-
-        String commands = "-y -threads 5 -i src.mp4 -crf 30 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s 1280x720 -r 30 -force_key_frames expr:gte(t,n_forced*1) -c:v libx264 dst.mp4";
-        String srcVideoFilePath = "";
-        String dstVideoFilePath = "";
-        progressDialog.show();
-
-        if (flagTop) {
-            srcVideoFilePath = Constant.getAssetTopVideo();
-            dstVideoFilePath = Constant.getTopVideo();
-            progressDialog.setMessage(getString(R.string.str_convert_asset_top_video));
-        } else {
-            srcVideoFilePath = Constant.getAssetTailVideo();
-            dstVideoFilePath = Constant.getTailVideo();
-            progressDialog.setMessage(getString(R.string.str_convert_asset_tail_video));
-        }
-
-        commands = commands.replace("src.mp4", srcVideoFilePath);
-        commands = commands.replace("dst.mp4", dstVideoFilePath);
-
-        String[] command = commands.split(" ");
-
-        FFMpegUtils.execFFmpegBinary(command, new Runnable() {
-            @Override
-            public void run() {
-                progressDialog.dismiss();
-                if (flagTop) {
-                    convertTopTailVideoToUniqueFormat(false);
-                } else {
-                    showActivity(EditingVideo.class, null);
-                }
-            }
-        });
-    }
-
-    /**
      * extract wav format from video file to show timeline on next page
      */
     private void extractAudioFromVideo() {
 
         String commands = "-y -i src.mp4 -vn dst.wav";
 
-        String srcVideoFilePath = Constant.getConvertedVideo();
+        String srcVideoFilePath = Constant.getCameraVideo();
         String dstAudioFilePath = Constant.getConvertedAudio();
 
         commands = commands.replace("src.mp4", srcVideoFilePath);
@@ -305,18 +241,14 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
         FFMpegUtils.execFFmpegBinary(command, new Runnable() {
             @Override
             public void run() {
-                if (FileUtils.isExistFile(Constant.getTailVideo()) && FileUtils.isExistFile(Constant.getTopVideo())) {
-                    progressDialog.dismiss();
-                    RecordingVideo.this.finish();
-                    showActivity(EditingVideo.class, null);
-                } else {
-                    convertTopTailVideoToUniqueFormat(true);
-                }
+                progressDialog.dismiss();
+                RecordingVideo.this.finish();
+                showActivity(EditingVideo.class, null);
             }
         });
     }
 
-    private void showDilaog() {
+    private void showDialog() {
         optionDialog = new Dialog(RecordingVideo.this, R.style.DialogSlideAnim);
         optionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
