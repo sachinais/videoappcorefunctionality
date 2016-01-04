@@ -26,6 +26,10 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
     private ChildTextTimelineLayout selectedItem = null;
     private boolean flagResizeLeft = false;
     private boolean flagResizeRight = false;
+    private boolean flagMoving = false;
+
+    private double movingOffset = 0;
+
     private boolean flagDragging;
     private long dragStartTime;
     private float startDragX;
@@ -130,16 +134,20 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
      * @return selected child layout
      */
     private ChildTextTimelineLayout getChildFromPosition(double position) {
-        flagResizeLeft = flagResizeRight = false;
+        flagMoving = flagResizeLeft = flagResizeRight = false;
         for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
             ChildTextTimelineLayout layout = timelineTitlesInformation.get(i);
             if (position > layout.getLayoutLeft() && position < layout.getLayoutRight()) {
-                double centerPosition = (layout.getLayoutLeft() + layout.getLayoutRight()) / 2.f;
-                if (position < centerPosition) {
+                double leftMovingArea = layout.getLayoutLeft() + (layout.getLayoutRight() - layout.getLeft()) / 3.f;
+                double rightMovingArea = layout.getLayoutLeft() + (layout.getLayoutRight() - layout.getLeft()) / 3.f * 2;
+                if (position < leftMovingArea) {
                     flagResizeLeft = true;
-                } else {
+                } else if (position > rightMovingArea){
                     flagResizeRight = true;
+                } else {
+                    flagMoving = true;
                 }
+
                 return layout;
             }
         }
@@ -213,11 +221,13 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             return true;
         } else if (me.getAction() == MotionEvent.ACTION_MOVE) {
             double x = me.getX();
-            if (flagDragging && (flagResizeLeft || flagResizeRight) && !checkConflictTitleArea(x)) {
+            if (flagDragging && (flagResizeLeft || flagResizeRight || flagMoving) && !checkConflictTitleArea(x)) {
                 if (flagResizeLeft) {
                     selectedItem.setLayoutLeft(me.getX());
                 } else if (flagResizeRight) {
                     selectedItem.setLayoutRight(me.getX());
+                } else if (flagMoving) {
+                    selectedItem.moveLayout(me.getX() + movingOffset);
                 }
             }
         }
