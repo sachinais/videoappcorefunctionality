@@ -3,11 +3,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-
-    <com.nick.sampleffmpeg.ui.view.VideoCaptureView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/surface_view" />
+        android:orientation="horizontal">
+        <View
+            android:id="@+id/left_area"
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:background="#000"
+            android:visibility="gone"
+            android:layout_weight="1"></View>
+        <com.nick.sampleffmpeg.ui.view.VideoCaptureView
+            android:layout_width="0sp"
+            android:layout_weight="8"
+            android:layout_height="match_parent"
+            android:id="@+id/surface_view" />
+        <View
+            android:id="@+id/right_area"
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:background="#000"
+            android:visibility="gone"
+            android:layout_weight="1"></View>
+    </LinearLayout>
     <ImageView
         android:id="@+id/img_theme_background"
         android:layout_width="match_parent"

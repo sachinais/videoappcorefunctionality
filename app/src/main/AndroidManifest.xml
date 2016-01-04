@@ -38,7 +38,8 @@
             android:screenOrientation="landscape">
             <action android:name="android.intent.action.MAIN" />
         </activity>
-        <activity android:name=".ui.activity.RecordingVideo"
+        <activity
+            android:name=".ui.activity.RecordingVideo"
             android:screenOrientation="landscape"/>
         <activity
             android:name=".ui.activity.LoginActivity"
