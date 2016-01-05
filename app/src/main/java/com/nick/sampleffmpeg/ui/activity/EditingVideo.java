@@ -179,7 +179,7 @@ public class EditingVideo extends BaseActivity {
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        startEncodingVideo();
+                        convertVideoToUniqueFormat();
                     }
                 });
 
@@ -278,7 +278,7 @@ public class EditingVideo extends BaseActivity {
     private void initializeVideoView() {
         videoControlLayout.setVisibility(View.GONE);
 
-        videoView.setVideoPath(Constant.getConvertedVideo());
+        videoView.setVideoPath(Constant.getCameraVideo());
         videoView.requestFocus();
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -305,13 +305,13 @@ public class EditingVideo extends BaseActivity {
      */
     private void initializeThumbView() {
         Bitmap bmTailThumb;
-        bmTailThumb = ThumbnailUtils.createVideoThumbnail(Constant.getTailVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
+        bmTailThumb = ThumbnailUtils.createVideoThumbnail(Constant.getAssetTailVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
 
         Bitmap bmTopThumb;
-        bmTopThumb = ThumbnailUtils.createVideoThumbnail(Constant.getTopVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
+        bmTopThumb = ThumbnailUtils.createVideoThumbnail(Constant.getAssetTopVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
 
         Bitmap bmThumb;
-        bmThumb = ThumbnailUtils.createVideoThumbnail(Constant.getConvertedVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
+        bmThumb = ThumbnailUtils.createVideoThumbnail(Constant.getCameraVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
 
         imgThumbVideo1.setImageBitmap(bmThumb);
         imgThumbVideo2.setImageBitmap(bmTopThumb);
@@ -432,7 +432,7 @@ public class EditingVideo extends BaseActivity {
             boolean flagInitialize = false;
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             try {
-                retriever.setDataSource(Constant.getConvertedVideo());
+                retriever.setDataSource(Constant.getCameraVideo());
                 flagInitialize = true;
             } catch (Exception ex) {
             }
@@ -535,6 +535,77 @@ public class EditingVideo extends BaseActivity {
         titleThumbsLayout.setActivity(this);
         titleThumbsLayout.removeChildTitleLayouts();
         new InitializeTimelineTask().execute(true);
+    }
+
+
+
+    /**
+     * Convert recording video into unique video format 1280 * 720 720p format
+     */
+    private void convertVideoToUniqueFormat() {
+
+        String commands = "-y -threads 5 -i src.mp4 -crf 30 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s 1280x720 -r 30 -force_key_frames expr:gte(t,n_forced*1) -c:v libx264 dst.mp4";
+
+        String srcVideoFilePath = Constant.getCameraVideo();
+        String dstVideoFilePath = Constant.getConvertedVideo();
+
+        commands = commands.replace("src.mp4", srcVideoFilePath);
+        commands = commands.replace("dst.mp4", dstVideoFilePath);
+
+        String[] command = commands.split(" ");
+
+        progressDialog.show();
+        progressDialog.setMessage(getString(R.string.str_convert_camera_unique_format));
+        FFMpegUtils.execFFmpegBinary(command, new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.dismiss();
+
+                if (!FileUtils.isExistFile(Constant.getTailVideo()) || !FileUtils.isExistFile(Constant.getTopVideo())) {
+                    convertTopTailVideoToUniqueFormat(true);
+                } else {
+                    startEncodingVideo();
+                }
+            }
+        });
+    }
+
+    /**
+     * Convert recording video into unique video format 1280 * 720 720p format
+     */
+    private void convertTopTailVideoToUniqueFormat(final boolean flagTop) {
+
+        String commands = "-y -threads 5 -i src.mp4 -crf 30 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s 1280x720 -r 30 -force_key_frames expr:gte(t,n_forced*1) -c:v libx264 dst.mp4";
+        String srcVideoFilePath = "";
+        String dstVideoFilePath = "";
+        progressDialog.show();
+
+        if (flagTop) {
+            srcVideoFilePath = Constant.getAssetTopVideo();
+            dstVideoFilePath = Constant.getTopVideo();
+            progressDialog.setMessage(getString(R.string.str_convert_asset_top_video));
+        } else {
+            srcVideoFilePath = Constant.getAssetTailVideo();
+            dstVideoFilePath = Constant.getTailVideo();
+            progressDialog.setMessage(getString(R.string.str_convert_asset_tail_video));
+        }
+
+        commands = commands.replace("src.mp4", srcVideoFilePath);
+        commands = commands.replace("dst.mp4", dstVideoFilePath);
+
+        String[] command = commands.split(" ");
+
+        FFMpegUtils.execFFmpegBinary(command, new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.dismiss();
+                if (flagTop) {
+                    convertTopTailVideoToUniqueFormat(false);
+                } else {
+                    startEncodingVideo();
+                }
+            }
+        });
     }
 
     public int getCurrentSeekPosition() {

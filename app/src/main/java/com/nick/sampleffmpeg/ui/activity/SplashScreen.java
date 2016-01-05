@@ -18,6 +18,7 @@ public class SplashScreen extends Activity {
             public void run() {
             // startActivity(new Intent(SplashScreen.this,RecordingVideo.class));
                 startActivity(new Intent(SplashScreen.this,LoginActivity.class));
+                SplashScreen.this.finish();
             }
         }, 1000);
     }

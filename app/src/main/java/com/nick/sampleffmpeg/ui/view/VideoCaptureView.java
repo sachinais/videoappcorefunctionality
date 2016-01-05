@@ -8,6 +8,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.util.AttributeSet;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -93,6 +94,7 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
 
     @Override
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
+        int k =1;
     }
 
     @Override
@@ -158,6 +160,19 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
         startVideoCapture();
     }
 
+
+    /**
+     * when orientation is changed
+     * @param orientation 1: landscape, 0: portrait
+     */
+    public void onOrientationChanged(int orientation) {
+        if (orientation == 0) {
+            mCamera.setDisplayOrientation(90);
+        } else {
+            mCamera.setDisplayOrientation(0);
+        }
+    }
+
     /**
      * initialize device camera for selected camera
      * @return selected camera id
@@ -167,6 +182,7 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
         if (flagFrontFaceCamera) {
             mCamera = CameraHelper.getDefaultFrontFacingCameraInstance();
             cameraID = CameraHelper.getDefaultFrontCameraID();
+
         } else {
             mCamera = CameraHelper.getDefaultBackFacingCameraInstance();
             cameraID = CameraHelper.getDefaultBackCameraID();
