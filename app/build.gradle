@@ -40,4 +40,19 @@ dependencies {
     androidTestCompile 'com.squareup.assertj:assertj-android:1.0.0'
     compile project(':FFmpegAndroid')
     compile project(':pickerview')
+
+    compile 'com.google.android.gms:play-services-plus:7.8.0'
+    compile ('com.google.api-client:google-api-client-android:+') {
+        exclude group: 'com.google.guava', module: 'guava-jdk5'
+    }
+    compile ('com.google.apis:google-api-services-youtube:v3-rev120-1.19.0') {
+        exclude group: 'com.google.guava', module: 'guava-jdk5'
+    }
+    compile ('com.google.api-client:google-api-client-gson:+') {
+        exclude group: 'com.google.guava', module: 'guava-jdk5'
+    }
+    compile 'com.mcxiaoke.volley:library:1.0.18'
+
+
+
 }
