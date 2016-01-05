@@ -1,8 +1,10 @@
 package com.nick.sampleffmpeg.ui.activity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
@@ -111,9 +113,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                     }
             }
         }));
-
         timerThread.start();
-
         rl_Menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,6 +206,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
         imgStatusRecording.setVisibility(View.VISIBLE);
         txtRecordingTime.setVisibility(View.VISIBLE);
         btnStartCapture.setVisibility(View.GONE);
+        rl_Menu.setVisibility(View.GONE);
     }
 
     /**
@@ -219,6 +220,8 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
         imgStatusRecording.setVisibility(View.GONE);
         txtRecordingTime.setVisibility(View.GONE);
         btnStartCapture.setVisibility(View.VISIBLE);
+        rl_Menu.setVisibility(View.VISIBLE);
+
     }
 
     /**
@@ -337,7 +340,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
         ((Button)optionDialog.findViewById(R.id.btnOpenDashboard)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+               // startActivity(ne );
             }
         });
         ((Button)optionDialog.findViewById(R.id.btnCancel)).setOnClickListener(new View.OnClickListener() {
@@ -346,7 +349,22 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                 optionDialog.dismiss();
             }
         });
-
+        ((Button)optionDialog.findViewById(R.id.btnOpenDashboard)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+                startActivity(browserIntent);            }
+        });((Button)optionDialog.findViewById(R.id.btnAddUser)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+                startActivity(browserIntent);            }
+        });((Button)optionDialog.findViewById(R.id.btnTutorials)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+                startActivity(browserIntent);            }
+        });
         optionDialog.show();
 
 
@@ -355,9 +373,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
         options1Items.add(new ProvinceBean(0,"Rose Gold","2","3"));
         options1Items.add(new ProvinceBean(1, "Space Gray", "2", "3"));
         options1Items.add(new ProvinceBean(3,"Silver","3",""));
-        options1Items.add(new ProvinceBean(0,"Rose Gold","2","3"));
-        options1Items.add(new ProvinceBean(1, "Space Gray", "2", "3"));
-        options1Items.add(new ProvinceBean(3, "Silver", "3", ""));
+
         pvOptions = new OptionsPickerView(this);
         pvOptions.setPicker(options1Items);
         pvOptions.setTitle("Select a Template");
@@ -367,7 +383,6 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
 
             @Override
             public void onOptionsSelect(int options1, int option2, int options3) {
-                //返回的分别是三个级别的选中位置
                /* String tx = options1Items.get(options1).getPickerViewText()
                         + options2Items.get(options1).get(option2)
                         + options3Items.get(options1).get(option2).get(options3);
@@ -376,7 +391,6 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                 Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
             }
         });
-        //点击弹出选项选择器
 
     }
 

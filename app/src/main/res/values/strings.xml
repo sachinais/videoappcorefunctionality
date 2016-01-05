@@ -35,4 +35,23 @@
     <string name="str_convert_asset_tail_video">Converting asset Tail video...</string>
     <string name="str_encoding_video">Encoding video using title caption...</string>
     <string name="str_merge_videos">Merging encoded video with top-tail videos</string>
+    <string name="initiation_started">Initiation Started</string>
+    <string name="initiation_completed">Initiation Completed</string>
+    <string name="upload_in_progress">Direct Lite upload in progress</string>
+    <string name="yt_upload_completed">YouTube Upload Completed</string>
+    <string name="upload_completed">Upload completed</string>
+    <string name="upload_not_started">Upload Not Started!</string>
+    <string name="youtube_upload">YouTube upload</string>
+    <string name="not_signed_in">Not signed in</string>
+    <string name="cant_access_play">Can\'t access to Google Play services</string>
+    <string name="title_activity_play">Click below to submit</string>
+    <string name="please_try_again">Please try again</string>
+    <string name="yt_upload_failed">YouTube Upload Failed</string>
+    <string name="see_the_newly_uploaded_video">See the newly uploaded video</string>
+    <string name="watch_your_video">Watch your video</string>
+    <string name="error">Error</string>
+    <string name="error_format">[Error] %s</string>
+    <string name="youtube_upload_started">YouTube Direct Lite upload started</string>
+    <string name="connection_to_google_play_failed">Connection to Play Services failed.</string>
+
 </resources>
