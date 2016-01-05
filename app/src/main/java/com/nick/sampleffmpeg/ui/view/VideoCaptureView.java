@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.RelativeLayout;
 
 import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.utils.FileUtils;
@@ -26,7 +27,6 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
 
     private Camera mCamera;
     private boolean flagFrontFaceCamera = true;
-
     public VideoCaptureView(Context context) {
         super(context);
         if (!isInEditMode()) {
@@ -54,6 +54,7 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
+
     @SuppressLint("NewApi")
     public void initializeRecording(boolean flagPreview) {
         try {
@@ -70,10 +71,23 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
             mMediaRecorder.setAudioSource( MediaRecorder.AudioSource.CAMCORDER );
             mMediaRecorder.setVideoSource( MediaRecorder.VideoSource.CAMERA );
 
+            //set correct layout size of video recording view
+
+            double newCameraWidth = getMeasuredWidth();
+            double newCameraHeight = getMeasuredHeight();
+            double previewWidth = mProfile.videoFrameWidth;
+            double previewHeight = mProfile.videoFrameHeight;
+
+            newCameraWidth = previewWidth / previewHeight * newCameraHeight;
+            RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams((int)newCameraWidth, (int)newCameraHeight);
+            param.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+            setLayoutParams(param);
+
             //3rd. config
             mMediaRecorder.setOutputFormat( mProfile.fileFormat );
             mMediaRecorder.setAudioEncoder( mProfile.audioCodec );
             mMediaRecorder.setVideoEncoder( mProfile.videoCodec );
+
             mMediaRecorder.setVideoSize( mProfile.videoFrameWidth, mProfile.videoFrameHeight );
             mMediaRecorder.setVideoFrameRate( mProfile.videoFrameRate );
             mMediaRecorder.setVideoEncodingBitRate( mProfile.videoBitRate );
@@ -87,6 +101,7 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
             mMediaRecorder.setPreviewDisplay(surfaceHolder.getSurface());
             mMediaRecorder.prepare();
             mMediaRecorder.start();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
