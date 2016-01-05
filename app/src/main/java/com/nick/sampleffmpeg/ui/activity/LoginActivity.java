@@ -21,6 +21,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         switch (v.getId()){
             case R.id.tvSignInBtn:
                 startActivity(new Intent(LoginActivity.this,RecordingVideo.class));
+                LoginActivity.this.finish();
                 break;
         }
     }

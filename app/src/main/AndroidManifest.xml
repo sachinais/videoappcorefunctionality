@@ -38,12 +38,18 @@
             android:screenOrientation="landscape">
             <action android:name="android.intent.action.MAIN" />
         </activity>
-        <activity android:name=".ui.activity.RecordingVideo"
+        <activity
+            android:name=".ui.activity.RecordingVideo"
             android:screenOrientation="landscape"/>
+
         <activity
             android:name=".ui.activity.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <service android:name=".utils.youtube.UploadService"/>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>
