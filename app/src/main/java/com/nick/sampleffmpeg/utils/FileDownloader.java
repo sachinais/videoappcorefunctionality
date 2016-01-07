@@ -4,10 +4,12 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Button;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,10 +25,13 @@ public class FileDownloader {
     private ProgressDialog mProgressDialog;
     private String url;
     private  Context context;
-
-    public FileDownloader(Context context, String url){
+    private  String fileName;
+    private  String _directoryName;
+    public FileDownloader(Context context, String url, String fileName, String _directoryName){
         this.url = url;
         this.context = context;
+        this.fileName = fileName;
+        this._directoryName = _directoryName;
     }
 
     public void startDownload() {
@@ -68,7 +73,8 @@ public class FileDownloader {
                 Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
 
                 InputStream input = new BufferedInputStream(url.openStream());
-                OutputStream output = new FileOutputStream("/sdcard/Template.zip");
+
+                OutputStream output = new FileOutputStream(getFilePath(_directoryName)+"/"+fileName+".zip");
 
                 byte data[] = new byte[1024];
 
@@ -83,7 +89,9 @@ public class FileDownloader {
                 output.flush();
                 output.close();
                 input.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return null;
 
         }
@@ -96,4 +104,24 @@ public class FileDownloader {
         protected void onPostExecute(String unused) {
             mProgressDialog.dismiss();
         }
-    }}
+    }
+    private String getFilePath(String _directorName){
+        File folder = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp"+"/");
+        boolean success = true;
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            if (!folder.exists()) {
+                folder.mkdir();
+            }
+            File file2 = new File(folder.getAbsolutePath(),_directorName);
+            if(!file2.exists()){
+                folder.mkdir();
+
+            }
+
+        }
+
+
+        return folder.getAbsolutePath();
+    }
+}

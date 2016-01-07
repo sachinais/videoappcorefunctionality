@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.network.CheckNetworkConnection;
 import com.nick.sampleffmpeg.network.CustomDialogs;
@@ -121,6 +122,15 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 }
                 if(!jsonObject.isNull("lastname")){
                     SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.LAST_NAME,jsonObject.getString("lastname"));
+                }
+                if(!jsonObject.isNull("region")){
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.REGION,jsonObject.getString("region"));
+                }
+                if(!jsonObject.isNull("company_directory")){
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.COMPANY_DIRECTORY,jsonObject.getString("company_directory"));
+                }
+                if(!jsonObject.isNull("templates")){
+                    MainApplication.getInstance().setTemplateArray(jsonObject.getJSONArray("templates"));
                 }
                 startActivity(new Intent(LoginActivity.this,RecordingVideo.class));
                 LoginActivity.this.finish();

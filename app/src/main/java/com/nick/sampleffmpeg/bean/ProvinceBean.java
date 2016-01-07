@@ -6,13 +6,13 @@ package com.nick.sampleffmpeg.bean;
 public class ProvinceBean {
     private long id;
     private String name;
-    private String description;
+    private String directoryId;
     private String others;
 
-    public ProvinceBean(long id, String name, String description, String others){
+    public ProvinceBean(long id, String name, String directoryId, String others){
         this.id = id;
         this.name = name;
-        this.description = description;
+        this.directoryId = directoryId;
         this.others = others;
     }
 
@@ -32,12 +32,12 @@ public class ProvinceBean {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDirectoryId() {
+        return directoryId;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDirectoryId(String directoryId) {
+        this.directoryId = directoryId;
     }
 
     public String getOthers() {
