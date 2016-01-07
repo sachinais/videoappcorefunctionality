@@ -124,7 +124,7 @@ public class ResumableUpload {
        * and use your own standard names.
        */
             Calendar cal = Calendar.getInstance();
-            snippet.setTitle("Latest Mine" + cal.getTime());
+            snippet.setTitle("Chaman Test" + cal.getTime());
             snippet.setDescription("Video uploaded via YouTube Data API V3 using the Java library "
                     + "on " + cal.getTime());
 

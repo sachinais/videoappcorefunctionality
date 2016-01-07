@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#ffffff"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/layout_root"
+        android:layout_width="180dp"
+        android:layout_height="70dp"
+        android:orientation="horizontal" >
+
+        <com.nick.sampleffmpeg.utils.progressbar.ProgressBarCircularIndeterminate
+            android:id="@+id/progressBar1"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:background="@android:color/holo_blue_bright"
+            android:layout_marginLeft="10dp"
+          />
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:text="please wait..."
+            android:textSize="14sp"
+             />
+    </LinearLayout>
+
+</LinearLayout>

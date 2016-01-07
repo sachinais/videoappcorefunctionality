@@ -32,6 +32,7 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/bg_edittext"
         android:hint="Email"
+        android:text="simonr@auxiliumit.com.au"
         android:paddingLeft="8dp"
         android:textSize="14sp"
         android:singleLine="true"/>
@@ -42,6 +43,8 @@
         android:layout_height="40dp"
         android:background="@drawable/bg_edittext"
         android:hint="Password"
+        android:inputType="textPassword"
+        android:text="failharder"
         android:paddingLeft="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
