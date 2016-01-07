@@ -76,7 +76,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
 
     private boolean isRecording = false;
     private static final String TAG = "Recorder";
-    private static boolean flagInitialized = false;
+    private boolean flagInitialized = false;
 
     private int recordingTime = 0;
     private Thread timerThread = null;
