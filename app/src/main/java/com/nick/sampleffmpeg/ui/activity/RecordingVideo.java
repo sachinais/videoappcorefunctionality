@@ -316,7 +316,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
             JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
             for (int i = 0; i <jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                options1Items.add(new ProvinceBean(i,jsonObject.optString("title"),jsonObject.optString("directory"),""));
+                options1Items.add(new ProvinceBean(i, jsonObject.optString("title"),jsonObject.optString("directory"),""));
             }
         }
 
@@ -342,9 +342,9 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                 tvOptions.setText(tx);
                 vMasker.setVisibility(View.GONE);*/
                // Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
+                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
                 FileDownloader fileDownloader = new FileDownloader(RecordingVideo.this,
                         getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
-                fileDownloader.startDownload();
             }
         });
 

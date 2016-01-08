@@ -131,6 +131,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 }
                 if(!jsonObject.isNull("templates")){
                     MainApplication.getInstance().setTemplateArray(jsonObject.getJSONArray("templates"));
+                    MainApplication.getInstance().setTemplate(0);
                 }
                 startActivity(new Intent(LoginActivity.this,RecordingVideo.class));
                 LoginActivity.this.finish();
