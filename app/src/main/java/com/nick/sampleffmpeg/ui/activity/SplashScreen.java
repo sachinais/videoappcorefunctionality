@@ -32,4 +32,5 @@ public class SplashScreen extends Activity {
             handler.removeCallbacksAndMessages(null);
         }
     }
+
 }

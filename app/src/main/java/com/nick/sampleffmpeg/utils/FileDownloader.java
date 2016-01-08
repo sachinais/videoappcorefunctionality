@@ -106,7 +106,7 @@ public class FileDownloader {
         }
     }
     private String getFilePath(String _directorName){
-        File folder = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp"+"/");
+        File folder = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp");
         File file2 = null;
         boolean success = true;
         String state = Environment.getExternalStorageState();
@@ -114,9 +114,9 @@ public class FileDownloader {
             if (!folder.exists()) {
                 folder.mkdir();
             }
-           file2 = new File(folder.getAbsolutePath(),_directorName);
+            file2 = new File(folder.getAbsolutePath(),_directorName);
             if(!file2.exists()){
-                folder.mkdir();
+                file2.mkdir();
 
             }
 
