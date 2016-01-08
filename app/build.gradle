@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
+    useLibrary  'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.nick.sampleffmpeg"
         minSdkVersion 16
@@ -40,19 +41,16 @@ dependencies {
     androidTestCompile 'com.squareup.assertj:assertj-android:1.0.0'
     compile project(':FFmpegAndroid')
     compile project(':pickerview')
-
     compile 'com.google.android.gms:play-services-plus:7.8.0'
-    compile ('com.google.api-client:google-api-client-android:+') {
+    compile('com.google.api-client:google-api-client-android:+') {
         exclude group: 'com.google.guava', module: 'guava-jdk5'
     }
-    compile ('com.google.apis:google-api-services-youtube:v3-rev120-1.19.0') {
+    compile('com.google.apis:google-api-services-youtube:v3-rev120-1.19.0') {
         exclude group: 'com.google.guava', module: 'guava-jdk5'
     }
-    compile ('com.google.api-client:google-api-client-gson:+') {
+    compile('com.google.api-client:google-api-client-gson:+') {
         exclude group: 'com.google.guava', module: 'guava-jdk5'
     }
     compile 'com.mcxiaoke.volley:library:1.0.18'
-
-
-
+    compile files('libs/httpmime-4.2-beta1.jar')
 }

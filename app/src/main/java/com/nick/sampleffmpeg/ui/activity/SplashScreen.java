@@ -13,7 +13,7 @@ public class SplashScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        handler.postDelayed(new Runnable() {
+      handler.postDelayed(new Runnable() {
             @Override
             public void run() {
             // startActivity(new Intent(SplashScreen.this,RecordingVideo.class));
@@ -21,6 +21,8 @@ public class SplashScreen extends Activity {
                 SplashScreen.this.finish();
             }
         }, 1000);
+       /* FileDownloader fileDownloader = new FileDownloader(SplashScreen.this,"http://syd.static.videomyjob.com/company/154fd4a18ee7e9d931059a76bea28a79/15e46054ba3c0c1f2b74e09bfcf600f0/template_225.zip");
+        fileDownloader.startDownload();*/
     }
 
     @Override
@@ -30,4 +32,5 @@ public class SplashScreen extends Activity {
             handler.removeCallbacksAndMessages(null);
         }
     }
+
 }

@@ -1,12 +1,16 @@
 package com.nick.sampleffmpeg.ui.activity;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +43,9 @@ public class LoginScreen extends AppCompatActivity implements  GoogleApiClient.C
     public static final String ACCOUNT_KEY = "accountName";
     private String mChosenAccountName;
     private Uri uri =Uri.fromFile(new File("sdcard/vid123.mp4"));
+    private static final int REQUEST_AUTHORIZATION = 3;
+    private UploadBroadcastReceiver broadcastReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +77,7 @@ public class LoginScreen extends AppCompatActivity implements  GoogleApiClient.C
         // if a video is picked or recorded.
         if (uri != null) {
             Intent uploadIntent = new Intent(this, UploadService.class);
-            uploadIntent.setData(Uri.parse("content://media/external/video/media/110804"));
+            uploadIntent.setData(Uri.parse("content://media/external/video/media/111470"));
             uploadIntent.putExtra(LoginScreen.ACCOUNT_KEY, mChosenAccountName);
             startService(uploadIntent);
             Toast.makeText(this, R.string.youtube_upload_started,
@@ -264,6 +271,30 @@ public class LoginScreen extends AppCompatActivity implements  GoogleApiClient.C
     private void hideProgressBar(){
         if(dialog != null){
             dialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (broadcastReceiver == null)
+            broadcastReceiver = new UploadBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(
+                REQUEST_AUTHORIZATION_INTENT);
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                broadcastReceiver, intentFilter);
+    }
+
+
+    private class UploadBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(REQUEST_AUTHORIZATION_INTENT)) {
+                Log.d("TAG", "Request auth received - executing the intent");
+                Intent toRun = intent
+                        .getParcelableExtra(REQUEST_AUTHORIZATION_INTENT_PARAM);
+                startActivityForResult(toRun, REQUEST_AUTHORIZATION);
+            }
         }
     }
 

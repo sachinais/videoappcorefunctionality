@@ -1,21 +1,13 @@
 package com.nick.sampleffmpeg.ui.activity;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
-import android.view.OrientationEventListener;
-import android.view.Surface;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -27,17 +19,32 @@ import android.widget.Toast;
 
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.nick.sampleffmpeg.Define.Constant;
+import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.ProvinceBean;
+import com.nick.sampleffmpeg.network.CheckNetworkConnection;
+import com.nick.sampleffmpeg.network.CustomDialogs;
+import com.nick.sampleffmpeg.network.RequestBean;
+import com.nick.sampleffmpeg.network.RequestHandler;
+import com.nick.sampleffmpeg.network.RequestListner;
+import com.nick.sampleffmpeg.sharedpreference.SPreferenceKey;
+import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 import com.nick.sampleffmpeg.ui.control.UITouchButton;
 import com.nick.sampleffmpeg.ui.view.VideoCaptureView;
+import com.nick.sampleffmpeg.utils.AppConstants;
+import com.nick.sampleffmpeg.utils.FileDownloader;
 import com.nick.sampleffmpeg.utils.FileUtils;
 import com.nick.sampleffmpeg.utils.LogFile;
 import com.nick.sampleffmpeg.utils.StringUtils;
 import com.nick.sampleffmpeg.utils.ffmpeg.FFMpegUtils;
 
+import org.apache.http.NameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -134,7 +141,11 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                 showDialog();
             }
         });
-        showPicker();
+       try{
+           showPicker();
+       }catch (JSONException e){
+           e.printStackTrace();
+       }
     }
 
     @Override
@@ -276,6 +287,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
             public void onClick(View v) {
                 optionDialog.dismiss();
                 pvOptions.show();
+                //sendTemplateRequest();
 
 
             }
@@ -297,13 +309,21 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
 
 
     }
-    private void showPicker(){
-        options1Items.add(new ProvinceBean(0,"Rose Gold","2","3"));
-        options1Items.add(new ProvinceBean(1, "Space Gray", "2", "3"));
-        options1Items.add(new ProvinceBean(3,"Silver","3",""));
-        options1Items.add(new ProvinceBean(0,"Rose Gold","2","3"));
+    private void showPicker()throws JSONException{
+        if(MainApplication.getInstance().getTemplateArray() != null && MainApplication.getInstance().getTemplateArray().length()>0){
+            JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
+            for (int i = 0; i <jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                options1Items.add(new ProvinceBean(i,jsonObject.optString("title"),jsonObject.optString("directory"),""));
+            }
+        }
+
+       /* options1Items.add(new ProvinceBean(0,"Rose Gold","2","3"));
         options1Items.add(new ProvinceBean(1, "Space Gray", "2", "3"));
         options1Items.add(new ProvinceBean(3, "Silver", "3", ""));
+        options1Items.add(new ProvinceBean(0, "Rose Gold", "2", "3"));
+        options1Items.add(new ProvinceBean(1, "Space Gray", "2", "3"));
+        options1Items.add(new ProvinceBean(3, "Silver", "3", ""));*/
         pvOptions = new OptionsPickerView(this);
         pvOptions.setPicker(options1Items);
         pvOptions.setTitle("Select a Template");
@@ -319,10 +339,112 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                         + options3Items.get(options1).get(option2).get(options3);
                 tvOptions.setText(tx);
                 vMasker.setVisibility(View.GONE);*/
-                Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
+               // Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
+                FileDownloader fileDownloader = new FileDownloader(RecordingVideo.this,
+                        getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
+                fileDownloader.startDownload();
             }
         });
         //点击弹出选项选择器
 
     }
+
+
+    private void sendTemplateRequest(){
+        try{
+            if(CheckNetworkConnection.isNetworkAvailable(RecordingVideo.this)){
+                List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
+                //   paramePairs.add(new BasicNameValuePair("login_resource",String.valueOf(AppConstants.DEVICE_TYPE_ANDROID)));
+                //   paramePairs.add(new BasicNameValuePair("device_key", GCMRegistrar.getRegistrationId(LoginActivity.this)));
+                RequestBean requestBean = new RequestBean();
+                requestBean.setActivity(RecordingVideo.this);
+                requestBean.setUrl("list_templates.php");
+                requestBean.setParams(paramePairs);
+                requestBean.setIsProgressBarEnable(true);
+                RequestHandler requestHandler = new RequestHandler(requestBean, requestListner);
+                requestHandler.execute(null, null, null);
+            }else {
+                CustomDialogs.showOkDialog(RecordingVideo.this, "Please check network connection");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    private RequestListner requestListner = new RequestListner() {
+
+        @Override
+        public void getResponse(JSONObject jsonObject) {
+            try{
+                if(jsonObject != null){
+                    parseJsonData(jsonObject);
+                }
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private void parseJsonData(JSONObject jsonObject) throws JSONException{
+        if(!jsonObject.isNull(AppConstants.SUCCESS)){
+            if(jsonObject.getBoolean(AppConstants.SUCCESS)){
+                if(!jsonObject.isNull("user_id")){
+                    SharedPreferenceWriter.getInstance(RecordingVideo.this).writeStringValue(SPreferenceKey.USERID,jsonObject.getString("user_id"));
+                }
+                if(!jsonObject.isNull("email")){
+                    SharedPreferenceWriter.getInstance(RecordingVideo.this).writeStringValue(SPreferenceKey.EMAIL,jsonObject.getString("email"));
+                }
+                if(!jsonObject.isNull("firstname")){
+                    SharedPreferenceWriter.getInstance(RecordingVideo.this).writeStringValue(SPreferenceKey.FIRST_NAME,jsonObject.getString("firstname"));
+                }
+                if(!jsonObject.isNull("lastname")){
+                    SharedPreferenceWriter.getInstance(RecordingVideo.this).writeStringValue(SPreferenceKey.LAST_NAME,jsonObject.getString("lastname"));
+                }
+                startActivity(new Intent(RecordingVideo.this,RecordingVideo.class));
+                RecordingVideo.this.finish();
+
+            }else {
+                if(!jsonObject.isNull(AppConstants.MESSAGE)){
+                    Toast.makeText(getBaseContext(),"Error",Toast.LENGTH_LONG).show();
+
+                }
+            }
+
+        }
+    }
+
+    private String getTemplateUrl(int postion){
+        StringBuilder builder = new StringBuilder();
+
+        try{
+            JSONArray jsonArray =  MainApplication.getInstance().getTemplateArray();
+            builder.append("http://").append(getServer(SharedPreferenceWriter.getInstance(RecordingVideo.this).getString(SPreferenceKey.REGION))).append("/company/")
+                    .append(SharedPreferenceWriter.getInstance(RecordingVideo.this).getString(SPreferenceKey.COMPANY_DIRECTORY)).append("/"+jsonArray.getJSONObject(postion).optString("directory")).append("/template_" + jsonArray.getJSONObject(postion).getInt("id")+".zip");
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return  builder.toString();
+    }
+
+    public  String getServer(String company_region)
+    {
+        String toReturn = "syd.static.videomyjob.com";
+
+        //Should we ever change the default
+        if (company_region == "AU")
+        {
+            toReturn = "syd.static.videomyjob.com";
+        }
+        else if (company_region == "HN")
+        {
+            toReturn = "hn.static.videomyjob.com";
+        }
+
+        return toReturn;
+    }
+
+
 }
