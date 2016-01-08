@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.1"
     defaultConfig {
         applicationId "com.nick.sampleffmpeg"
-        minSdkVersion 17
+        minSdkVersion 16
         targetSdkVersion 22
         versionCode 13
         versionName "2.35"

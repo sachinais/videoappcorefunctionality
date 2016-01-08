@@ -66,7 +66,6 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
             CamcorderProfile mProfile = CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_HIGH );
             mMediaRecorder = new MediaRecorder();
             mMediaRecorder.setCamera( mCamera );
-
             //2nd. Initialized state
             mMediaRecorder.setAudioSource( MediaRecorder.AudioSource.CAMCORDER );
             mMediaRecorder.setVideoSource( MediaRecorder.VideoSource.CAMERA );
