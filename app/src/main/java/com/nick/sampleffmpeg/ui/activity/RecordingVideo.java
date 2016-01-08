@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
@@ -295,7 +296,8 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
         ((Button)optionDialog.findViewById(R.id.btnOpenDashboard)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.APP_DOMAIN));
+                startActivity(browserIntent);
             }
         });
         ((Button)optionDialog.findViewById(R.id.btnCancel)).setOnClickListener(new View.OnClickListener() {
@@ -345,7 +347,6 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                 fileDownloader.startDownload();
             }
         });
-        //点击弹出选项选择器
 
     }
 

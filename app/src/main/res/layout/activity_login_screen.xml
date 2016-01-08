@@ -1,24 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:orientation="vertical"
+    android:gravity="center"
     >
+
+    <TextView
+        android:id="@+id/tvFileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No file selected"
+        android:textSize="18sp"
+        android:layout_centerHorizontal="true"
+        android:textColor="#000000"/>
     <Button
         android:layout_centerInParent="true"
         android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/common_google_play_services_enable_button">
+        android:layout_below="@+id/tvFileName"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"
+        android:text="Login"
+        >
 
     </Button>
+    <Button
+        android:layout_centerInParent="true"
+        android:id="@+id/btnChooseAFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose File"
+        android:layout_below="@+id/btnLogin"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:singleLine="true"
+        android:id="@+id/etTittle"
+        android:hint="Enter Video Title"
+        android:layout_below="@id/btnChooseAFile"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"/>
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/rbg1">
+        <RadioButton
+            android:id="@+id/rbPublic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Public"/>
+        <RadioButton
+            android:id="@+id/rbPrivate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Private"/>
+    </RadioGroup>
+
     <Button
         android:layout_centerInParent="true"
         android:id="@+id/btnUpload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload123"
-        android:layout_below="@+id/btnLogin">
+        android:text="Upload"
+        android:layout_below="@+id/rbg1">
 
     </Button>
-</RelativeLayout>
+</LinearLayout>

@@ -30,6 +30,7 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.youtube.YouTube;
 import com.google.common.collect.Lists;
 import com.nick.sampleffmpeg.R;
+import com.nick.sampleffmpeg.bean.YoutubeDataBean;
 import com.nick.sampleffmpeg.ui.activity.LoginScreen;
 
 import java.io.FileNotFoundException;
@@ -97,7 +98,9 @@ public class UploadService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Uri fileUri = intent.getData();
         String chosenAccountName = intent.getStringExtra(LoginScreen.ACCOUNT_KEY);
-
+        YoutubeDataBean youtubeDataBean = new YoutubeDataBean();
+        youtubeDataBean.setVideoTitle(intent.getStringExtra(LoginScreen.VIDEO_TITLE));
+        youtubeDataBean.setVideoType(intent.getStringExtra(LoginScreen.VIDEO_TYPE));
         credential =
                 GoogleAccountCredential.usingOAuth2(getApplicationContext(), Lists.newArrayList(Auth.SCOPES));
         credential.setSelectedAccountName(chosenAccountName);
@@ -110,16 +113,16 @@ public class UploadService extends IntentService {
 
 
         try {
-            tryUploadAndShowSelectableNotification(fileUri, youtube);
+            tryUploadAndShowSelectableNotification(fileUri, youtube,youtubeDataBean);
         } catch (InterruptedException e) {
             // ignore
         }
     }
 
-    private void tryUploadAndShowSelectableNotification(final Uri fileUri, final YouTube youtube) throws InterruptedException {
+    private void tryUploadAndShowSelectableNotification(final Uri fileUri, final YouTube youtube, final YoutubeDataBean youtubeDataBean) throws InterruptedException {
         while (true) {
             Log.i(TAG, String.format("Uploading [%s] to YouTube", fileUri.toString()));
-            String videoId = tryUpload(fileUri, youtube);
+            String videoId = tryUpload(fileUri, youtube,youtubeDataBean);
             if (videoId != null) {
                 Log.i(TAG, String.format("Uploaded video with ID: %s", videoId));
                 tryShowSelectableNotification(videoId, youtube);
@@ -163,7 +166,7 @@ public class UploadService extends IntentService {
         }
     }
 
-    private String tryUpload(Uri mFileUri, YouTube youtube) {
+    private String tryUpload(Uri mFileUri, YouTube youtube, YoutubeDataBean youtubeDataBean) {
         long fileSize;
         InputStream fileInputStream = null;
         String videoId = null;
@@ -175,7 +178,7 @@ public class UploadService extends IntentService {
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
 
-            videoId = ResumableUpload.upload(youtube, fileInputStream, fileSize, mFileUri, cursor.getString(column_index), getApplicationContext());
+            videoId = ResumableUpload.upload(youtube, fileInputStream, fileSize, mFileUri, cursor.getString(column_index), getApplicationContext(),youtubeDataBean);
 
 
         } catch (FileNotFoundException e) {

@@ -127,8 +127,6 @@ public class FileDownloader {
             }
 
         }
-
-
         return file2.getAbsolutePath();
     }
 }

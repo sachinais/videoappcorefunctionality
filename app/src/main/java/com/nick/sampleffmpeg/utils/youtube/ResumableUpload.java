@@ -37,6 +37,7 @@ import com.google.api.services.youtube.model.VideoListResponse;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
 import com.nick.sampleffmpeg.R;
+import com.nick.sampleffmpeg.bean.YoutubeDataBean;
 import com.nick.sampleffmpeg.ui.activity.LoginScreen;
 import com.nick.sampleffmpeg.ui.activity.SplashScreen;
 import com.nick.sampleffmpeg.utils.youtube.util.Upload;
@@ -81,7 +82,7 @@ public class ResumableUpload {
     static final String REQUEST_AUTHORIZATION_INTENT = "com.google.example.yt.RequestAuth";
 
     public static String upload(YouTube youtube, final InputStream fileInputStream,
-                                final long fileSize, final Uri mFileUri, final String path, final Context context) {
+                                final long fileSize, final Uri mFileUri, final String path, final Context context,  final YoutubeDataBean youtubeDataBean) {
         final NotificationManager notifyManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -112,7 +113,8 @@ public class ResumableUpload {
        * it to "unlisted" or "private" via API.
        */
             VideoStatus status = new VideoStatus();
-            status.setPrivacyStatus("public");
+          //  status.setPrivacyStatus("public");
+            status.setPrivacyStatus(youtubeDataBean.getVideoType());
             videoObjectDefiningMetadata.setStatus(status);
 
             // We set a majority of the metadata with the VideoSnippet object.
@@ -124,7 +126,9 @@ public class ResumableUpload {
        * and use your own standard names.
        */
             Calendar cal = Calendar.getInstance();
-            snippet.setTitle("Chaman Test" + cal.getTime());
+          //  snippet.setTitle("Chaman Test" + cal.getTime());
+            snippet.setTitle(youtubeDataBean.getVideoTitle());
+
             snippet.setDescription("Video uploaded via YouTube Data API V3 using the Java library "
                     + "on " + cal.getTime());
 

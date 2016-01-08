@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +47,9 @@ public class LoginScreen extends AppCompatActivity implements  GoogleApiClient.C
     private Uri uri =Uri.fromFile(new File("sdcard/vid123.mp4"));
     private static final int REQUEST_AUTHORIZATION = 3;
     private UploadBroadcastReceiver broadcastReceiver;
+    public static final String VIDEO_TITLE = "VIDEO_TITLE";
+    public static final String VIDEO_TYPE = "VIDEO_TYPE";
+
 
 
     @Override
@@ -68,17 +73,38 @@ public class LoginScreen extends AppCompatActivity implements  GoogleApiClient.C
 
             }
         });
+        findViewById(R.id.btnChooseAFile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // signInWithGplus();
+                pickFile();
+
+            }
+        });
     }
 
     public void uploadVideo() {
         if (mChosenAccountName == null) {
+            Toast.makeText(LoginScreen.this, "Please Login First", Toast.LENGTH_LONG).show();
+            return;
+        }else if(uri == null){
+            Toast.makeText(LoginScreen.this, "Please select a video", Toast.LENGTH_LONG).show();
+            return;
+        }else if(((EditText)findViewById(R.id.etTittle)).getText().toString().trim().isEmpty()){
+            Toast.makeText(LoginScreen.this, "Please give title", Toast.LENGTH_LONG).show();
             return;
         }
+
+
         // if a video is picked or recorded.
         if (uri != null) {
             Intent uploadIntent = new Intent(this, UploadService.class);
-            uploadIntent.setData(Uri.parse("content://media/external/video/media/111470"));
+           // uploadIntent.setData(Uri.parse("content://media/external/video/media/111470"));
+            uploadIntent.setData(uri);
             uploadIntent.putExtra(LoginScreen.ACCOUNT_KEY, mChosenAccountName);
+            uploadIntent.putExtra(VIDEO_TYPE, getVideType());
+            uploadIntent.putExtra(VIDEO_TITLE,((EditText)findViewById(R.id.etTittle)).getText().toString().trim());
+
             startService(uploadIntent);
             Toast.makeText(this, R.string.youtube_upload_started,
                     Toast.LENGTH_LONG).show();
@@ -160,6 +186,17 @@ public class LoginScreen extends AppCompatActivity implements  GoogleApiClient.C
 
             if (!mGoogleApiClient.isConnecting()) {
                 mGoogleApiClient.connect();
+            }
+        }
+        if(requestCode == RESULT_PICK_IMAGE_CROP){
+            if (responseCode == RESULT_OK) {
+                uri = intent.getData();
+                if (uri != null) {
+                    ((TextView)findViewById(R.id.tvFileName)).setText(String.valueOf(uri));
+                   /* Intent intent = new Intent(this, ReviewActivity.class);
+                    intent.setData(mFileURI);
+                    startActivity(intent);*/
+                }
             }
         }
     }
@@ -296,6 +333,34 @@ public class LoginScreen extends AppCompatActivity implements  GoogleApiClient.C
                 startActivityForResult(toRun, REQUEST_AUTHORIZATION);
             }
         }
+    }
+
+    /***
+     * -------------------------------------------------------------------------------------->
+     */
+    private static final int RESULT_PICK_IMAGE_CROP = 4;
+
+    public void pickFile() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("video/*");
+        startActivityForResult(intent, RESULT_PICK_IMAGE_CROP);
+    }
+
+    private String getVideType(){
+        RadioGroup rbg = (RadioGroup)findViewById(R.id.rbg1);
+        String videoType = "";
+        switch (rbg.getCheckedRadioButtonId()){
+            case R.id.rbPublic:
+                videoType = "public";
+                break;
+
+            case R.id.rbPrivate:
+                videoType = "private";
+                break;
+        }
+
+        return videoType;
+
     }
 
 }
