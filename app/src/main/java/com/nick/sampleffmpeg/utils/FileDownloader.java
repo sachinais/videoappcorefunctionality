@@ -89,6 +89,12 @@ public class FileDownloader {
                 output.flush();
                 output.close();
                 input.close();
+
+                String unzipLocation = getFilePath(_directoryName)+"/";
+                String zipFile = getFilePath(_directoryName)+"/"+fileName+".zip";
+
+                Decompress d = new Decompress(zipFile, unzipLocation);
+                d.unzip();
             } catch (Exception e) {
                 e.printStackTrace();
             }
