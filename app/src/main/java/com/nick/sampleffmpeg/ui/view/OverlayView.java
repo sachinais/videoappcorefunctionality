@@ -75,6 +75,11 @@ public class OverlayView extends View {
     public void setCaptionTimelayout(TitleTimeLayout layout) {
         this.captionTimelineLayout = layout;
     }
+
+    public void updateOverlay(){
+        overlayInformation = null;
+        invalidate();
+    }
     /**
      * create text Bitmap for overlay
      * @param overlay
@@ -163,7 +168,6 @@ public class OverlayView extends View {
             canvas.drawBitmap(bitmapText, x, y, mBitmapPaint);
         }
     }
-
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh)
     {

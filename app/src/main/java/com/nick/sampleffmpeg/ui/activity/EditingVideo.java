@@ -138,7 +138,7 @@ public class EditingVideo extends BaseActivity {
     private static EditText editTitle = null;
 
     private void addTitle() {
-        View v = showViewContentDialog(R.layout.add_caption_dialog, getString(R.string.str_set), new Runnable() {
+        View v = showViewContentDialog(R.layout.add_title_dialog, getString(R.string.str_set), new Runnable() {
             @Override
             public void run() {
                 if (editTitle != null) {
