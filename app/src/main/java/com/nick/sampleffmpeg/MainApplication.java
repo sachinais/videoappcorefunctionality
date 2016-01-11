@@ -46,10 +46,15 @@ public class MainApplication extends Application{
     public void setTemplate(int index) {
         try {
             JSONObject overlayObj = templateArray.getJSONObject(index).getJSONObject("data");
+            String directoryID = templateArray.getJSONObject(index).getString("directory");
             selectedOverlay = new OverlayBean();
-            selectedOverlay.parseFromJson(overlayObj);
+            selectedOverlay.parseFromJson(overlayObj, directoryID);
         } catch (Exception e) {
             LogFile.logText(e.getMessage(), null);
         }
+    }
+
+    public OverlayBean getTemplate() {
+        return selectedOverlay;
     }
 }

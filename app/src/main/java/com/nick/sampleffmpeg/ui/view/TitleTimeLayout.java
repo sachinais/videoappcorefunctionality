@@ -34,6 +34,8 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
     private long dragStartTime;
     private float startDragX;
 
+    private int videoLength = 0;
+
     final static private int TAP_DRIFT_TOLERANCE = 3;
     final static private int SINGLE_TAP_MAX_TIME = 175;
 
@@ -60,6 +62,9 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         timelineTitlesInformation.clear();
     }
 
+    public void setVideoLength(int length) {
+        videoLength = length;
+    }
 
     private boolean checkTitleAlreadyExistInCurrentTimeLine(int currentVideoSeekPosition) {
         boolean ret = false;
@@ -91,12 +96,13 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             int endTime = startTime + Constant.TIMELINE_UNIT_SECOND;
 
             ChildTextTimelineLayout titleLayout = (ChildTextTimelineLayout)parentActivity.getLayoutInflater().inflate(R.layout.title_timeline_layout, null);
+            titleLayout.setVideoLength(videoLength);
             titleLayout.setDisplayMetrics(parentActivity.getDisplayMetric());
             titleLayout.setInformation(startTime, endTime, title, System.currentTimeMillis());
 
             addView(titleLayout);
             timelineTitlesInformation.add(titleLayout);
-            parentActivity.updateOverlayView();
+            parentActivity.updateOverlayView(startTime);
         }
         showHintTextView();
     }
@@ -138,13 +144,14 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
             ChildTextTimelineLayout layout = timelineTitlesInformation.get(i);
             if (position > layout.getLayoutLeft() && position < layout.getLayoutRight()) {
-                double leftMovingArea = layout.getLayoutLeft() + (layout.getLayoutRight() - layout.getLeft()) / 3.f;
-                double rightMovingArea = layout.getLayoutLeft() + (layout.getLayoutRight() - layout.getLeft()) / 3.f * 2;
+                double leftMovingArea = layout.getLayoutLeft() + (layout.getLayoutRight() - layout.getLeft()) / 4.f;
+                double rightMovingArea = layout.getLayoutLeft() + (layout.getLayoutRight() - layout.getLeft()) / 4.f * 3;
                 if (position < leftMovingArea) {
                     flagResizeLeft = true;
                 } else if (position > rightMovingArea){
                     flagResizeRight = true;
                 } else {
+                    movingOffset = layout.getLayoutLeft() - position;
                     flagMoving = true;
                 }
 
@@ -240,13 +247,13 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
     private static EditText editTitle = null;
 
     private void addNewTitleToTimeline() {
-        View v = parentActivity.showViewContentDialog(R.layout.add_title_dialog, parentActivity.getString(R.string.str_add), new Runnable() {
+        View v = parentActivity.showViewContentDialog(R.layout.add_caption_dialog, parentActivity.getString(R.string.str_add), new Runnable() {
             @Override
             public void run() {
                 if (editTitle != null) {
-                    String strUserName = editTitle.getText().toString();
-                    if (strUserName.length() > 0) {
-                        addNewTitleInformation(strUserName);
+                    String strCaption = editTitle.getText().toString();
+                    if (strCaption.length() > 0) {
+                        addNewTitleInformation(strCaption);
                     }
                 }
             }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -181,6 +182,13 @@ public class FileUtils {
             e.printStackTrace();
         } finally {
         }
+    }
+
+    public synchronized static Bitmap getBitmapFromPNGFile(String path) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+        return bitmap;
     }
 
     /**

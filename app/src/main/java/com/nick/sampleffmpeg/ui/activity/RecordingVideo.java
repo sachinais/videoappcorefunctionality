@@ -31,6 +31,7 @@ import com.nick.sampleffmpeg.network.RequestListner;
 import com.nick.sampleffmpeg.sharedpreference.SPreferenceKey;
 import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 import com.nick.sampleffmpeg.ui.control.UITouchButton;
+import com.nick.sampleffmpeg.ui.view.OverlayView;
 import com.nick.sampleffmpeg.ui.view.VideoCaptureView;
 import com.nick.sampleffmpeg.utils.AppConstants;
 import com.nick.sampleffmpeg.utils.FileDownloader;
@@ -70,6 +71,9 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
 
     @InjectView(R.id.surface_view)
     VideoCaptureView cameraView;
+
+    @InjectView(R.id.overlayview)
+    OverlayView overlayview;
 
     @InjectView(R.id.img_recording_frame_border)
     ImageView imgRecordingFrameBorderLayout;
@@ -180,6 +184,10 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
+                        if (MainApplication.getInstance().getTemplate() == null) {
+                            showAlert(R.string.str_alert_title_information, "You should select a template first.", "OK");
+                            return;
+                        }
                         if (!isRecording) {
                             isRecording = true;
                             cameraView.startVideoCapture();
@@ -220,6 +228,8 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                         recordingTime = 0;
                     }
                 });
+
+        overlayview.setRecordingView(true);
     }
 
     /**
@@ -334,7 +344,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
         pvOptions.setOnoptionsSelectListener(new OptionsPickerView.OnOptionsSelectListener() {
 
             @Override
-            public void onOptionsSelect(int options1, int option2, int options3) {
+            public void onOptionsSelect(final int options1, int option2, int options3) {
                 //返回的分别是三个级别的选中位置
                /* String tx = options1Items.get(options1).getPickerViewText()
                         + options2Items.get(options1).get(option2)
@@ -342,9 +352,18 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                 tvOptions.setText(tx);
                 vMasker.setVisibility(View.GONE);*/
                // Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
-                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
                 FileDownloader fileDownloader = new FileDownloader(RecordingVideo.this,
                         getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
+//                fileDownloader.startDownload(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+//                overlayview.invalidate();
+//                    }
+//                });
+
+                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+                overlayview.invalidate();
             }
         });
 

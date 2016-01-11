@@ -30,6 +30,7 @@
             android:layout_height="match_parent"
             android:layout_weight="2.5">
             <EditText
+                android:id="@+id/txt_job_title"
                 android:layout_width="match_parent"
                 android:layout_gravity="center"
                 android:layout_height="35sp"
@@ -208,18 +209,13 @@
                     android:layout_alignBottom="@id/video_view"
                     android:orientation="vertical">
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="0sp"
-                        android:layout_weight="3"></View>
-
-                    <include layout="@layout/overlay_layout"
+                    <com.nick.sampleffmpeg.ui.view.OverlayView
+                        layout="@layout/overlay_layout"
                         android:id="@+id/overlay_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="0sp"
-                        android:layout_weight="1">
+                        android:layout_height="match_parent">
+                    </com.nick.sampleffmpeg.ui.view.OverlayView>
 
-                    </include>
                 </LinearLayout>
                 <RelativeLayout
                     android:id="@+id/video_control_layout"

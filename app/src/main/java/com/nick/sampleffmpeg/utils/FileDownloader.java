@@ -27,6 +27,8 @@ public class FileDownloader {
     private  Context context;
     private  String fileName;
     private  String _directoryName;
+
+    private Runnable runnable = null;
     public FileDownloader(Context context, String url, String fileName, String _directoryName){
         this.url = url;
         this.context = context;
@@ -34,9 +36,10 @@ public class FileDownloader {
         this._directoryName = _directoryName;
     }
 
-    public void startDownload() {
-    new DownloadFileAsync().execute(url);
-}
+    public void startDownload(Runnable callback) {
+        new DownloadFileAsync().execute(url);
+        this.runnable = callback;
+    }
 
     protected Dialog onCreateDialog(int id) {
         switch (id) {
@@ -95,6 +98,10 @@ public class FileDownloader {
 
                 Decompress d = new Decompress(zipFile, unzipLocation);
                 d.unzip();
+
+                if (runnable != null) {
+                    runnable.run();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

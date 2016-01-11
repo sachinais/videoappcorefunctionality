@@ -20,6 +20,8 @@ import com.nick.sampleffmpeg.R;
 public class ChildTextTimelineLayout extends LinearLayout{
     private double startTime = 0;
     private double endTime = 0;
+
+    private int videoLength = 0; //second unit
     private String titleText = "";
     private DisplayMetrics displayMetrics = null;
 
@@ -37,6 +39,10 @@ public class ChildTextTimelineLayout extends LinearLayout{
 
     public ChildTextTimelineLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    public void setVideoLength(int length) {
+        videoLength = length;
     }
 
     public double getStartTime() {
@@ -69,6 +75,18 @@ public class ChildTextTimelineLayout extends LinearLayout{
     }
 
     private void setLayoutParameters() {
+
+        startTime = left / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
+        endTime = right / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
+
+        if (startTime < 0 ) {
+            left = 0;
+        }
+        if (endTime > videoLength) {
+            endTime = videoLength;
+            right = endTime * Constant.SP_PER_SECOND * displayMetrics.scaledDensity;
+        }
+
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 (int)(right - left),
                 LayoutParams.MATCH_PARENT
@@ -76,8 +94,7 @@ public class ChildTextTimelineLayout extends LinearLayout{
         params.setMargins((int)left, 0, 0, 0);
         setLayoutParams(params);
 
-        startTime = left / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
-        endTime = right / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
+
     }
 
     /**

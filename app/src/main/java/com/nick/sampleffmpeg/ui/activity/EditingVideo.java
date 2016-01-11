@@ -41,6 +41,9 @@ import butterknife.InjectView;
  */
 public class EditingVideo extends BaseActivity {
 
+    @InjectView(R.id.txt_job_title)
+    EditText editJobTitle;
+
     @InjectView(R.id.video_view)
     StretchVideoView videoView;
 
@@ -115,12 +118,35 @@ public class EditingVideo extends BaseActivity {
         ButterKnife.inject(this);
 
         initializeButtons();
-        initializeVideoView();
-        initializeThumbView();
+
+        overlayView.setRecordingView(false);
         LogFile.clearLogText();
         mHandler = new Handler();
+        addTitle();
     }
 
+    /**
+     * show dialog which require input title information.
+     */
+    private static EditText editTitle = null;
+
+    private void addTitle() {
+        View v = showViewContentDialog(R.layout.add_caption_dialog, getString(R.string.str_set), new Runnable() {
+            @Override
+            public void run() {
+                if (editTitle != null) {
+                    String strTitle = editTitle.getText().toString();
+                    if (strTitle.length() > 0) {
+                        editJobTitle.setText(strTitle);
+                        overlayView.setJobTitle(strTitle);
+                        initializeVideoView();
+                        initializeThumbView();
+                    }
+                }
+            }
+        }, getString(R.string.str_cancel));
+        editTitle = (EditText)v.findViewById(R.id.edit_title_name);
+    }
 
     private void initializeButtons() {
         UITouchButton.applyEffect(btnNext, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
@@ -233,28 +259,28 @@ public class EditingVideo extends BaseActivity {
         int index = time / 1000 / Constant.TIMELINE_UNIT_SECOND;
         setTimelineVideo(videoThumbsLayout.findViewWithTag(index));
 
-        updateOverlayView();
+        updateOverlayView(time);
     }
 
     /**
      * update overlay view during play or once timeline is selected
      */
-    public void updateOverlayView() {
-        ArrayList<ChildTextTimelineLayout> titleList = titleThumbsLayout.getTimelineTitlesInformation();
-        ChildTextTimelineLayout showingTitle = null;
-        for (int i = 0; i < titleList.size(); i ++) {
-            ChildTextTimelineLayout title = titleList.get(i);
-            if (title.getStartTime() * 1000 <= currentVideoSeekPosition && currentVideoSeekPosition < title.getEndTime() * 1000) {
-                showingTitle = title;
-                break;
-            }
-        }
-        if (showingTitle == null) {
-            overlayView.setVisibility(View.GONE);
-        } else {
-            overlayView.setVisibility(View.VISIBLE);
-            overlayView.setText(showingTitle.getTitleText());
-        }
+    public void updateOverlayView(int time) {
+//        ArrayList<ChildTextTimelineLayout> titleList = titleThumbsLayout.getTimelineTitlesInformation();
+//        ChildTextTimelineLayout showingTitle = null;
+//        for (int i = 0; i < titleList.size(); i ++) {
+//            ChildTextTimelineLayout title = titleList.get(i);
+//            if (title.getStartTime() * 1000 <= currentVideoSeekPosition && currentVideoSeekPosition < title.getEndTime() * 1000) {
+//                showingTitle = title;
+//                break;
+//            }
+//        }
+//        if (showingTitle == null) {
+//            overlayView.setVisibility(View.GONE);
+//        } else {
+//            overlayView.setVisibility(View.VISIBLE);
+//            overlayView.setText(showingTitle.getTitleText());
+//        }
     }
     /**
      * Play & Pause video in video view
@@ -530,7 +556,7 @@ public class EditingVideo extends BaseActivity {
      * initialize Timeline view extract thumb image from video, add them into video timeline
      */
     private void initializeTimeLineView() {
-
+        titleThumbsLayout.setVideoLength(videoLength);
         videoThumbsLayout.removeAllViews();
         titleThumbsLayout.setActivity(this);
         titleThumbsLayout.removeChildTitleLayouts();
