@@ -9,6 +9,8 @@ import android.graphics.drawable.PictureDrawable;
 import android.util.Size;
 
 import com.nick.sampleffmpeg.Define.Constant;
+import com.nick.sampleffmpeg.sharedpreference.SPreferenceKey;
+import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 import com.nick.sampleffmpeg.utils.FileUtils;
 import com.nick.sampleffmpeg.utils.svgandroid.SVG;
 import com.nick.sampleffmpeg.utils.svgandroid.SVGParser;
@@ -30,12 +32,7 @@ import java.util.ArrayList;
 public class OverlayBean {
 
     public class Overlay {
-        public int startTime = 0;
-        public int endTime = 0;
         public String text = "";
-
-        public Bitmap bitmapBackground = null;
-        public Bitmap bitmapText = null;
 
         public double width;
         public double height;
@@ -57,6 +54,7 @@ public class OverlayBean {
         public String topVideo = "";
         public String tailVideo = "";
     }
+
     public ArrayList<Overlay> captions = new ArrayList<>();
     public Overlay brandLogo = null;
     public BrandLogoOption brandLogoOption = null;
@@ -65,6 +63,9 @@ public class OverlayBean {
 
     public String strDirectoryID = "";
     public JSONObject debugJsonObj = null;
+
+    private SharedPreferenceWriter sharedPreferenceWriter = null;
+
     private double convertPercentToDouble(JSONObject obj, String field) throws Exception{
         String value = obj.getString(field);
         value = value.replace("%", "");
@@ -171,12 +172,6 @@ public class OverlayBean {
             }
         }
 
-        overlay.bitmapBackground = null;
-        if (overlay.backgroundImage.length() > 0) {
-            String filePath = Constant.getApplicationDirectory() + strDirectoryID + File.separator + overlay.backgroundImage;;
-            overlay.bitmapBackground = FileUtils.getBitmapFromPNGFile(filePath);
-        }
-
         ret = overlay;
         return ret;
     }
@@ -193,6 +188,8 @@ public class OverlayBean {
 
         debugJsonObj = obj;
         strDirectoryID = directoryID;
+
+        sharedPreferenceWriter = SharedPreferenceWriter.getInstance();
         //parse brand logo
         if (!obj.isNull("brand-logo")) {
             JSONObject brandObj = obj.getJSONObject("brand-logo");
@@ -214,11 +211,18 @@ public class OverlayBean {
         //parse name overlay
         if (!obj.isNull("name-overlay")) {
             name = parseOverlay(obj.getJSONObject("name-overlay"), false);
+            if (sharedPreferenceWriter != null) {
+                String strName = sharedPreferenceWriter.getString(SPreferenceKey.FIRST_NAME) + " " + sharedPreferenceWriter.getString(SPreferenceKey.LAST_NAME);
+                name.text = strName + "\n" + sharedPreferenceWriter.getString(SPreferenceKey.TITLE);
+            }
         }
 
         //parse contact overlay
         if (!obj.isNull("contact-overlay")) {
             contact = parseOverlay(obj.getJSONObject("contact-overlay"), false);
+            if (sharedPreferenceWriter != null) {
+                contact.text = sharedPreferenceWriter.getString(SPreferenceKey.EMAIL) + "\n" + sharedPreferenceWriter.getString(SPreferenceKey.CONTACT);
+            }
         }
 
         if (!obj.isNull("captions")) {

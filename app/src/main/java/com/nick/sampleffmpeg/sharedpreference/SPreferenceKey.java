@@ -12,7 +12,8 @@ public class SPreferenceKey {
 	public static final String LAST_NAME = "LAST_NAME";
 	public static final String REGION = "REGION";
 	public static final String COMPANY_DIRECTORY = "COMPANY_DIRECTORY";
-
+	public static final String TITLE = "TITLE";
+	public static final String CONTACT = "CONTACT";
 	public static final String SESSION_ID ="session_id";
 
 

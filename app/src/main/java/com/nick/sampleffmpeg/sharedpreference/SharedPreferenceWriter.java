@@ -21,6 +21,10 @@ public class SharedPreferenceWriter {
 		return sharePref;
 	}
 
+	public static SharedPreferenceWriter getInstance() {
+		return sharePref;
+	}
+
 	private SharedPreferenceWriter() {
 		// TODO Auto-generated constructor stub
 	}

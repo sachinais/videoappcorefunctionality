@@ -133,6 +133,14 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 if(!jsonObject.isNull("company_directory")){
                     SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.COMPANY_DIRECTORY,jsonObject.getString("company_directory"));
                 }
+
+                if(!jsonObject.isNull("title")){
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.TITLE,jsonObject.getString("title"));
+                }
+                if(!jsonObject.isNull("contact")){
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.CONTACT, jsonObject.getString("contact"));
+                }
+
                 if(!jsonObject.isNull("templates")){
                     MainApplication.getInstance().setTemplateArray(jsonObject.getJSONArray("templates"));
                 }

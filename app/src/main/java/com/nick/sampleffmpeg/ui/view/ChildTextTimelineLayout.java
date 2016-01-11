@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.R;
+import com.nick.sampleffmpeg.bean.OverlayBean;
 
 /**
  * Created by baebae on 12/25/15.
@@ -20,8 +21,9 @@ import com.nick.sampleffmpeg.R;
 public class ChildTextTimelineLayout extends LinearLayout{
     private double startTime = 0;
     private double endTime = 0;
+    private OverlayBean.Overlay overlay = null;
+    private boolean flagRemovable = false;
 
-    private int videoLength = 0; //second unit
     private String titleText = "";
     private DisplayMetrics displayMetrics = null;
 
@@ -29,6 +31,7 @@ public class ChildTextTimelineLayout extends LinearLayout{
     private double left = 0.f;
     private double right = 0.f;
 
+    private int parentWidth = 0;
     public ChildTextTimelineLayout(Context context) {
         super(context);
     }
@@ -41,8 +44,8 @@ public class ChildTextTimelineLayout extends LinearLayout{
         super(context, attrs, defStyleAttr);
     }
 
-    public void setVideoLength(int length) {
-        videoLength = length;
+    public void setParentWidth(int width) {
+        parentWidth = width;
     }
 
     public double getStartTime() {
@@ -57,34 +60,52 @@ public class ChildTextTimelineLayout extends LinearLayout{
         return titleText;
     }
 
+    public OverlayBean.Overlay getCaptionOverlay() {
+        return overlay;
+    }
+
+    public boolean isRemovable() {
+        return flagRemovable;
+    }
+
     public void setDisplayMetrics(DisplayMetrics displayMetrics) {
         this.displayMetrics = displayMetrics;
     }
 
-    public void setInformation(double startTime, double endTime, String strText, long tagID) {
+    public void setInformation(double startTime, double endTime, String strText, long tagID, OverlayBean.Overlay overlay, boolean flagRemovable) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.titleText = strText;
         this.childTagID = tagID;
+        this.overlay = overlay;
+        this.flagRemovable = flagRemovable;
 
         left = startTime * Constant.SP_PER_SECOND * displayMetrics.scaledDensity;
         right = endTime * Constant.SP_PER_SECOND * displayMetrics.scaledDensity;
-        setLayoutParameters();
+        setLayoutParameters(left, right);
 
         ((TextView)findViewById(R.id.txt_title)).setText(strText);
     }
 
-    private void setLayoutParameters() {
+    private void setLayoutParameters(double newLeft, double newRight) {
+        if (newLeft < 0) {
+            newLeft = 0;
+            newRight = this.right;
+        }
+
+        if (parentWidth > 0 && newRight > parentWidth) {
+            newRight = parentWidth;
+            newLeft = left;
+        }
+
+        left = newLeft;
+        right = newRight;
 
         startTime = left / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
         endTime = right / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
 
-        if (startTime < 0 ) {
-            left = 0;
-        }
-        if (endTime > videoLength) {
-            endTime = videoLength;
-            right = endTime * Constant.SP_PER_SECOND * displayMetrics.scaledDensity;
+        if (endTime - startTime < Constant.TIMELINE_UNIT_SECOND) {
+            return;
         }
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
@@ -93,8 +114,6 @@ public class ChildTextTimelineLayout extends LinearLayout{
         );
         params.setMargins((int)left, 0, 0, 0);
         setLayoutParams(params);
-
-
     }
 
     /**
@@ -118,8 +137,8 @@ public class ChildTextTimelineLayout extends LinearLayout{
      */
     public void setLayoutLeft(double left) {
         if (left < right - displayMetrics.scaledDensity * 30 ) {
-            this.left = left;
-            setLayoutParameters();
+            double newLeft = left;
+            setLayoutParameters(newLeft, this.right);
         }
     }
 
@@ -128,8 +147,8 @@ public class ChildTextTimelineLayout extends LinearLayout{
      */
     public void setLayoutRight(double right) {
         if (right > left + displayMetrics.scaledDensity * 30 ) {
-            this.right = right;
-            setLayoutParameters();
+            double newRight = right;
+            setLayoutParameters(this.left, newRight);
         }
     }
 
@@ -138,9 +157,9 @@ public class ChildTextTimelineLayout extends LinearLayout{
      */
     public void moveLayout(double x) {
         double offset = x - this.left;
-        this.left = x;
-        this.right = this.right + offset;
-        setLayoutParameters();
+        double newLeft = x;
+        double newRight = this.right + offset;
+        setLayoutParameters(newLeft, newRight);
     }
 
 

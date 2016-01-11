@@ -10,7 +10,9 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.nick.sampleffmpeg.Define.Constant;
+import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
+import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.ui.activity.EditingVideo;
 
 import java.util.ArrayList;
@@ -33,8 +35,8 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
     private boolean flagDragging;
     private long dragStartTime;
     private float startDragX;
+    private double lastDragX;
 
-    private int videoLength = 0;
 
     final static private int TAP_DRIFT_TOLERANCE = 3;
     final static private int SINGLE_TAP_MAX_TIME = 175;
@@ -62,10 +64,6 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         timelineTitlesInformation.clear();
     }
 
-    public void setVideoLength(int length) {
-        videoLength = length;
-    }
-
     private boolean checkTitleAlreadyExistInCurrentTimeLine(int currentVideoSeekPosition) {
         boolean ret = false;
 
@@ -86,7 +84,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
     /**
      * add title into title timeline area
      */
-    private void addNewTitleInformation(String title) {
+    private void addNewTitleInformation(String title, OverlayBean.Overlay overlay) {
         int currentVideoSeekPosition = parentActivity.getCurrentSeekPosition();
         boolean flagAlreadyHaveTitle = checkTitleAlreadyExistInCurrentTimeLine(currentVideoSeekPosition);
         if (flagAlreadyHaveTitle) {
@@ -95,15 +93,22 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             int startTime = currentVideoSeekPosition / 1000;
             int endTime = startTime + Constant.TIMELINE_UNIT_SECOND;
 
-            ChildTextTimelineLayout titleLayout = (ChildTextTimelineLayout)parentActivity.getLayoutInflater().inflate(R.layout.title_timeline_layout, null);
-            titleLayout.setVideoLength(videoLength);
-            titleLayout.setDisplayMetrics(parentActivity.getDisplayMetric());
-            titleLayout.setInformation(startTime, endTime, title, System.currentTimeMillis());
-
-            addView(titleLayout);
-            timelineTitlesInformation.add(titleLayout);
-            parentActivity.updateOverlayView(startTime);
+            addNewTitleInformation(title, startTime, endTime, overlay, true);
         }
+    }
+
+    public void addNewTitleInformation(String title, int startTime, int endTime, OverlayBean.Overlay overlay, boolean flagRemovable) {
+
+        ChildTextTimelineLayout titleLayout = (ChildTextTimelineLayout)parentActivity.getLayoutInflater().inflate(R.layout.title_timeline_layout, null);
+        titleLayout.setParentWidth(this.getWidth());
+        titleLayout.setDisplayMetrics(parentActivity.getDisplayMetric());
+        titleLayout.setInformation(startTime, endTime, title, System.currentTimeMillis(), overlay, flagRemovable);
+
+        addView(titleLayout);
+        timelineTitlesInformation.add(titleLayout);
+        parentActivity.updateOverlayView(startTime);
+
+
         showHintTextView();
     }
 
@@ -184,7 +189,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         // Touch begin and get title from selected position
         if (me.getAction() == MotionEvent.ACTION_DOWN) {
             selectedItem = null;
-            startDragX = me.getX();
+            lastDragX = startDragX = me.getX();
             selectedItem = getChildFromPosition(startDragX);
             dragStartTime = SystemClock.elapsedRealtime();
             if (selectedItem != null) {
@@ -201,9 +206,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             flagDragging = false;
 
             //if touch start & end in short time, press event will happen.
-            if (startDragX < (me.getX() + TAP_DRIFT_TOLERANCE)
-                    && startDragX > (me.getX() - TAP_DRIFT_TOLERANCE)
-                    && ((SystemClock.elapsedRealtime() - dragStartTime) < SINGLE_TAP_MAX_TIME)) {
+            if (((SystemClock.elapsedRealtime() - dragStartTime) < SINGLE_TAP_MAX_TIME)) {
                 int seekVideoTime = (int)((me.getX() / Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity) * 1000);
                 parentActivity.setCurrentSeekTime(seekVideoTime);
 
@@ -213,13 +216,15 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
                  */
 
                 if (selectedItem != null) {
-                    parentActivity.showAlert(R.string.str_alert_title_information, R.string.str_delete_time_line,
-                            parentActivity.getString(R.string.str_yes), new Runnable() {
-                                @Override
-                                public void run() {
-                                    removeChildLayout(selectedItem);
-                                }
-                            }, parentActivity.getString(R.string.str_no));
+                    if (selectedItem.isRemovable()) {
+                        parentActivity.showAlert(R.string.str_alert_title_information, R.string.str_delete_time_line,
+                                parentActivity.getString(R.string.str_yes), new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        removeChildLayout(selectedItem);
+                                    }
+                                }, parentActivity.getString(R.string.str_no));
+                    }
                 } else {
                     addNewTitleToTimeline();
                 }
@@ -228,15 +233,18 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             return true;
         } else if (me.getAction() == MotionEvent.ACTION_MOVE) {
             double x = me.getX();
-            if (flagDragging && (flagResizeLeft || flagResizeRight || flagMoving) && !checkConflictTitleArea(x)) {
-                if (flagResizeLeft) {
-                    selectedItem.setLayoutLeft(me.getX());
-                } else if (flagResizeRight) {
-                    selectedItem.setLayoutRight(me.getX());
-                } else if (flagMoving) {
-                    selectedItem.moveLayout(me.getX() + movingOffset);
+            if (Math.abs(x - lastDragX) > 5) {
+                if (flagDragging && (flagResizeLeft || flagResizeRight || flagMoving) && !checkConflictTitleArea(x)) {
+                    if (flagResizeLeft) {
+                        selectedItem.setLayoutLeft(me.getX());
+                    } else if (flagResizeRight) {
+                        selectedItem.setLayoutRight(me.getX());
+                    } else if (flagMoving) {
+                        selectedItem.moveLayout(me.getX() + movingOffset);
+                    }
                 }
             }
+            lastDragX = x;
         }
         return true;
     }
@@ -247,17 +255,26 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
     private static EditText editTitle = null;
 
     private void addNewTitleToTimeline() {
-        View v = parentActivity.showViewContentDialog(R.layout.add_caption_dialog, parentActivity.getString(R.string.str_add), new Runnable() {
-            @Override
-            public void run() {
-                if (editTitle != null) {
-                    String strCaption = editTitle.getText().toString();
-                    if (strCaption.length() > 0) {
-                        addNewTitleInformation(strCaption);
+
+        OverlayBean template = MainApplication.getInstance().getTemplate();
+        if (template.captions.size() == 0) {
+            parentActivity.showAlert(R.string.str_alert_title_information, "There's no caption templates.", "OK");
+        } else {
+            final OverlayBean.Overlay overlay = template.captions.get(0);
+            View v = parentActivity.showViewContentDialog(R.layout.add_caption_dialog, parentActivity.getString(R.string.str_add), new Runnable() {
+                @Override
+                public void run() {
+                    if (editTitle != null) {
+                        String strCaption = editTitle.getText().toString();
+                        if (strCaption.length() > 0) {
+                            overlay.text = strCaption;
+                            addNewTitleInformation(strCaption, overlay);
+                        }
                     }
                 }
-            }
-        }, parentActivity.getString(R.string.str_cancel));
-        editTitle = (EditText)v.findViewById(R.id.edit_title_name);
+            }, parentActivity.getString(R.string.str_cancel));
+            editTitle = (EditText)v.findViewById(R.id.edit_title_name);
+        }
+
     }
 }

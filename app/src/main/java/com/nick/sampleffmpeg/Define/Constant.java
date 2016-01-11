@@ -11,7 +11,7 @@ import java.io.File;
 public class Constant {
     public final static int			BUTTON_NORMAL_ALPHA	= 100;
     public final static int			BUTTON_FOCUS_ALPHA	= 50;
-    public final static int         TIMELINE_UNIT_SECOND = 1;
+    public static int               TIMELINE_UNIT_SECOND = 1;
     public final static int         SP_PER_SECOND = 60 / TIMELINE_UNIT_SECOND;
     public final static String      APP_NAME = "VideoEditorApp";
     public static String strTemporaryFolderName = Long.toString(System.currentTimeMillis());

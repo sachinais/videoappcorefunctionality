@@ -18,7 +18,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nick.sampleffmpeg.Define.Constant;
+import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
+import com.nick.sampleffmpeg.bean.OverlayBean;
+import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 import com.nick.sampleffmpeg.ui.control.UITouchButton;
 import com.nick.sampleffmpeg.ui.view.ChildTextTimelineLayout;
 import com.nick.sampleffmpeg.ui.view.OverlayView;
@@ -110,6 +113,8 @@ public class EditingVideo extends BaseActivity {
 
     private Handler mHandler = null;
     private View selectedVideoTimeline = null;
+
+    private SharedPreferenceWriter sharedPreferenceWriter = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,9 +122,11 @@ public class EditingVideo extends BaseActivity {
         setContentView(R.layout.editing_video_view);
         ButterKnife.inject(this);
 
+        sharedPreferenceWriter = SharedPreferenceWriter.getInstance(this);
         initializeButtons();
 
         overlayView.setRecordingView(false);
+        overlayView.setCaptionTimelayout(titleThumbsLayout);
         LogFile.clearLogText();
         mHandler = new Handler();
         addTitle();
@@ -138,7 +145,7 @@ public class EditingVideo extends BaseActivity {
                     String strTitle = editTitle.getText().toString();
                     if (strTitle.length() > 0) {
                         editJobTitle.setText(strTitle);
-                        overlayView.setJobTitle(strTitle);
+
                         initializeVideoView();
                         initializeThumbView();
                     }
@@ -266,21 +273,7 @@ public class EditingVideo extends BaseActivity {
      * update overlay view during play or once timeline is selected
      */
     public void updateOverlayView(int time) {
-//        ArrayList<ChildTextTimelineLayout> titleList = titleThumbsLayout.getTimelineTitlesInformation();
-//        ChildTextTimelineLayout showingTitle = null;
-//        for (int i = 0; i < titleList.size(); i ++) {
-//            ChildTextTimelineLayout title = titleList.get(i);
-//            if (title.getStartTime() * 1000 <= currentVideoSeekPosition && currentVideoSeekPosition < title.getEndTime() * 1000) {
-//                showingTitle = title;
-//                break;
-//            }
-//        }
-//        if (showingTitle == null) {
-//            overlayView.setVisibility(View.GONE);
-//        } else {
-//            overlayView.setVisibility(View.VISIBLE);
-//            overlayView.setText(showingTitle.getTitleText());
-//        }
+        overlayView.setCurrentVideoTime(time);
     }
     /**
      * Play & Pause video in video view
@@ -556,10 +549,25 @@ public class EditingVideo extends BaseActivity {
      * initialize Timeline view extract thumb image from video, add them into video timeline
      */
     private void initializeTimeLineView() {
-        titleThumbsLayout.setVideoLength(videoLength);
-        videoThumbsLayout.removeAllViews();
         titleThumbsLayout.setActivity(this);
         titleThumbsLayout.removeChildTitleLayouts();
+
+        //add default captions into timeline view (contact, name overlay)
+        OverlayBean template = MainApplication.getInstance().getTemplate();
+        OverlayBean.Overlay nameOverlay = template.name;
+        if (nameOverlay != null) {
+            titleThumbsLayout.addNewTitleInformation(nameOverlay.text, 0, 1, nameOverlay, false);
+        }
+
+        OverlayBean.Overlay contactOverlay = template.contact;
+        if (contactOverlay != null) {
+            int lastSec = videoLength / 1000;
+            titleThumbsLayout.addNewTitleInformation(contactOverlay.text, lastSec - 1, lastSec, contactOverlay, false);
+        }
+        updateOverlayView(0);
+
+        videoThumbsLayout.removeAllViews();
+
         new InitializeTimelineTask().execute(true);
     }
 

@@ -97,6 +97,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
     private double defaultWidth = 0;
     private double defaultHeight = 0;
 
+    private SharedPreferenceWriter sharedPreferenceWriter = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,7 +119,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
             LogFile.logText("Error on copy assets" + e.getMessage(), null);
         }
 
-
+        sharedPreferenceWriter = SharedPreferenceWriter.getInstance(this);
         timerThread = (new Thread(new Runnable() {
             @Override
             public void run() {
@@ -209,6 +210,10 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
+                        if (recordingTime <= 5) {
+                            showAlert(R.string.str_alert_title_information, "You have to record video more than 5 secs.", "OK");
+                            return;
+                        }
                         if (isRecording) {
                             isRecording = false;
                             cameraView.stopPreview();
@@ -279,6 +284,9 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
             public void run() {
                 progressDialog.dismiss();
                 RecordingVideo.this.finish();
+                if (recordingTime > 30) {
+                    Constant.TIMELINE_UNIT_SECOND = 2;
+                }
                 showActivity(EditingVideo.class, null);
             }
         });
@@ -354,16 +362,16 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                // Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
                 FileDownloader fileDownloader = new FileDownloader(RecordingVideo.this,
                         getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
-//                fileDownloader.startDownload(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
-//                overlayview.invalidate();
-//                    }
-//                });
-
-                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+                fileDownloader.startDownload(new Runnable() {
+                    @Override
+                    public void run() {
+                        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
                 overlayview.invalidate();
+                    }
+                });
+
+//                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+//                overlayview.invalidate();
             }
         });
 
@@ -439,10 +447,15 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
 
         try{
             JSONArray jsonArray =  MainApplication.getInstance().getTemplateArray();
-            builder.append("http://").append(getServer(SharedPreferenceWriter.getInstance(RecordingVideo.this).getString(SPreferenceKey.REGION))).append("/company/")
-                    .append(SharedPreferenceWriter.getInstance(RecordingVideo.this).getString(SPreferenceKey.COMPANY_DIRECTORY)).append("/"+jsonArray.getJSONObject(postion).optString("directory")).append("/template_" + jsonArray.getJSONObject(postion).getInt("id")+".zip");
 
-        }catch (Exception e){
+            builder.append("http://")
+                    .append(getServer(sharedPreferenceWriter.getString(SPreferenceKey.REGION)))
+                    .append("/company/")
+                    .append(sharedPreferenceWriter.getString(SPreferenceKey.COMPANY_DIRECTORY))
+                    .append("/"+jsonArray.getJSONObject(postion).optString("directory"))
+                    .append("/template_" + jsonArray.getJSONObject(postion).getInt("id")+".zip");
+
+        } catch (Exception e){
             e.printStackTrace();
         }
 

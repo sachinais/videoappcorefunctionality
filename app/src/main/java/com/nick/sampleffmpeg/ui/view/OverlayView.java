@@ -23,6 +23,7 @@ import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.utils.FileUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,6 +34,9 @@ public class OverlayView extends View {
     private Context appContext;
     private int width;
     private int height;
+    private int currentVideoTime = 0;
+    private TitleTimeLayout captionTimelineLayout = null;
+
     private Bitmap viewBitmap;
     private Canvas viewCanvas;
     private Paint mBitmapPaint;
@@ -63,26 +67,23 @@ public class OverlayView extends View {
         this.isRecordingView = flag;
     }
 
-    public void setJobTitle(String strTitle) {
-        if (overlayInformation == null) {
-            overlayInformation = MainApplication.getInstance().getTemplate();
-        }
-
-        if (overlayInformation != null && overlayInformation.name != null ) {
-            overlayInformation.name.text = strTitle;
-            createOverlayTextBitmap(overlayInformation.name);
-        }
+    public void setCurrentVideoTime(int time) {
+        currentVideoTime = time;
+        invalidate();
     }
 
+    public void setCaptionTimelayout(TitleTimeLayout layout) {
+        this.captionTimelineLayout = layout;
+    }
     /**
      * create text Bitmap for overlay
      * @param overlay
      */
-    private void createOverlayTextBitmap(OverlayBean.Overlay overlay) {
-        overlay.bitmapText = null;
-        if (overlay.bitmapBackground != null) {
-            int width = overlay.bitmapBackground.getWidth();
-            int height = overlay.bitmapBackground.getHeight();
+    private Bitmap createOverlayTextBitmap(OverlayBean.Overlay overlay, Bitmap backgroundBitmap) {
+        Bitmap ret = null;
+        if (backgroundBitmap != null) {
+            int width = backgroundBitmap.getWidth();
+            int height = backgroundBitmap.getHeight();
 
             int margin = (int) ((overlay.marginLeft / 100) * width) ;
             int fontSize = (int) (((double)overlay.fontSize / 100.0) * height) ;
@@ -101,10 +102,19 @@ public class OverlayView extends View {
             mTextLayout.draw(canvas);
             canvas.restore();
 
-            overlay.bitmapText = image;
+            ret = image;
         }
+
+        return ret;
     }
 
+    /**
+     * resize bitmap with new widht, height
+     * @param bm
+     * @param newWidth
+     * @param newHeight
+     * @return
+     */
     private Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
         int width = bm.getWidth();
         int height = bm.getHeight();
@@ -123,12 +133,19 @@ public class OverlayView extends View {
      * resize overlay background bitmap
      * @param overlay
      */
-    private void resizeOverlayBackgroundBitmap(OverlayBean.Overlay overlay) {
-        if (overlay.bitmapBackground != null) {
-            int newWidth = (int)(width * (overlay.width / 100.f));
-            int newHeight = (int)(height * (overlay.height / 100.f));
-            overlay.bitmapBackground = getResizedBitmap(overlay.bitmapBackground, newWidth, newHeight);
+    private Bitmap createBackgroundBitmap(OverlayBean.Overlay overlay) {
+        Bitmap ret = null;
+        if (overlay != null && overlay.backgroundImage.length() > 0) {
+            String filePath = Constant.getApplicationDirectory() + MainApplication.getInstance().getTemplate().strDirectoryID + File.separator + overlay.backgroundImage;;
+            Bitmap fullBitmap = FileUtils.getBitmapFromPNGFile(filePath);
+            if (fullBitmap != null) {
+                int newWidth = (int)(width * (overlay.width / 100.f));
+                int newHeight = (int)(height * (overlay.height / 100.f));
+                ret = getResizedBitmap(fullBitmap, newWidth, newHeight);
+            }
         }
+
+        return ret;
     }
 
     /**
@@ -136,42 +153,17 @@ public class OverlayView extends View {
      * @param canvas
      * @param overlay
      */
-    private void drawOverlayBackground(Canvas canvas, OverlayBean.Overlay overlay) {
+    private void drawOverlayBackground(Canvas canvas, OverlayBean.Overlay overlay, Bitmap bitmapBackground, Bitmap bitmapText) {
         int x = (int)(width * (overlay.x / 100.f));
         int y = (int)(height * (overlay.y / 100.f));
-        if (overlay.bitmapBackground != null) {
-            canvas.drawBitmap(overlay.bitmapBackground, x, y, mBitmapPaint);
+        if (bitmapBackground != null) {
+            canvas.drawBitmap(bitmapBackground, x, y, mBitmapPaint);
         }
-        if (overlay.bitmapText != null) {
-            canvas.drawBitmap(overlay.bitmapText, x, y, mBitmapPaint);
-        }
-    }
-
-    /**
-     * init overlay objects (resize width , height based on overlay view size)
-     */
-    private void initOverlayObject() {
-        overlayInformation = MainApplication.getInstance().getTemplate();
-        if (overlayInformation != null) {
-            if (overlayInformation.brandLogo != null) {
-                resizeOverlayBackgroundBitmap(overlayInformation.brandLogo);
-            }
-            if (!isRecordingView) {
-                if (overlayInformation.contact != null) {
-                    resizeOverlayBackgroundBitmap(overlayInformation.contact);
-                }
-
-                if (overlayInformation.name != null) {
-                    resizeOverlayBackgroundBitmap(overlayInformation.name);
-                    createOverlayTextBitmap(overlayInformation.name);
-                }
-
-                for (int i = 0; i < overlayInformation.captions.size(); i++) {
-                    resizeOverlayBackgroundBitmap(overlayInformation.captions.get(i));
-                }
-            }
+        if (bitmapText != null) {
+            canvas.drawBitmap(bitmapText, x, y, mBitmapPaint);
         }
     }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh)
     {
@@ -179,7 +171,7 @@ public class OverlayView extends View {
         width = w;
         height = h;
         viewBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        initOverlayObject();
+        overlayInformation = MainApplication.getInstance().getTemplate();
         viewCanvas = new Canvas(viewBitmap);
     }
 
@@ -188,24 +180,28 @@ public class OverlayView extends View {
     {
         super.onDraw(canvas);
         if (overlayInformation == null) {
-            initOverlayObject();
+            overlayInformation = MainApplication.getInstance().getTemplate();
         }
         canvas.drawBitmap(viewBitmap, 0, 0, mBitmapPaint);
         if (overlayInformation != null) {
             if (overlayInformation.brandLogo != null) {
-                drawOverlayBackground(canvas, overlayInformation.brandLogo);
+                Bitmap backgroundBitmap = createBackgroundBitmap(overlayInformation.brandLogo);
+                drawOverlayBackground(canvas, overlayInformation.brandLogo, backgroundBitmap, null);
             }
-            if (!isRecordingView) {
-                if (overlayInformation.contact != null) {
-                    drawOverlayBackground(canvas, overlayInformation.contact);
-                }
+            if (!isRecordingView && this.captionTimelineLayout != null) {
+                ArrayList<ChildTextTimelineLayout> captions = this.captionTimelineLayout.getTimelineTitlesInformation();
+                for (int i = 0; i < captions.size(); i ++) {
+                    ChildTextTimelineLayout caption = captions.get(i);
 
-                if (overlayInformation.name != null) {
-                    drawOverlayBackground(canvas, overlayInformation.name);
-                }
+                    if (caption.getStartTime() <= currentVideoTime && caption.getEndTime() > currentVideoTime) {
 
-                for (int i = 0 ; i < overlayInformation.captions.size(); i ++) {
-                    drawOverlayBackground(canvas, overlayInformation.captions.get(i));
+                        OverlayBean.Overlay overlay = caption.getCaptionOverlay();
+                        if (overlay != null) {
+                            Bitmap backgroundBitmap = createBackgroundBitmap(overlay);
+                            Bitmap textBitmap = createOverlayTextBitmap(overlay, backgroundBitmap);
+                            drawOverlayBackground(canvas, overlay, backgroundBitmap, textBitmap);
+                        }
+                    }
                 }
             }
 
