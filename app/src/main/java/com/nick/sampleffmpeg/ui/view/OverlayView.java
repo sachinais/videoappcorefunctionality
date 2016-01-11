@@ -44,6 +44,7 @@ public class OverlayView extends View {
 
     private void init()
     {
+        setWillNotDraw (false);
         mBitmapPaint = new Paint(Paint.DITHER_FLAG);
     }
 
@@ -78,7 +79,7 @@ public class OverlayView extends View {
 
     public void updateOverlay(){
         overlayInformation = null;
-        invalidate();
+        this.invalidate();
     }
     /**
      * create text Bitmap for overlay

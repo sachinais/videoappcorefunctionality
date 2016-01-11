@@ -366,7 +366,12 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                     @Override
                     public void run() {
                         MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
-                        overlayview.updateOverlay();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                overlayview.updateOverlay();
+                            }
+                        });
                     }
                 });
 
