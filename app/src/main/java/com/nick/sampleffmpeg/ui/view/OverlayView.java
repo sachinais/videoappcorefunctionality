@@ -34,7 +34,7 @@ public class OverlayView extends View {
     private Context appContext;
     private int width;
     private int height;
-    private int currentVideoTime = 0;
+    private double currentVideoTime = 0;
     private TitleTimeLayout captionTimelineLayout = null;
 
     private Bitmap viewBitmap;
@@ -68,7 +68,7 @@ public class OverlayView extends View {
         this.isRecordingView = flag;
     }
 
-    public void setCurrentVideoTime(int time) {
+    public void setCurrentVideoTime(double time) {
         currentVideoTime = time;
         invalidate();
     }
@@ -85,7 +85,7 @@ public class OverlayView extends View {
      * create text Bitmap for overlay
      * @param overlay
      */
-    private Bitmap createOverlayTextBitmap(OverlayBean.Overlay overlay, Bitmap backgroundBitmap) {
+    private Bitmap createOverlayTextBitmap(OverlayBean.Overlay overlay, Bitmap backgroundBitmap, String title) {
         Bitmap ret = null;
         if (backgroundBitmap != null) {
             int width = backgroundBitmap.getWidth();
@@ -100,7 +100,7 @@ public class OverlayView extends View {
             mTextPaint.setColor(overlay.color);
             mTextPaint.setTextSize(fontSize);
             mTextPaint.setAntiAlias(true);
-            StaticLayout mTextLayout = new StaticLayout(overlay.text, mTextPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+            StaticLayout mTextLayout = new StaticLayout(title, mTextPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
 
             canvas.save();
 
@@ -203,7 +203,7 @@ public class OverlayView extends View {
                         OverlayBean.Overlay overlay = caption.getCaptionOverlay();
                         if (overlay != null) {
                             Bitmap backgroundBitmap = createBackgroundBitmap(overlay);
-                            Bitmap textBitmap = createOverlayTextBitmap(overlay, backgroundBitmap);
+                            Bitmap textBitmap = createOverlayTextBitmap(overlay, backgroundBitmap, caption.getTitleText());
                             drawOverlayBackground(canvas, overlay, backgroundBitmap, textBitmap);
                         }
                     }

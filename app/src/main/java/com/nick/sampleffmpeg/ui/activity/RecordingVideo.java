@@ -362,21 +362,21 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                // Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
                 FileDownloader fileDownloader = new FileDownloader(RecordingVideo.this,
                         getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
-                fileDownloader.startDownload(new Runnable() {
-                    @Override
-                    public void run() {
-                        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                overlayview.updateOverlay();
-                            }
-                        });
-                    }
-                });
+//                fileDownloader.startDownload(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                overlayview.updateOverlay();
+//                            }
+//                        });
+//                    }
+//                });
 
-//                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
-//                overlayview.invalidate();
+                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+                overlayview.invalidate();
             }
         });
 

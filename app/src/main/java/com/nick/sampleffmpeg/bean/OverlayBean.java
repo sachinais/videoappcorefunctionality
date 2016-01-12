@@ -32,7 +32,7 @@ import java.util.ArrayList;
 public class OverlayBean {
 
     public class Overlay {
-        public String text = "";
+        public String defaultText = "";
 
         public double width;
         public double height;
@@ -213,7 +213,7 @@ public class OverlayBean {
             name = parseOverlay(obj.getJSONObject("name-overlay"), false);
             if (sharedPreferenceWriter != null) {
                 String strName = sharedPreferenceWriter.getString(SPreferenceKey.FIRST_NAME) + " " + sharedPreferenceWriter.getString(SPreferenceKey.LAST_NAME);
-                name.text = strName + "\n" + sharedPreferenceWriter.getString(SPreferenceKey.TITLE);
+                name.defaultText = strName + "\n" + sharedPreferenceWriter.getString(SPreferenceKey.TITLE);
             }
         }
 
@@ -221,7 +221,7 @@ public class OverlayBean {
         if (!obj.isNull("contact-overlay")) {
             contact = parseOverlay(obj.getJSONObject("contact-overlay"), false);
             if (sharedPreferenceWriter != null) {
-                contact.text = sharedPreferenceWriter.getString(SPreferenceKey.EMAIL) + "\n" + sharedPreferenceWriter.getString(SPreferenceKey.CONTACT);
+                contact.defaultText = sharedPreferenceWriter.getString(SPreferenceKey.EMAIL) + "\n" + sharedPreferenceWriter.getString(SPreferenceKey.CONTACT);
             }
         }
 

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.RelativeLayout;
 
 import com.nick.sampleffmpeg.Define.Constant;
@@ -14,6 +15,7 @@ import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.ui.activity.EditingVideo;
+import com.nick.sampleffmpeg.ui.adapter.CaptionPreviewAdapter;
 
 import java.util.ArrayList;
 
@@ -37,6 +39,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
     private float startDragX;
     private double lastDragX;
 
+    private CaptionPreviewAdapter captionPreviewAdapter = null;
 
     final static private int TAP_DRIFT_TOLERANCE = 3;
     final static private int SINGLE_TAP_MAX_TIME = 175;
@@ -97,7 +100,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         }
     }
 
-    public void addNewTitleInformation(String title, int startTime, int endTime, OverlayBean.Overlay overlay, boolean flagRemovable) {
+    public void addNewTitleInformation(String title, double startTime, double endTime, OverlayBean.Overlay overlay, boolean flagRemovable) {
 
         ChildTextTimelineLayout titleLayout = (ChildTextTimelineLayout)parentActivity.getLayoutInflater().inflate(R.layout.title_timeline_layout, null);
         titleLayout.setParentWidth(this.getWidth());
@@ -249,6 +252,23 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         return true;
     }
 
+    private GridView captionGridView;
+    public interface SelectCaptionCallback {
+        public abstract void onCaptionThemeSelected(OverlayBean.Overlay overlay);
+    }
+    private void showSelectCaptionDialog(final SelectCaptionCallback callback) {
+        captionPreviewAdapter = new CaptionPreviewAdapter(parentActivity);
+        View v = parentActivity.showViewContentDialog(R.layout.select_caption_dialog, parentActivity.getString(R.string.str_select), new Runnable() {
+            @Override
+            public void run() {
+                int index = (int)(captionPreviewAdapter.getSelectedView().getTag());
+                OverlayBean.Overlay overlay = MainApplication.getInstance().getTemplate().captions.get(index);
+                callback.onCaptionThemeSelected(overlay);
+            }
+        }, parentActivity.getString(R.string.str_cancel));
+        captionGridView = (GridView)v.findViewById(R.id.gridView);
+        captionGridView.setAdapter(captionPreviewAdapter);
+    }
     /**
      * show dialog which require input title information.
      */
@@ -256,24 +276,30 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
 
     private void addNewTitleToTimeline() {
 
-        OverlayBean template = MainApplication.getInstance().getTemplate();
+        final OverlayBean template = MainApplication.getInstance().getTemplate();
         if (template.captions.size() == 0) {
             parentActivity.showAlert(R.string.str_alert_title_information, "There's no caption templates.", "OK");
         } else {
-            final OverlayBean.Overlay overlay = template.captions.get(0);
-            View v = parentActivity.showViewContentDialog(R.layout.add_caption_dialog, parentActivity.getString(R.string.str_add), new Runnable() {
+            showSelectCaptionDialog(new SelectCaptionCallback() {
                 @Override
-                public void run() {
-                    if (editTitle != null) {
-                        String strCaption = editTitle.getText().toString();
-                        if (strCaption.length() > 0) {
-                            overlay.text = strCaption;
-                            addNewTitleInformation(strCaption, overlay);
+                public void onCaptionThemeSelected(final OverlayBean.Overlay overlay) {
+                    View v = parentActivity.showViewContentDialog(R.layout.add_caption_dialog, parentActivity.getString(R.string.str_add), new Runnable() {
+                        @Override
+                        public void run() {
+                            if (editTitle != null) {
+                                String strCaption = editTitle.getText().toString();
+                                if (strCaption.length() > 0) {
+                                    addNewTitleInformation(strCaption, overlay);
+                                }
+                            }
                         }
-                    }
+                    }, parentActivity.getString(R.string.str_cancel));
+                    editTitle = (EditText)v.findViewById(R.id.edit_title_name);
+                    editTitle.setTextColor(overlay.color);
+                    v.setBackgroundColor(overlay.backgroundColor);
                 }
-            }, parentActivity.getString(R.string.str_cancel));
-            editTitle = (EditText)v.findViewById(R.id.edit_title_name);
+            });
+
         }
 
     }

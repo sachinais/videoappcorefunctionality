@@ -54,4 +54,5 @@
     <string name="youtube_upload_started">YouTube Direct Lite upload started</string>
     <string name="connection_to_google_play_failed">Connection to Play Services failed.</string>
     <string name="str_set">Set</string>
+    <string name="str_select">Select</string>
 </resources>

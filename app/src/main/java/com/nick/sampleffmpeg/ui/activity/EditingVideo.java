@@ -143,15 +143,12 @@ public class EditingVideo extends BaseActivity {
             public void run() {
                 if (editTitle != null) {
                     String strTitle = editTitle.getText().toString();
-                    if (strTitle.length() > 0) {
-                        editJobTitle.setText(strTitle);
-
-                        initializeVideoView();
-                        initializeThumbView();
-                    }
+                    editJobTitle.setText(strTitle);
+                    initializeVideoView();
+                    initializeThumbView();
                 }
             }
-        }, getString(R.string.str_cancel));
+        });
         editTitle = (EditText)v.findViewById(R.id.edit_title_name);
     }
 
@@ -266,13 +263,13 @@ public class EditingVideo extends BaseActivity {
         int index = time / 1000 / Constant.TIMELINE_UNIT_SECOND;
         setTimelineVideo(videoThumbsLayout.findViewWithTag(index));
 
-        updateOverlayView(time);
+        updateOverlayView((float)time / 1000.f);
     }
 
     /**
      * update overlay view during play or once timeline is selected
      */
-    public void updateOverlayView(int time) {
+    public void updateOverlayView(double time) {
         overlayView.setCurrentVideoTime(time);
     }
     /**
@@ -556,13 +553,13 @@ public class EditingVideo extends BaseActivity {
         OverlayBean template = MainApplication.getInstance().getTemplate();
         OverlayBean.Overlay nameOverlay = template.name;
         if (nameOverlay != null) {
-            titleThumbsLayout.addNewTitleInformation(nameOverlay.text, 0, 1, nameOverlay, false);
+            titleThumbsLayout.addNewTitleInformation(nameOverlay.defaultText, 0, 1, nameOverlay, false);
         }
 
         OverlayBean.Overlay contactOverlay = template.contact;
         if (contactOverlay != null) {
-            int lastSec = videoLength / 1000;
-            titleThumbsLayout.addNewTitleInformation(contactOverlay.text, lastSec - 1, lastSec, contactOverlay, false);
+            double lastSec = videoLength / 1000;
+            titleThumbsLayout.addNewTitleInformation(contactOverlay.defaultText, lastSec - 1, lastSec, contactOverlay, false);
         }
         updateOverlayView(0);
 
