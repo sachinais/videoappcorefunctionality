@@ -142,47 +142,47 @@ public class FileUtils {
             destination.write(buffer, 0, read);
         }
     }
-
-    public static void createTitleCaptionPNG(String title, String filePath) {
-        File file = new File(filePath);
-        try {
-
-            Rect rect = new Rect(0, 0, 1280, 150);
-
-            Bitmap image = Bitmap.createBitmap(rect.width(), rect.height(), Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(image);
-
-            int color = Color.argb(160, 1, 200, 245);
-
-            Paint paint = new Paint();
-            paint.setColor(color);
-
-            canvas.drawRect(rect, paint);
-
-            TextPaint mTextPaint=new TextPaint();
-            mTextPaint.setColor(Color.argb(255, 255, 255, 255));
-            mTextPaint.setTextSize(40);
-            mTextPaint.setAntiAlias(true);
-            StaticLayout mTextLayout = new StaticLayout(title, mTextPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
-
-            canvas.save();
-
-            canvas.translate(100, 75 - mTextLayout.getHeight() / 2);
-            mTextLayout.draw(canvas);
-            canvas.restore();
-
-
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileOutputStream ostream = new FileOutputStream(file);
-            image.compress(Bitmap.CompressFormat.PNG, 10, ostream);
-            ostream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-        }
-    }
+//
+//    public static void createTitleCaptionPNG(String title, String filePath) {
+//        File file = new File(filePath);
+//        try {
+//
+//            Rect rect = new Rect(0, 0, 1280, 150);
+//
+//            Bitmap image = Bitmap.createBitmap(rect.width(), rect.height(), Bitmap.Config.ARGB_8888);
+//            Canvas canvas = new Canvas(image);
+//
+//            int color = Color.argb(160, 1, 200, 245);
+//
+//            Paint paint = new Paint();
+//            paint.setColor(color);
+//
+//            canvas.drawRect(rect, paint);
+//
+//            TextPaint mTextPaint=new TextPaint();
+//            mTextPaint.setColor(Color.argb(255, 255, 255, 255));
+//            mTextPaint.setTextSize(40);
+//            mTextPaint.setAntiAlias(true);
+//            StaticLayout mTextLayout = new StaticLayout(title, mTextPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+//
+//            canvas.save();
+//
+//            canvas.translate(100, 75 - mTextLayout.getHeight() / 2);
+//            mTextLayout.draw(canvas);
+//            canvas.restore();
+//
+//
+//            if (!file.exists()) {
+//                file.createNewFile();
+//            }
+//            FileOutputStream ostream = new FileOutputStream(file);
+//            image.compress(Bitmap.CompressFormat.PNG, 10, ostream);
+//            ostream.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//        }
+//    }
 
     public synchronized static Bitmap getBitmapFromPNGFile(String path) {
         BitmapFactory.Options options = new BitmapFactory.Options();

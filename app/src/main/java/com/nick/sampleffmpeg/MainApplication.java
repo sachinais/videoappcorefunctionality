@@ -3,12 +3,14 @@ package com.nick.sampleffmpeg;
 import android.app.Application;
 
 import com.nick.sampleffmpeg.bean.OverlayBean;
+import com.nick.sampleffmpeg.bean.VideoOverlay;
 import com.nick.sampleffmpeg.utils.LogFile;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.CookieStore;
+import java.util.ArrayList;
 
 /**
  * Created by Vindhya Pratap on 1/7/2016.
@@ -18,6 +20,8 @@ public class MainApplication extends Application{
     private CookieStore cookieStore;
     private JSONArray templateArray;
     private OverlayBean selectedOverlay = null;
+
+    private ArrayList<VideoOverlay> videoOverlayInformation = new ArrayList<>();
     public static  MainApplication getInstance(){
         return mainApplication;
     }
@@ -52,6 +56,10 @@ public class MainApplication extends Application{
         } catch (Exception e) {
             LogFile.logText(e.getMessage(), null);
         }
+    }
+
+    public ArrayList<VideoOverlay> getVideoOverlayInformation() {
+        return videoOverlayInformation;
     }
 
     public OverlayBean getTemplate() {

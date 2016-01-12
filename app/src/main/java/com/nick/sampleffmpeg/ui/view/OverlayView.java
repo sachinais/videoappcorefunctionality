@@ -23,6 +23,7 @@ import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.utils.FileUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,15 +78,43 @@ public class OverlayView extends View {
         this.captionTimelineLayout = layout;
     }
 
-    public void updateOverlay(){
-        overlayInformation = null;
-        this.invalidate();
-    }
-
+    /**
+     * convert overlay into png file
+     * @param text overlay text
+     * @param overlay overlay information
+     * @param videoWidth videoWidth
+     * @param videoHeight videoHeight
+     * @param dstFilePath image file path
+     */
     public void convertOverlayToPNG(String text, OverlayBean.Overlay overlay, int videoWidth, int videoHeight, String dstFilePath) {
-        Bitmap backgroundBitmap = createBackgroundBitmap(overlay, videoWidth, videoHeight);
-        Bitmap textBitmap = createOverlayTextBitmap(overlay, backgroundBitmap, text);
+        try {
+            File file = new File(dstFilePath);
+            Bitmap backgroundBitmap = createBackgroundBitmap(overlay, videoWidth, videoHeight);
+            Bitmap textBitmap = null;
+            if (text.length() > 0) {
+                textBitmap = createOverlayTextBitmap(overlay, backgroundBitmap, text);
+            }
 
+            if (backgroundBitmap != null ) {
+                Bitmap image = Bitmap.createBitmap(backgroundBitmap.getWidth(), backgroundBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(image);
+                canvas.drawBitmap(backgroundBitmap, 0, 0, mBitmapPaint);
+                if (textBitmap != null) {
+                    canvas.drawBitmap(textBitmap, 0, 0, mBitmapPaint);
+                }
+
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                canvas.save();
+                FileOutputStream ostream = new FileOutputStream(file);
+                image.compress(Bitmap.CompressFormat.PNG, 50, ostream);
+                ostream.close();
+            }
+
+        } catch (Exception e) {
+
+        }
     }
     /**
      * create text Bitmap for overlay
