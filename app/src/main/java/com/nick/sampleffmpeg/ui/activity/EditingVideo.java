@@ -376,7 +376,7 @@ public class EditingVideo extends BaseActivity {
         }
         for (int i = 0; i < titleList.size(); i ++) {
             ChildTextTimelineLayout title = titleList.get(i);
-            FileUtils.createTitleCaptionPNG(title.getTitleText(), Constant.getOverlayDirectory() + i + ".png");
+            overlayView.convertOverlayToPNG(title.getTitleText(), title.getCaptionOverlay(), 1280, 720, Constant.getOverlayDirectory() + i + ".png");
         }
 
         //make ffmpeg command
