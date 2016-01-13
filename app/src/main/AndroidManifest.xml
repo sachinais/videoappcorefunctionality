@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activity.EditingVideo"
+            android:name=".ui.activity.EditingVideoActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,7 +42,7 @@
             <action android:name="android.intent.action.MAIN" />
         </activity>
         <activity
-            android:name=".ui.activity.RecordingVideo"
+            android:name=".ui.activity.RecordingVideoActivity"
             android:screenOrientation="landscape"/>
 
         <activity

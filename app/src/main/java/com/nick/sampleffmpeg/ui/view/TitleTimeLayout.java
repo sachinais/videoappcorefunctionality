@@ -3,7 +3,6 @@ package com.nick.sampleffmpeg.ui.view;
 import android.content.Context;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -14,7 +13,7 @@ import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.OverlayBean;
-import com.nick.sampleffmpeg.ui.activity.EditingVideo;
+import com.nick.sampleffmpeg.ui.activity.EditingVideoActivity;
 import com.nick.sampleffmpeg.ui.adapter.CaptionPreviewAdapter;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
 
     private ArrayList<ChildTextTimelineLayout> timelineTitlesInformation = new ArrayList<>();
 
-    private EditingVideo parentActivity = null;
+    private EditingVideoActivity parentActivity = null;
     private ChildTextTimelineLayout selectedItem = null;
     private boolean flagResizeLeft = false;
     private boolean flagResizeRight = false;
@@ -80,7 +79,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         return ret;
     }
 
-    public void setActivity(EditingVideo activity) {
+    public void setActivity(EditingVideoActivity activity) {
         this.parentActivity = activity;
     }
 

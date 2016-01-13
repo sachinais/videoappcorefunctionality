@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,7 +18,6 @@ import com.nick.sampleffmpeg.network.RequestListner;
 import com.nick.sampleffmpeg.sharedpreference.SPreferenceKey;
 import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 import com.nick.sampleffmpeg.utils.AppConstants;
-import com.nick.sampleffmpeg.utils.LogFile;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -28,7 +26,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class LoginActivity extends Activity implements View.OnClickListener{
 
@@ -144,7 +141,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 if(!jsonObject.isNull("templates")){
                     MainApplication.getInstance().setTemplateArray(jsonObject.getJSONArray("templates"));
                 }
-                startActivity(new Intent(LoginActivity.this,RecordingVideo.class));
+                startActivity(new Intent(LoginActivity.this,RecordingVideoActivity.class));
                 LoginActivity.this.finish();
 
             }else {

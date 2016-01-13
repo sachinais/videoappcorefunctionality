@@ -19,11 +19,11 @@ public class SplashScreen extends Activity {
       handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-            // startActivity(new Intent(SplashScreen.this,RecordingVideo.class));
+            // startActivity(new Intent(SplashScreen.this,RecordingVideoActivity.class));
                 CookieSyncManager.createInstance(MainApplication.getInstance());
                 if(CookieManager.getInstance().getCookie("live.videomyjob.com") != null){
                     startActivity(new Intent(SplashScreen.this,LoginActivity.class));
-                    //startActivity(new Intent(SplashScreen.this,RecordingVideo.class));
+                    //startActivity(new Intent(SplashScreen.this,RecordingVideoActivity.class));
                     SplashScreen.this.finish();
                 }else {
                     startActivity(new Intent(SplashScreen.this,LoginActivity.class));

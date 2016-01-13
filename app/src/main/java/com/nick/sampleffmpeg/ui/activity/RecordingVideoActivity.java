@@ -54,7 +54,7 @@ import butterknife.InjectView;
 /**
  * Created by baebae on 12/22/15.
  */
-public class RecordingVideo extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class RecordingVideoActivity extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
     private ArrayList<ProvinceBean> options1Items = new ArrayList<ProvinceBean>();
     private OptionsPickerView pvOptions;
     @InjectView(R.id.btnStartCapture)
@@ -279,21 +279,26 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
         progressDialog.show();
         progressDialog.setMessage(getString(R.string.str_extract_audio));
 
-        FFMpegUtils.execFFmpegBinary(command, new Runnable() {
+        FFMpegUtils.execFFmpegBinary(command, new FFMpegUtils.Callback() {
             @Override
-            public void run() {
+            public void onProgress(String msg) {
+
+            }
+
+            @Override
+            public void onFinish() {
                 progressDialog.dismiss();
-                RecordingVideo.this.finish();
+                RecordingVideoActivity.this.finish();
                 if (recordingTime > 30) {
                     Constant.TIMELINE_UNIT_SECOND = 2;
                 }
-                showActivity(EditingVideo.class, null);
+                showActivity(EditingVideoActivity.class, null);
             }
         });
     }
 
     private void showDialog() {
-        optionDialog = new Dialog(RecordingVideo.this, R.style.DialogSlideAnim);
+        optionDialog = new Dialog(RecordingVideoActivity.this, R.style.DialogSlideAnim);
         optionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(optionDialog.getWindow().getAttributes());
@@ -360,7 +365,7 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
                 tvOptions.setText(tx);
                 vMasker.setVisibility(View.GONE);*/
                // Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
-                FileDownloader fileDownloader = new FileDownloader(RecordingVideo.this,
+                FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this,
                         getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
 //                fileDownloader.startDownload(new Runnable() {
 //                    @Override
@@ -385,19 +390,19 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
 
     private void sendTemplateRequest(){
         try{
-            if(CheckNetworkConnection.isNetworkAvailable(RecordingVideo.this)){
+            if(CheckNetworkConnection.isNetworkAvailable(RecordingVideoActivity.this)){
                 List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
                 //   paramePairs.add(new BasicNameValuePair("login_resource",String.valueOf(AppConstants.DEVICE_TYPE_ANDROID)));
                 //   paramePairs.add(new BasicNameValuePair("device_key", GCMRegistrar.getRegistrationId(LoginActivity.this)));
                 RequestBean requestBean = new RequestBean();
-                requestBean.setActivity(RecordingVideo.this);
+                requestBean.setActivity(RecordingVideoActivity.this);
                 requestBean.setUrl("list_templates.php");
                 requestBean.setParams(paramePairs);
                 requestBean.setIsProgressBarEnable(true);
                 RequestHandler requestHandler = new RequestHandler(requestBean, requestListner);
                 requestHandler.execute(null, null, null);
             }else {
-                CustomDialogs.showOkDialog(RecordingVideo.this, "Please check network connection");
+                CustomDialogs.showOkDialog(RecordingVideoActivity.this, "Please check network connection");
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -423,19 +428,19 @@ public class RecordingVideo extends BaseActivity implements ActivityCompat.OnReq
         if(!jsonObject.isNull(AppConstants.SUCCESS)){
             if(jsonObject.getBoolean(AppConstants.SUCCESS)){
                 if(!jsonObject.isNull("user_id")){
-                    SharedPreferenceWriter.getInstance(RecordingVideo.this).writeStringValue(SPreferenceKey.USERID,jsonObject.getString("user_id"));
+                    SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).writeStringValue(SPreferenceKey.USERID,jsonObject.getString("user_id"));
                 }
                 if(!jsonObject.isNull("email")){
-                    SharedPreferenceWriter.getInstance(RecordingVideo.this).writeStringValue(SPreferenceKey.EMAIL,jsonObject.getString("email"));
+                    SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).writeStringValue(SPreferenceKey.EMAIL,jsonObject.getString("email"));
                 }
                 if(!jsonObject.isNull("firstname")){
-                    SharedPreferenceWriter.getInstance(RecordingVideo.this).writeStringValue(SPreferenceKey.FIRST_NAME,jsonObject.getString("firstname"));
+                    SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).writeStringValue(SPreferenceKey.FIRST_NAME,jsonObject.getString("firstname"));
                 }
                 if(!jsonObject.isNull("lastname")){
-                    SharedPreferenceWriter.getInstance(RecordingVideo.this).writeStringValue(SPreferenceKey.LAST_NAME,jsonObject.getString("lastname"));
+                    SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).writeStringValue(SPreferenceKey.LAST_NAME,jsonObject.getString("lastname"));
                 }
-                startActivity(new Intent(RecordingVideo.this,RecordingVideo.class));
-                RecordingVideo.this.finish();
+                startActivity(new Intent(RecordingVideoActivity.this,RecordingVideoActivity.class));
+                RecordingVideoActivity.this.finish();
 
             }else {
                 if(!jsonObject.isNull(AppConstants.MESSAGE)){

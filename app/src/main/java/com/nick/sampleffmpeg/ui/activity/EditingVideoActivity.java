@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.bean.VideoOverlay;
+import com.nick.sampleffmpeg.encoding.VideoEncoding;
 import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 import com.nick.sampleffmpeg.ui.control.UITouchButton;
 import com.nick.sampleffmpeg.ui.view.ChildTextTimelineLayout;
@@ -32,10 +34,12 @@ import com.nick.sampleffmpeg.ui.view.WaveformView;
 import com.nick.sampleffmpeg.utils.FileUtils;
 import com.nick.sampleffmpeg.utils.LogFile;
 import com.nick.sampleffmpeg.utils.StringUtils;
+import com.nick.sampleffmpeg.utils.VideoUtils;
 import com.nick.sampleffmpeg.utils.audio.soundfile.SoundFile;
 import com.nick.sampleffmpeg.utils.ffmpeg.FFMpegUtils;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -43,7 +47,7 @@ import butterknife.InjectView;
 /**
  * Created by baebae on 12/24/15.
  */
-public class EditingVideo extends BaseActivity {
+public class EditingVideoActivity extends BaseActivity {
 
     @InjectView(R.id.txt_job_title)
     EditText editJobTitle;
@@ -202,7 +206,7 @@ public class EditingVideo extends BaseActivity {
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        EditingVideo.this.finish();
+                        EditingVideoActivity.this.finish();
                     }
                 });
 
@@ -335,37 +339,6 @@ public class EditingVideo extends BaseActivity {
         imgThumbVideo3.setImageBitmap(bmTailThumb);
     }
 
-    private void mergeEncodingVideoWithTopTailVideo() {
-        //make ffmpeg command
-        String command = "-y ";
-        command = command + "-i" + " " + Constant.getTopVideo() +" ";
-        command = command + "-i" + " " + Constant.getEncodedVideo() +" ";
-        command = command + "-i" + " " + Constant.getTailVideo() +" ";
-
-        command = command + "-c:a aac -strict experimental -threads 5 -preset ultrafast -r 30 -c:v libx264 -map [v] -map [a] -filter_complex";
-
-        String strFilterComplex = "[0:0] [0:1] [1:0] [1:1] [2:0] [2:1] concat=n=3:v=1:a=1 [v] [a]";
-
-        String[] subCommands = command.split(" ");
-
-        String[] commands = new String[subCommands.length + 2];
-        for (int i = 0; i < subCommands.length; i ++) {
-            commands[i] = subCommands[i];
-        }
-        commands[subCommands.length] = strFilterComplex;
-        commands[subCommands.length + 1] = Constant.getMergedVideo();
-
-        progressDialog.show();
-        progressDialog.setMessage(getString(R.string.str_merge_videos));
-        FFMpegUtils.execFFmpegBinary(commands, new Runnable() {
-            @Override
-            public void run() {
-                progressDialog.dismiss();
-                EditingVideo.this.finish();
-                showActivity(CompleteActivity.class, null);
-            }
-        });
-    }
     /**
      * Convert overlay into png && save video overlay information..
      */
@@ -373,26 +346,27 @@ public class EditingVideo extends BaseActivity {
         ArrayList<VideoOverlay> videoOverlayInformation = MainApplication.getInstance().getVideoOverlayInformation();
         videoOverlayInformation.clear();
 
-        int videoWidth = 1280;
-        int videoHeight = 720;
+        int videoWidth = VideoUtils.getVideoWidth(Constant.getCameraVideo());
+        int videoHeight = VideoUtils.getVideoHeight(Constant.getCameraVideo());
+
         ArrayList<ChildTextTimelineLayout> titleList = titleThumbsLayout.getTimelineTitlesInformation();
-        OverlayBean overlayBean = MainApplication.getInstance().getTemplate();
+         OverlayBean overlayBean = MainApplication.getInstance().getTemplate();
 
         //convert brand overlay into png
         if (overlayBean.brandLogo != null && overlayBean.brandLogo.backgroundImage.length() > 0) {
-            OverlayBean.Overlay nameOverlay = overlayBean.brandLogo;
+            OverlayBean.Overlay brandOverlay = overlayBean.brandLogo;
             String fileName = Constant.getOverlayDirectory() + "0.png";
-            overlayView.convertOverlayToPNG("", nameOverlay, videoWidth, videoHeight, fileName);
-            int x = (int)(videoWidth * (nameOverlay.x / 100.f));
-            int y = (int)(videoHeight * (nameOverlay.y / 100.f));
+            overlayView.convertOverlayToPNG("", brandOverlay, videoWidth, videoHeight, fileName);
+            int x = (int)(videoWidth * (brandOverlay.x / 100.f));
+            int y = (int)(videoHeight * (brandOverlay.y / 100.f));
             VideoOverlay info = new VideoOverlay(0, videoLength, x, y, fileName);
             videoOverlayInformation.add(info);
         }
 
         //convert caption overlay into image.
-        for (int i = 1; i < titleList.size() + 1; i ++) {
+        for (int i = 0; i < titleList.size(); i ++) {
             ChildTextTimelineLayout title = titleList.get(i);
-            String fileName =  Constant.getOverlayDirectory() + i + ".png";
+            String fileName =  Constant.getOverlayDirectory() + (i + 1) + ".png";
             overlayView.convertOverlayToPNG(title.getTitleText(), title.getCaptionOverlay(), videoWidth, videoHeight, fileName);
 
             int x = (int)(videoWidth * (title.getCaptionOverlay().x / 100.f));
@@ -400,45 +374,20 @@ public class EditingVideo extends BaseActivity {
             VideoOverlay info = new VideoOverlay(title.getStartTime(), title.getEndTime(), x, y, fileName);
             videoOverlayInformation.add(info);
         }
+        progressDialog.show();
+        VideoEncoding.startVideoEncoding(new VideoEncoding.Callback() {
+            @Override
+            public void onProgress(int progress) {
+                progressDialog.setMessage("Processing " + Integer.toString(progress) + "%");
+            }
 
-        //
+            @Override
+            public void onFinish() {
+                progressDialog.dismiss();
+            }
+        }, videoWidth, videoHeight, true);
         return;
-//        //make ffmpeg command
-//        String command = "-y ";
-//
-//        command = command + "-i" + " " + Constant.getConvertedVideo() +" ";
-//        for (int i = 0; i < titleList.size(); i ++) {
-//            command = command + "-i" + " " + Constant.getOverlayDirectory() + i + ".png ";
-//        }
-//
-//        command = command + "-c:a aac -strict experimental -threads 5 -preset ultrafast -r 30 -c:v libx264 -filter_complex";
-//
-//        String strFilterComplex = "[0:v][1:v] overlay=0:570:enable='between(t," + titleList.get(0).getStartTime() + "," + + titleList.get(0).getEndTime() + ")' ";
-//        for (int i = 1; i < titleList.size(); i ++) {
-//            ChildTextTimelineLayout title = titleList.get(i);
-//            strFilterComplex += "[tmp];[tmp][" + Integer.toString(i + 1) + ":v] overlay=0:570:enable='between(t," + title.getStartTime() + "," + + title.getEndTime() + ")' ";
-//        }
-//
-//        String[] subCommands = command.split(" ");
-//
-//        String[] commands = new String[subCommands.length + 2];
-//        for (int i = 0; i < subCommands.length; i ++) {
-//            commands[i] = subCommands[i];
-//        }
-//        commands[subCommands.length] = strFilterComplex;
-//        commands[subCommands.length + 1] = Constant.getEncodedVideo();
-//
-//        progressDialog.show();
-//        progressDialog.setMessage(getString(R.string.str_encoding_video));
-//
-//        FFMpegUtils.execFFmpegBinary(commands, new Runnable() {
-//            @Override
-//            public void run() {
-//                progressDialog.dismiss();
-//
-//                mergeEncodingVideoWithTopTailVideo();
-//            }
-//        });
+
     }
 
     /**
@@ -590,77 +539,6 @@ public class EditingVideo extends BaseActivity {
         videoThumbsLayout.removeAllViews();
 
         new InitializeTimelineTask().execute(true);
-    }
-
-
-
-    /**
-     * Convert recording video into unique video format 1280 * 720 720p format
-     */
-    private void convertVideoToUniqueFormat() {
-
-//        String commands = "-y -threads 5 -i src.mp4 -crf 30 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s 1280x720 -r 30 -force_key_frames expr:gte(t,n_forced*1) -c:v libx264 dst.mp4";
-//
-//        String srcVideoFilePath = Constant.getCameraVideo();
-//        String dstVideoFilePath = Constant.getConvertedVideo();
-//
-//        commands = commands.replace("src.mp4", srcVideoFilePath);
-//        commands = commands.replace("dst.mp4", dstVideoFilePath);
-//
-//        String[] command = commands.split(" ");
-//
-//        progressDialog.show();
-//        progressDialog.setMessage(getString(R.string.str_convert_camera_unique_format));
-//        FFMpegUtils.execFFmpegBinary(command, new Runnable() {
-//            @Override
-//            public void run() {
-//                progressDialog.dismiss();
-//
-//                if (!FileUtils.isExistFile(Constant.getTailVideo()) || !FileUtils.isExistFile(Constant.getTopVideo())) {
-//                    convertTopTailVideoToUniqueFormat(true);
-//                } else {
-//                    startEncodingVideo();
-//                }
-//            }
-//        });
-    }
-
-    /**
-     * Convert recording video into unique video format 1280 * 720 720p format
-     */
-    private void convertTopTailVideoToUniqueFormat(final boolean flagTop) {
-
-        String commands = "-y -threads 5 -i src.mp4 -crf 30 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s 1280x720 -r 30 -force_key_frames expr:gte(t,n_forced*1) -c:v libx264 dst.mp4";
-        String srcVideoFilePath = "";
-        String dstVideoFilePath = "";
-        progressDialog.show();
-
-        if (flagTop) {
-            srcVideoFilePath = Constant.getAssetTopVideo();
-            dstVideoFilePath = Constant.getTopVideo();
-            progressDialog.setMessage(getString(R.string.str_convert_asset_top_video));
-        } else {
-            srcVideoFilePath = Constant.getAssetTailVideo();
-            dstVideoFilePath = Constant.getTailVideo();
-            progressDialog.setMessage(getString(R.string.str_convert_asset_tail_video));
-        }
-
-        commands = commands.replace("src.mp4", srcVideoFilePath);
-        commands = commands.replace("dst.mp4", dstVideoFilePath);
-
-        String[] command = commands.split(" ");
-
-        FFMpegUtils.execFFmpegBinary(command, new Runnable() {
-            @Override
-            public void run() {
-                progressDialog.dismiss();
-                if (flagTop) {
-                    convertTopTailVideoToUniqueFormat(false);
-                } else {
-//                    startEncodingVideo();
-                }
-            }
-        });
     }
 
     public int getCurrentSeekPosition() {

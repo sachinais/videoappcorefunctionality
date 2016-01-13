@@ -21,6 +21,10 @@ public class FFMpegUtils {
     private static Context appContext = null;
     private static FFmpeg ffMpeg = null;
 
+    public interface Callback {
+        public abstract void onProgress(String msg);
+        public abstract void onFinish();
+    }
     public static void initializeFFmpeg(Context context) {
         appContext = context;
         if (ffMpeg == null) {
@@ -64,7 +68,7 @@ public class FFMpegUtils {
 
     }
 
-    public static void execFFmpegBinary(final String[] command, final Runnable finishRunnable) {
+    public static void execFFmpegBinary(final String[] command, final Callback callback) {
         try {
             ffMpeg.execute(command, new ExecuteBinaryResponseHandler() {
                 @Override
@@ -80,6 +84,7 @@ public class FFMpegUtils {
                 @Override
                 public void onProgress(String s) {
                     LogFile.logText("Progress: " + s, null);
+                    callback.onProgress(s);
                 }
 
                 @Override
@@ -88,7 +93,7 @@ public class FFMpegUtils {
 
                 @Override
                 public void onFinish() {
-                    finishRunnable.run();
+                    callback.onFinish();
                 }
             });
         } catch (FFmpegCommandAlreadyRunningException e) {
