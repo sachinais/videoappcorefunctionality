@@ -49,6 +49,12 @@
             android:name=".ui.activity.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+
+        <activity
+            android:name=".ui.activity.UploadingVideoScreen"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+
         <service android:name=".utils.youtube.UploadService"/>
         <meta-data
             android:name="com.google.android.gms.version"

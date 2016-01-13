@@ -374,18 +374,8 @@ public class EditingVideoActivity extends BaseActivity {
             VideoOverlay info = new VideoOverlay(title.getStartTime(), title.getEndTime(), x, y, fileName);
             videoOverlayInformation.add(info);
         }
-        progressDialog.show();
-        VideoEncoding.startVideoEncoding(new VideoEncoding.Callback() {
-            @Override
-            public void onProgress(int progress) {
-                progressDialog.setMessage("Processing " + Integer.toString(progress) + "%");
-            }
 
-            @Override
-            public void onFinish() {
-                progressDialog.dismiss();
-            }
-        }, videoWidth, videoHeight, true);
+        showActivity(UploadingVideoScreen.class, null);
         return;
 
     }
@@ -526,13 +516,13 @@ public class EditingVideoActivity extends BaseActivity {
         OverlayBean template = MainApplication.getInstance().getTemplate();
         OverlayBean.Overlay nameOverlay = template.name;
         if (nameOverlay != null) {
-            titleThumbsLayout.addNewTitleInformation(nameOverlay.defaultText, 0, 1, nameOverlay, false);
+            titleThumbsLayout.addNewTitleInformation(nameOverlay.defaultText, 0, Constant.TIMELINE_UNIT_SECOND, nameOverlay, false);
         }
 
         OverlayBean.Overlay contactOverlay = template.contact;
         if (contactOverlay != null) {
             double lastSec = videoLength / 1000;
-            titleThumbsLayout.addNewTitleInformation(contactOverlay.defaultText, lastSec - 1, lastSec, contactOverlay, false);
+            titleThumbsLayout.addNewTitleInformation(contactOverlay.defaultText, lastSec - Constant.TIMELINE_UNIT_SECOND, lastSec, contactOverlay, false);
         }
         updateOverlayView(0);
 

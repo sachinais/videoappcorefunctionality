@@ -58,6 +58,11 @@ public class OverlayView extends View {
         init();
     }
 
+    public void updateOverlay(){
+        overlayInformation = null;
+        this.invalidate();
+    }
+
     public OverlayView(Context context, AttributeSet attrs)
     {
         super(context, attrs);

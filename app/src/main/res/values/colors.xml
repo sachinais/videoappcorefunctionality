@@ -19,25 +19,30 @@
 
 <resources>
 
-  <drawable name="waveform_selected">#6f6f6f</drawable>
-  <drawable name="waveform_unselected">#6f6f6f</drawable>
-  <drawable name="waveform_unselected_bkgnd_overlay">#454545</drawable>
-  <drawable name="selection_border">#454545</drawable>
-  <drawable name="playback_indicator">#ffff66</drawable>
-  <drawable name="grid_line">#66ffffff</drawable>
-  <drawable name="timecode">#454545</drawable>
-  <drawable name="timecode_shadow">#aa000000</drawable>
+    <drawable name="waveform_selected">#6f6f6f</drawable>
+    <drawable name="waveform_unselected">#6f6f6f</drawable>
+    <drawable name="waveform_unselected_bkgnd_overlay">#454545</drawable>
+    <drawable name="selection_border">#454545</drawable>
+    <drawable name="playback_indicator">#ffff66</drawable>
+    <drawable name="grid_line">#66ffffff</drawable>
+    <drawable name="timecode">#454545</drawable>
+    <drawable name="timecode_shadow">#aa000000</drawable>
 
-  <drawable name="type_bkgnd_alarm">#88880000</drawable>
-  <drawable name="type_bkgnd_ringtone">#88008888</drawable>
-  <drawable name="type_bkgnd_notification">#88666600</drawable>
-  <drawable name="type_bkgnd_music">#88000000</drawable>
-  <drawable name="type_bkgnd_unsupported">#88cccccc</drawable>
+    <drawable name="type_bkgnd_alarm">#88880000</drawable>
+    <drawable name="type_bkgnd_ringtone">#88008888</drawable>
+    <drawable name="type_bkgnd_notification">#88666600</drawable>
+    <drawable name="type_bkgnd_music">#88000000</drawable>
+    <drawable name="type_bkgnd_unsupported">#88cccccc</drawable>
 
-  <color name="transparent_color">#00000000</color>
-  <color name="color_blue">#00BFFF</color>
-  <color name="color_white">#FFFFFF</color>
-  <color name="color_black">#000000</color>
+    <color name="transparent_color">#00000000</color>
+    <color name="color_blue">#00BFFF</color>
+    <color name="color_white">#FFFFFF</color>
+    <color name="color_black">#000000</color>
     <color name="color_greyish">#5d5d5d</color>
+    <color name="color_sky_blue">#027BFC</color>
+
+    <color name="color_light_grey">#8D8D8F</color>
+    <color name="color_blue_sky">#30B5B4</color>
+
 
 </resources>

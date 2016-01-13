@@ -15,7 +15,10 @@
 package com.nick.sampleffmpeg.utils.youtube;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -32,6 +35,7 @@ import com.google.common.collect.Lists;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.YoutubeDataBean;
 import com.nick.sampleffmpeg.ui.activity.LoginScreen;
+import com.nick.sampleffmpeg.ui.activity.UploadingVideoScreen;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -92,6 +96,32 @@ public class UploadService extends IntentService {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        registerReceiver(receiver, new IntentFilter(UploadingVideoScreen.ACTION_PROGRESS_UPDATE));
+    }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction() == UploadingVideoScreen.ACTION_CANCEL_UPLOAD){
+                stopSelf();
+            }
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if(receiver != null){
+            unregisterReceiver(receiver);
+        }
+
+        Log.d("Destroy","Destroy");
     }
 
     @Override

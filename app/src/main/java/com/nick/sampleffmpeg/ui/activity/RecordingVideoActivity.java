@@ -289,8 +289,16 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             public void onFinish() {
                 progressDialog.dismiss();
                 RecordingVideoActivity.this.finish();
-                if (recordingTime > 30) {
-                    Constant.TIMELINE_UNIT_SECOND = 2;
+                if (recordingTime > 15) {
+                    Constant.updateTimeUnit(2);
+                }
+
+                if (recordingTime > 25) {
+                    Constant.updateTimeUnit(3);
+                }
+
+                if (recordingTime > 40) {
+                    Constant.updateTimeUnit(4);
                 }
                 showActivity(EditingVideoActivity.class, null);
             }
@@ -367,21 +375,21 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                // Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
                 FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this,
                         getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
-//                fileDownloader.startDownload(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                overlayview.updateOverlay();
-//                            }
-//                        });
-//                    }
-//                });
+                fileDownloader.startDownload(new Runnable() {
+                    @Override
+                    public void run() {
+                        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                overlayview.updateOverlay();
+                            }
+                        });
+                    }
+                });
 
-                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
-                overlayview.invalidate();
+//                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+//                overlayview.invalidate();
             }
         });
 

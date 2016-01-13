@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+   >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="#eee">
 
         <LinearLayout
             android:layout_width="100dp"
@@ -33,7 +36,21 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/btn_edit_video_page_logo"/>
         </LinearLayout>
-
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="12dp"
+            android:layout_alignParentRight="true"
+            >
+            <TextView
+                android:id="@+id/btnNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NEXT"
+                android:layout_gravity="right|center_vertical"
+                android:textSize="18sp"
+                android:textColor="@color/color_sky_blue"/>
+        </LinearLayout>
 
     </RelativeLayout>
     <LinearLayout
@@ -48,14 +65,15 @@
             android:layout_height="wrap_content"
             android:text="Encoding Video"
             android:textColor="@android:color/black"
-            android:id="@+id/textView2"
+            android:id="@+id/tvEnocdeVideo"
+            android:textSize="16sp"
             android:layout_gravity="center_vertical" />
 
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/progressBar"
+            android:id="@+id/progress_encoding_bar"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:layout_marginLeft="5dp"
@@ -64,9 +82,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="83%"
+            android:text="0%"
             android:textColor="@android:color/black"
-            android:id="@+id/textView3"
+            android:id="@+id/progress_encoding_text"
+            android:textSize="16sp"
+
             android:layout_gravity="center_vertical" />
     </LinearLayout>
     <LinearLayout
@@ -77,11 +97,14 @@
         android:layout_marginRight="16dp">
 
         <TextView
+            android:id="@+id/tvUploadVideo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Uploading Video"
             android:textColor="@android:color/black"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:textSize="16sp"
+            />
 
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
@@ -89,13 +112,18 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:id="@+id/pbarUploadVideo"
+            android:max="100"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"/>
 
         <TextView
+            android:id="@+id/tvUploaPercent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="83%"
+            android:text="0%"
+            android:textSize="16sp"
+
             android:textColor="@android:color/black"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
@@ -106,13 +134,16 @@
         android:text="Job Title"
         android:textColor="@android:color/black"
         android:id="@+id/textView4"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:textSize="16sp"
+        />
 
-    <TextView
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Youtube"
-        android:id="@+id/textView5"
+        android:hint="Your title..."
+        android:singleLine="true"
+        android:id="@+id/etVideTitle"
         android:layout_gravity="top"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
@@ -128,7 +159,9 @@
         android:text="Job Discription"
         android:textColor="@android:color/black"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -155,14 +188,14 @@
                 android:checked="false"
                 android:textOff="OFF"
                 android:textOn="ON"
-                android:layout_marginLeft="12dp"
+                android:layout_marginLeft="8dp"
                 />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="One Discription\nFor all platform"
-                android:layout_marginLeft="8dp"/>
+                android:layout_marginLeft="5dp"/>
 
         </LinearLayout>
         <View
@@ -190,14 +223,14 @@
         android:background="#605d5d5d"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"/>
-    <TextView
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="New Text"
+        android:layout_height="75dp"
+        android:hint="Add you description...."
         android:layout_gravity="top"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:gravity="center_vertical"
+        android:gravity="left|top"
         android:textColor="@android:color/black"
         android:paddingLeft="8dp"
         android:background="@drawable/bg_white_fill_flat_rect"/>
@@ -207,7 +240,9 @@
         android:text="Job Tags"
         android:layout_marginTop="16dp"
         android:textColor="@android:color/black"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:textSize="16sp"
+        />
 
     <TextView
         android:layout_width="match_parent"
@@ -228,6 +263,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:orientation="horizontal"
+        android:id="@+id/rbg1"
         android:layout_marginTop="16dp">
 
    <LinearLayout
@@ -237,10 +273,12 @@
        android:orientation="vertical"
        android:gravity="left|center_vertical">
        <RadioButton
+           android:id="@+id/rbPublic"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:text="Public"
-           android:id="@+id/radioButton2"
+           android:checked="true"
+
            />
        <TextView
            android:layout_width="wrap_content"
@@ -258,6 +296,7 @@
             android:orientation="vertical"
             android:gravity="left|center_vertical">
             <RadioButton
+                android:id="@+id/rbPrivate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Private"
@@ -277,6 +316,7 @@
             android:orientation="vertical"
             android:gravity="left|center_vertical">
             <RadioButton
+                android:id="@+id/rbUnlisted"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"

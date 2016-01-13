@@ -40,6 +40,7 @@ import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.YoutubeDataBean;
 import com.nick.sampleffmpeg.ui.activity.LoginScreen;
 import com.nick.sampleffmpeg.ui.activity.SplashScreen;
+import com.nick.sampleffmpeg.ui.activity.UploadingVideoScreen;
 import com.nick.sampleffmpeg.utils.youtube.util.Upload;
 
 import java.io.BufferedInputStream;
@@ -113,7 +114,7 @@ public class ResumableUpload {
        * it to "unlisted" or "private" via API.
        */
             VideoStatus status = new VideoStatus();
-          //  status.setPrivacyStatus("public");
+            //  status.setPrivacyStatus("public");
             status.setPrivacyStatus(youtubeDataBean.getVideoType());
             videoObjectDefiningMetadata.setStatus(status);
 
@@ -126,7 +127,7 @@ public class ResumableUpload {
        * and use your own standard names.
        */
             Calendar cal = Calendar.getInstance();
-          //  snippet.setTitle("Chaman Test" + cal.getTime());
+            //  snippet.setTitle("Chaman Test" + cal.getTime());
             snippet.setTitle(youtubeDataBean.getVideoTitle());
 
             snippet.setDescription("Video uploaded via YouTube Data API V3 using the Java library "
@@ -159,22 +160,32 @@ public class ResumableUpload {
        * in data chunks.
        */
             uploader.setDirectUploadEnabled(false);
+            final   Intent intent = new Intent(UploadingVideoScreen.ACTION_PROGRESS_UPDATE);
 
             MediaHttpUploaderProgressListener progressListener = new MediaHttpUploaderProgressListener() {
                 public void progressChanged(MediaHttpUploader uploader) throws IOException {
                     switch (uploader.getUploadState()) {
+
                         case INITIATION_STARTED:
                             builder.setContentText(context.getString(R.string.initiation_started)).setProgress((int) fileSize,
                                     (int) uploader.getNumBytesUploaded(), false);
 //                            progress.setMax((int) fileSize);
 //                            progress.show();
+                            Log.d(TAG, "File Size-"+(int)fileSize);
+                            Log.d(TAG, "Uploaded Size-"+ (int) (uploader.getProgress() * 100));
+
+                            intent.putExtra("progress",  (int) (uploader.getProgress() * 100));
+                            context.sendBroadcast(intent);
                             notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());
                             break;
                         case INITIATION_COMPLETE:
                             builder.setContentText(context.getString(R.string.initiation_completed)).setProgress((int) fileSize,
                                     (int) uploader.getNumBytesUploaded(), false);
-
+                            intent.putExtra("progress",  (int) (uploader.getProgress() * 100));
+                            context.sendBroadcast(intent);
                             notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());
+                            Log.d(TAG, "File Size-" + (int) fileSize);
+                            Log.d(TAG, "Uploaded Size-" +  (int) (uploader.getProgress() * 100));
                             break;
                         case MEDIA_IN_PROGRESS:
                             builder
@@ -183,15 +194,24 @@ public class ResumableUpload {
                                     .setContentText(context.getString(R.string.upload_in_progress))
                                     .setProgress((int) fileSize, (int) uploader.getNumBytesUploaded(), false);
                             notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());
+                            intent.putExtra("progress",  (int) (uploader.getProgress() * 100));
+                            context.sendBroadcast(intent);
+                            Log.d(TAG, "File Size-" + (int) fileSize);
+                            Log.d(TAG, "Uploaded Size-" +  (int) (uploader.getProgress() * 100));
                       /*      progress.setMax((int) uploader.getNumBytesUploaded());
                             progress.show();*/
                             break;
                         case MEDIA_COMPLETE:
                             builder.setContentTitle(context.getString(R.string.yt_upload_completed))
                                     .setContentText(context.getString(R.string.upload_completed))
-                                            // Removes the progress bar
+                                    // Removes the progress bar
                                     .setProgress(0, 0, false);
                             notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());
+                            //   intent.setAction()
+                            intent.putExtra("progress",  (int) (uploader.getProgress() * 100));
+                            context.sendBroadcast(intent);
+                            Log.d(TAG, "File Size-" + (int) fileSize);
+                            Log.d(TAG, "Uploaded Size-" +  (int) (uploader.getProgress() * 100));
                         case NOT_STARTED:
                             Log.d(this.getClass().getSimpleName(), context.getString(R.string.upload_not_started));
                             break;
