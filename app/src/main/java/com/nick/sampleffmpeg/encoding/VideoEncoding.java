@@ -45,10 +45,12 @@ public class VideoEncoding {
 
         //skip convert recorded video if size is same...
         if (isCameraSize) {
-            stepProgress = -25;
+            progress = -25;
+            stepProgress = 25;
             convertTopTailVideoToUniqueFormat(true);
         } else {
-            stepProgress = -20;
+            progress = -20;
+            stepProgress = 20;
             convertVideoToUniqueFormat();
         }
     }
