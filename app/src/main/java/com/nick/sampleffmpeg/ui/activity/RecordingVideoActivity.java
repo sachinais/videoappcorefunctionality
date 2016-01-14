@@ -258,8 +258,8 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        if (MainApplication.getInstance().getTemplate() == null) {
-                            showAlert(R.string.str_alert_title_information, "You should select a template first.", "OK");
+                        if (findViewById(R.id.layout_loading_template).getVisibility() == View.VISIBLE) {
+                            showAlert(R.string.str_alert_title_information, "Template is still loading.", "OK");
                             return;
                         }
                         countDownValue = 3000;
@@ -472,6 +472,14 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     }
 
     private void selectTemplateItem(final int options1) {
+        if (findViewById(R.id.layout_loading_template).getVisibility() == View.VISIBLE) {
+            showAlert(R.string.str_alert_title_information, "Template is still loading.", "OK");
+            return;
+        }
+
+//        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+//        overlayview.updateOverlay();
+
         FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this,
                 getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
         findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);

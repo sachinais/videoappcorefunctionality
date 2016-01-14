@@ -5,6 +5,7 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
@@ -260,13 +261,27 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         View v = parentActivity.showViewContentDialog(R.layout.select_caption_dialog, parentActivity.getString(R.string.str_select), new Runnable() {
             @Override
             public void run() {
-                int index = (int)(captionPreviewAdapter.getSelectedView().getTag());
+                int index = captionPreviewAdapter.getSelectedItem();
                 OverlayBean.Overlay overlay = MainApplication.getInstance().getTemplate().captions.get(index);
                 callback.onCaptionThemeSelected(overlay);
             }
         }, parentActivity.getString(R.string.str_cancel));
         captionGridView = (GridView)v.findViewById(R.id.gridView);
         captionGridView.setAdapter(captionPreviewAdapter);
+        captionGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                final OverlayBean overlayBean = MainApplication.getInstance().getTemplate();
+
+                for (int i = 0; i < parent.getChildCount(); i ++) {
+                    View view = parent.getChildAt(i);
+                    view.findViewById(R.id.selected).setVisibility(GONE);
+                }
+                View view = parent.getChildAt(position);
+                view.findViewById(R.id.selected).setVisibility(VISIBLE);
+                captionPreviewAdapter.setSelectedItem(position);
+            }
+        });
     }
     /**
      * show dialog which require input title information.

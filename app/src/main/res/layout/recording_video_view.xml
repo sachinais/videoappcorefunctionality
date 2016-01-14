@@ -87,6 +87,7 @@
         android:layout_marginTop="30sp"
         android:layout_marginLeft="40sp"
         android:id="@+id/layout_loading_template"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ProgressBar

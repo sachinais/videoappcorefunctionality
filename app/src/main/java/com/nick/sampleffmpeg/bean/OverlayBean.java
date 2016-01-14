@@ -48,7 +48,6 @@ public class OverlayBean {
         public int fontSize;
         public String fontName;
 
-        public Object customObject = null;
     }
 
     public class BrandLogoOption {

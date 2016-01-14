@@ -2,12 +2,14 @@ package com.nick.sampleffmpeg.ui.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
@@ -20,7 +22,7 @@ public class CaptionPreviewAdapter extends BaseAdapter {
     private Activity mContext;
     private OverlayBean overlayBean = null;
 
-    private View lastSelectedView = null;
+    private int selectedItem = -1;
     // Constructor
     public CaptionPreviewAdapter(Activity c) {
         mContext = c;
@@ -39,16 +41,20 @@ public class CaptionPreviewAdapter extends BaseAdapter {
         return position;
     }
 
-    public View getSelectedView() {
-        return lastSelectedView;
+    public int getSelectedItem() {
+        return selectedItem;
+    }
+
+    public void setSelectedItem(int index) {
+        selectedItem = index;
     }
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
         View ret;
+        OverlayBean.Overlay overlay = (OverlayBean.Overlay)getItem(position);
         if (convertView == null) {
             ret = mContext.getLayoutInflater().inflate(R.layout.caption_preview, null);
-            ret.setTag(position);
         } else {
             ret = convertView;
         }
@@ -58,33 +64,13 @@ public class CaptionPreviewAdapter extends BaseAdapter {
             ret.setLayoutParams(new GridView.LayoutParams(width / 4 - 10, width / 4 - 10));
         }
 
-        final OverlayBean.Overlay overlay = (OverlayBean.Overlay)getItem(position);
-        overlay.customObject = ret;
-
         ret.findViewById(R.id.backgroundView).setBackgroundColor(overlay.backgroundColor);
         ((TextView)ret.findViewById(R.id.textView)).setTextColor(overlay.color);
 
-        if (lastSelectedView == null && position == 0) {
-            ret.setBackgroundColor(0xFF000000);
-            lastSelectedView = ret;
+        if (selectedItem == -1 && position == 0) {
+            ret.findViewById(R.id.selected).setVisibility(View.VISIBLE);
+            selectedItem = 0;
         }
-
-        ret.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (int i = 0; i < overlayBean.captions.size(); i ++) {
-                    View view = (View)(overlayBean.captions.get(i).customObject);
-                    if (view != null) {
-                        view.setBackgroundColor(0x00000000);
-                    }
-                }
-                int index = (int)(v.getTag());
-                if (index < overlayBean.captions.size()) {
-                    View view = (View)(overlayBean.captions.get(index).customObject);
-                    view.setBackgroundColor(0xFF000000);
-                }
-            }
-        });
         return ret;
     }
 }
