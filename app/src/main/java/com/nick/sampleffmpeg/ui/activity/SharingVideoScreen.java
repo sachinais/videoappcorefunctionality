@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.VideoView;
 
 import com.nick.sampleffmpeg.R;
+import com.nick.sampleffmpeg.ui.view.StretchVideoView;
 
 public class SharingVideoScreen extends Activity {
 
@@ -14,7 +15,7 @@ public class SharingVideoScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_share_upload);
 
-        VideoView mVideoView = (VideoView)findViewById(R.id.videoview);
+        StretchVideoView mVideoView = (StretchVideoView)findViewById(R.id.videoview);
 
         String uriPath = getIntent().getExtras().getString("uripath");
 

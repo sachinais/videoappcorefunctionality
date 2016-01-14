@@ -110,7 +110,7 @@
         android:layout_gravity="center_horizontal" />
 
 
-    <VideoView
+    <com.nick.sampleffmpeg.ui.view.StretchVideoView
         android:id="@+id/videoview"
         android:layout_width="fill_parent"
         android:layout_height="150dp"

@@ -7,6 +7,7 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.IntegerRes;
 import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
 import android.view.View;
@@ -83,6 +84,10 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
     @InjectView(R.id.txt_recording_time)
     TextView txtRecordingTime;
+
+    @InjectView(R.id.txtCountDown)
+    TextView txtCountDown;
+
     @InjectView(R.id.rl_Menu)
     RelativeLayout rl_Menu;
 
@@ -97,6 +102,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     private double defaultWidth = 0;
     private double defaultHeight = 0;
 
+    private int countDownValue = -1;
     private SharedPreferenceWriter sharedPreferenceWriter = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +129,8 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         timerThread = (new Thread(new Runnable() {
             @Override
             public void run() {
-                while (!Thread.interrupted())
+                while (!Thread.interrupted()) {
+
                     try {
                         Thread.sleep(1000);
                         recordingTime ++;
@@ -132,10 +139,30 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                             public void run() {
                                 String time = StringUtils.getMinuteSecondString(recordingTime, true);
                                 txtRecordingTime.setText(time);
+
+                                if (countDownValue > 0) {
+                                    txtCountDown.setVisibility(View.VISIBLE);
+                                    txtCountDown.setText(Integer.toString(countDownValue));
+                                } else {
+                                    txtCountDown.setVisibility(View.GONE);
+                                }
+
+                                if (countDownValue == 0) {
+                                    if (!isRecording) {
+                                        isRecording = true;
+                                        cameraView.startVideoCapture();
+                                        showRecordingLayout();
+                                        recordingTime = 0;
+                                    }
+                                }
+
+                                countDownValue --;
                             }
                         });
                     } catch (InterruptedException e) {
                     }
+                }
+
             }
         }));
 
@@ -189,12 +216,8 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                             showAlert(R.string.str_alert_title_information, "You should select a template first.", "OK");
                             return;
                         }
-                        if (!isRecording) {
-                            isRecording = true;
-                            cameraView.startVideoCapture();
-                            showRecordingLayout();
-                            recordingTime = 0;
-                        }
+                        countDownValue = 3;
+
                     }
                 });
 
