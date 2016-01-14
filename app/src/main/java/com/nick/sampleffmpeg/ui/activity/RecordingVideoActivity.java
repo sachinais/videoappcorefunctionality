@@ -271,6 +271,8 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                     @Override
                     public void run() {
                         cameraView.switchCamera();
+                        overlayview.setRecordingView(true, cameraView.isFrontCamera());
+                        overlayview.updateOverlay();
                     }
                 });
 

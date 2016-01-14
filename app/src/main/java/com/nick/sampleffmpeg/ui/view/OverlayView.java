@@ -73,7 +73,7 @@ public class OverlayView extends View {
 
     public void setRecordingView(boolean flag, boolean flagFrontCamera) {
         this.isRecordingView = flag;
-        this.isMirror = true;
+        this.isMirror = flagFrontCamera;
     }
 
     public void setCurrentVideoTime(double time) {
