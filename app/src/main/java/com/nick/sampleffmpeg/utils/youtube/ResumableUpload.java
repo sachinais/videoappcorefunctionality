@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -83,7 +82,7 @@ public class ResumableUpload {
     static final String REQUEST_AUTHORIZATION_INTENT = "com.google.example.yt.RequestAuth";
 
     public static String upload(YouTube youtube, final InputStream fileInputStream,
-                                final long fileSize, final Uri mFileUri, final String path, final Context context,  final YoutubeDataBean youtubeDataBean) {
+                                final long fileSize, final Context context,  final YoutubeDataBean youtubeDataBean) {
         final NotificationManager notifyManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);

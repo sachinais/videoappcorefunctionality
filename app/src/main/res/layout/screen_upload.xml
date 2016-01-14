@@ -150,6 +150,7 @@
         android:gravity="center_vertical"
         android:textColor="@android:color/black"
         android:layout_marginTop="8dp"
+        android:text="Title1"
         android:paddingLeft="8dp"
         android:background="@drawable/bg_white_fill_roundrect"/>
 

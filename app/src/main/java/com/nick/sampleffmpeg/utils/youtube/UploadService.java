@@ -19,7 +19,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -204,11 +203,11 @@ public class UploadService extends IntentService {
             fileSize = getContentResolver().openFileDescriptor(mFileUri, "r").getStatSize();
             fileInputStream = getContentResolver().openInputStream(mFileUri);
             String[] proj = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver().query(mFileUri, proj, null, null, null);
+           /* Cursor cursor = getContentResolver().query(mFileUri, proj, null, null, null);
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
+            cursor.moveToFirst();*/
 
-            videoId = ResumableUpload.upload(youtube, fileInputStream, fileSize, mFileUri, cursor.getString(column_index), getApplicationContext(),youtubeDataBean);
+            videoId = ResumableUpload.upload(youtube, fileInputStream, fileSize, getApplicationContext(),youtubeDataBean);
 
 
         } catch (FileNotFoundException e) {
