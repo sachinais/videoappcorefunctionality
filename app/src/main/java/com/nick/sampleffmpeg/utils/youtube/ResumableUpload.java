@@ -35,6 +35,7 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
+import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.YoutubeDataBean;
 import com.nick.sampleffmpeg.ui.activity.LoginScreen;
@@ -172,7 +173,7 @@ public class ResumableUpload {
 //                            progress.show();
                             Log.d(TAG, "File Size-"+(int)fileSize);
                             Log.d(TAG, "Uploaded Size-"+ (int) (uploader.getProgress() * 100));
-
+                            MainApplication.getInstance().setUploadingProgress((int) (uploader.getProgress() * 100));
                             intent.putExtra("progress",  (int) (uploader.getProgress() * 100));
                             context.sendBroadcast(intent);
                             notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());
@@ -180,7 +181,8 @@ public class ResumableUpload {
                         case INITIATION_COMPLETE:
                             builder.setContentText(context.getString(R.string.initiation_completed)).setProgress((int) fileSize,
                                     (int) uploader.getNumBytesUploaded(), false);
-                            intent.putExtra("progress",  (int) (uploader.getProgress() * 100));
+                            intent.putExtra("progress", (int) (uploader.getProgress() * 100));
+                            MainApplication.getInstance().setUploadingProgress((int) (uploader.getProgress() * 100));
                             context.sendBroadcast(intent);
                             notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());
                             Log.d(TAG, "File Size-" + (int) fileSize);
@@ -193,12 +195,12 @@ public class ResumableUpload {
                                     .setContentText(context.getString(R.string.upload_in_progress))
                                     .setProgress((int) fileSize, (int) uploader.getNumBytesUploaded(), false);
                             notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());
-                            intent.putExtra("progress",  (int) (uploader.getProgress() * 100));
+                            intent.putExtra("progress", (int) (uploader.getProgress() * 100));
                             context.sendBroadcast(intent);
                             Log.d(TAG, "File Size-" + (int) fileSize);
                             Log.d(TAG, "Uploaded Size-" +  (int) (uploader.getProgress() * 100));
-                      /*      progress.setMax((int) uploader.getNumBytesUploaded());
-                            progress.show();*/
+                            MainApplication.getInstance().setUploadingProgress((int) (uploader.getProgress() * 100));
+
                             break;
                         case MEDIA_COMPLETE:
                             builder.setContentTitle(context.getString(R.string.yt_upload_completed))
@@ -206,7 +208,7 @@ public class ResumableUpload {
                                     // Removes the progress bar
                                     .setProgress(0, 0, false);
                             notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());
-                            //   intent.setAction()
+                            MainApplication.getInstance().setUploadingProgress((int) (uploader.getProgress() * 100));
                             intent.putExtra("progress",  (int) (uploader.getProgress() * 100));
                             context.sendBroadcast(intent);
                             Log.d(TAG, "File Size-" + (int) fileSize);
@@ -224,6 +226,10 @@ public class ResumableUpload {
             Video returnedVideo = videoInsert.execute();
             Log.d(TAG, "Video upload completed");
             videoId = returnedVideo.getId();
+            Intent intent1 = new Intent(UploadingVideoScreen.ACTION_UPLOAD_COMPLETED);
+            intent1.putExtra("url","https://www.youtube.com/watch?v="+videoId);
+            context.sendBroadcast(intent1);
+            MainApplication.getInstance().setYoutubeUrl("https://www.youtube.com/watch?v=" + videoId);
             Log.d(TAG, String.format("videoId = [%s]", videoId));
         } catch (final GooglePlayServicesAvailabilityIOException availabilityException) {
             Log.e(TAG, "GooglePlayServicesAvailabilityIOException", availabilityException);

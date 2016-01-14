@@ -20,6 +20,35 @@ public class MainApplication extends Application{
     private CookieStore cookieStore;
     private JSONArray templateArray;
     private OverlayBean selectedOverlay = null;
+    private int encodeingProgres=0;
+
+    public String getYoutubeUrl() {
+        return youtubeUrl;
+    }
+
+    public void setYoutubeUrl(String youtubeUrl) {
+        this.youtubeUrl = youtubeUrl;
+    }
+
+    private String youtubeUrl="";
+
+    public int getUploadingProgress() {
+        return uploadingProgress;
+    }
+
+    public void setUploadingProgress(int uploadingProgress) {
+        this.uploadingProgress = uploadingProgress;
+    }
+
+    public int getEncodeingProgres() {
+        return encodeingProgres;
+    }
+
+    public void setEncodeingProgres(int encodeingProgres) {
+        this.encodeingProgres = encodeingProgres;
+    }
+
+    private int uploadingProgress=0;
 
     private ArrayList<VideoOverlay> videoOverlayInformation = new ArrayList<>();
     public static  MainApplication getInstance(){

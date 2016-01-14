@@ -26,6 +26,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.nick.sampleffmpeg.Define.Constant;
+import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.encoding.VideoEncoding;
 import com.nick.sampleffmpeg.utils.VideoUtils;
@@ -56,14 +57,21 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
     public static String ACTION_PROGRESS_UPDATE = "ACTION_PROGRESS_UPDATE";
     public static String ACTION_CANCEL_UPLOAD = "ACTION_CANCEL_UPLOAD";
     public static String ACTION_UPLOAD_COMPLETED = "ACTION_UPLOAD_COMPLETED";
+    private int encodingProgress, uploadingProgress;
+    private static String videoLink;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_upload);
-        registerReceiver(receiver, new IntentFilter(ACTION_PROGRESS_UPDATE));
-
+        MainApplication.getInstance().setEncodeingProgres(0);
+        MainApplication.getInstance().setUploadingProgress(0);
+        MainApplication.getInstance().setYoutubeUrl("");
+        IntentFilter intentfilter = new IntentFilter();
+        intentfilter.addAction(ACTION_PROGRESS_UPDATE);
+        intentfilter.addAction(ACTION_UPLOAD_COMPLETED);
+        registerReceiver(receiver, intentfilter);
         googlePlusLogin();
         findViewById(R.id.btnNext).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +103,9 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
               if(uri != null){
                   Intent intent = new Intent(UploadingVideoScreen.this,SharingVideoScreen.class);
                   intent.putExtra("uripath",uri.toString());
+                  intent.putExtra("encoding_progress",encodingProgress);
+                  intent.putExtra("uploading_progress",uploadingProgress);
+                  intent.putExtra("video_link",videoLink);
                   startActivity(intent);
               }
 
@@ -112,12 +123,14 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
         VideoEncoding.startVideoEncoding(new VideoEncoding.Callback() {
             @Override
             public void onProgress(int progress) {
+                encodingProgress = progress;
                 ((ProgressBar)findViewById(R.id.progress_encoding_bar)).setProgress(progress);
                 ((TextView)findViewById(R.id.progress_encoding_text)).setText(progress + "%");
             }
 
             @Override
             public void onFinish() {
+                ((TextView)findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_sky_blue));
                 uri = Uri.fromFile(new File(Constant.getMergedVideo()));
                 uploadVideo();
             }
@@ -410,8 +423,17 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction() == ACTION_PROGRESS_UPDATE){
+                if(intent.getExtras().getInt("progress") == 0){
+                    ((ProgressBar)findViewById(R.id.pbarUploadVideo)).setIndeterminate(true);
+
+                }else {
+                    ((ProgressBar)findViewById(R.id.pbarUploadVideo)).setIndeterminate(false);
+
+                }
                 ((ProgressBar)findViewById(R.id.pbarUploadVideo)).setProgress(intent.getExtras().getInt("progress"));
-                ((TextView)findViewById(R.id.tvUploaPercent)).setText(intent.getExtras().getInt("progress")+"%");
+                ((TextView)findViewById(R.id.tvUploaPercent)).setText(intent.getExtras().getInt("progress") + "%");
+            }else if(intent.getAction() == ACTION_PROGRESS_UPDATE){
+                videoLink = intent.getExtras().getString("url");
             }
         }
     };

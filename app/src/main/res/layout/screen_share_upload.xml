@@ -16,7 +16,8 @@
                 android:id="@+id/btn_back"
                 android:layout_marginRight="10sp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="45dp"
+                android:layout_gravity="center_vertical"
                 android:src="@drawable/btn_back"/>
         </LinearLayout>
 
@@ -47,15 +48,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Encoding Video"
-            android:textColor="@android:color/black"
+            android:textColor="@color/color_greyish"
             android:id="@+id/textView2"
+            android:textSize="16sp"
             android:layout_gravity="center_vertical" />
 
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/progressBar"
+            android:id="@+id/progress_encoding_bar"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:layout_marginLeft="5dp"
@@ -65,9 +67,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="83%"
-            android:textColor="@android:color/black"
-            android:id="@+id/textView3"
-            android:layout_gravity="center_vertical" />
+            android:textColor="@color/color_greyish"
+            android:id="@+id/progress_encoding_text"
+            android:layout_gravity="center_vertical"
+            android:textSize="16sp"
+            />
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
@@ -80,8 +84,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Uploading Video"
-            android:textColor="@android:color/black"
-            android:layout_gravity="center_vertical" />
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/color_greyish"
+            />
 
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
@@ -89,6 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:id="@+id/pbarUploadVideo"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"/>
 
@@ -96,18 +103,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="83%"
-            android:textColor="@android:color/black"
-            android:layout_gravity="center_vertical" />
+            android:id="@+id/tvUploaPercent"
+            android:textColor="@color/color_greyish"
+            android:layout_gravity="center_vertical"
+            android:textSize="16sp"
+            />
     </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Job Title"
-        android:textColor="@android:color/black"
+        android:textColor="@color/color_greyish"
         android:id="@+id/textView4"
+        android:layout_gravity="center_horizontal"
         android:textSize="16sp"
-        android:layout_gravity="center_horizontal" />
+        />
 
 
     <com.nick.sampleffmpeg.ui.view.StretchVideoView
@@ -126,8 +137,12 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     android:layout_marginTop="8dp"
-    android:background="@drawable/bg_sky_blue_round_rect">
+        android:background="@drawable/bg_sky_blue_round_rect"
+        android:padding="2dp"
+
+        >
     <TextView
+        android:id="@+id/tvVideoUrlBtn"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -137,11 +152,12 @@
         android:gravity="center"
         android:textSize="16sp"/>
     <TextView
+        android:id="@+id/tvEmbedCodeBtn"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:text="Embed Code"
-        android:textColor="@android:color/black"
+        android:textColor="@color/color_greyish"
         android:gravity="center"
         android:textSize="16sp"
         />
@@ -154,12 +170,13 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="12dp"
         >
-        <EditText
+        <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Video URL"
-            android:textColor="@android:color/white"
+            android:id="@+id/tvVideoUrl"
+            android:textColor="@color/color_greyish"
             android:background="@drawable/bg_edittext"
             android:hint="Shared url"
             android:textColorHint="@color/color_light_grey"

@@ -17,7 +17,7 @@
         <Button
             android:id="@+id/btnChangeTemplate"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="40dp"
             android:background="@color/transparent_color"
             android:text="Change Template"
             android:textColor="@color/color_blue"
@@ -30,7 +30,7 @@
         <Button
             android:id="@+id/btnImportVideo"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="40dp"
             android:background="@color/transparent_color"
             android:text="Import Video"
             android:textColor="@color/color_blue"
@@ -45,7 +45,7 @@
         <Button
             android:id="@+id/btnOpenDashboard"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="40dp"
             android:background="@color/transparent_color"
             android:text="Open Dashboard"
             android:textColor="@color/color_blue"
@@ -53,13 +53,13 @@
             android:textSize="16sp" />
 
         <View
-            android:layout_width="match_parent"
-            android:background="@color/color_black"
-            android:layout_height="1dp"></View>
+        android:layout_width="match_parent"
+        android:background="@color/color_black"
+        android:layout_height="1dp"></View>
         <Button
             android:id="@+id/btnAddUser"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="40dp"
             android:background="@color/transparent_color"
             android:text="Add User"
             android:textColor="@color/color_blue"
@@ -71,11 +71,11 @@
         <Button
             android:id="@+id/btnTutorials"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="40dp"
             android:background="@color/transparent_color"
             android:text="Tutorials"
             android:textColor="@color/color_blue"
-            android:visibility="gone"
+            android:visibility="visible"
             android:textSize="16sp" />
 
         <View
@@ -85,11 +85,11 @@
         <Button
             android:id="@+id/btnSetting"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="40dp"
             android:background="@color/transparent_color"
-            android:text="Setting"
+            android:text="Sign Out"
             android:textColor="@color/color_blue"
-            android:visibility="gone"
+            android:visibility="visible"
 
             android:textSize="16sp" />
     </LinearLayout>
@@ -104,7 +104,7 @@
     <Button
         android:id="@+id/btnCancel"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="40dp"
         android:background="@drawable/rect_round_white"
         android:text="Cancel"
         android:textColor="@color/color_blue"

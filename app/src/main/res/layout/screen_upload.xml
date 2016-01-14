@@ -1,337 +1,350 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
-   >
+    android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:background="#eee">
+        android:background="#eee"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-           >
+            android:layout_alignParentLeft="true">
+
             <ImageView
                 android:id="@+id/btn_back"
-                android:layout_marginRight="10sp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/btn_back"/>
+                android:layout_height="45dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="10sp"
+                android:src="@drawable/btn_back" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_centerInParent="true"
             android:layout_marginLeft="5sp"
-            android:layout_weight="1"
-            android:layout_centerInParent="true">
+            android:layout_weight="1">
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 
                 android:scaleType="fitCenter"
-                android:src="@drawable/btn_edit_video_page_logo"/>
+                android:src="@drawable/btn_edit_video_page_logo" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginRight="12dp"
             android:layout_alignParentRight="true"
-            >
+            android:layout_marginRight="12dp">
+
             <TextView
                 android:id="@+id/btnNext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="NEXT"
                 android:layout_gravity="right|center_vertical"
-                android:textSize="18sp"
-                android:textColor="@color/color_sky_blue"/>
+                android:text="NEXT"
+                android:textColor="@color/color_light_grey"
+                android:textSize="16sp" />
         </LinearLayout>
 
     </RelativeLayout>
-    <LinearLayout
-        android:orientation="horizontal"
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Encoding Video"
-            android:textColor="@android:color/black"
-            android:id="@+id/tvEnocdeVideo"
-            android:textSize="16sp"
-            android:layout_gravity="center_vertical" />
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/progress_encoding_bar"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0%"
-            android:textColor="@android:color/black"
-            android:id="@+id/progress_encoding_text"
-            android:textSize="16sp"
-
-            android:layout_gravity="center_vertical" />
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp">
-
-        <TextView
-            android:id="@+id/tvUploadVideo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Uploading Video"
-            android:textColor="@android:color/black"
-            android:layout_gravity="center_vertical"
-            android:textSize="16sp"
-            />
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:id="@+id/pbarUploadVideo"
-            android:max="100"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"/>
-
-        <TextView
-            android:id="@+id/tvUploaPercent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0%"
-            android:textSize="16sp"
-
-            android:textColor="@android:color/black"
-            android:layout_gravity="center_vertical" />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Job Title"
-        android:textColor="@android:color/black"
-        android:id="@+id/textView4"
-        android:layout_gravity="center_horizontal"
-        android:textSize="16sp"
-        />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="Your title..."
-        android:singleLine="true"
-        android:id="@+id/etVideTitle"
-        android:layout_gravity="top"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:gravity="center_vertical"
-        android:textColor="@android:color/black"
-        android:layout_marginTop="8dp"
-        android:text="Title1"
-        android:paddingLeft="8dp"
-        android:background="@drawable/bg_white_fill_roundrect"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Job Discription"
-        android:textColor="@android:color/black"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:textSize="16sp"
-        />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_white_fill_flat_rect"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        >
+        android:layout_height="wrap_content">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_weight="1"
-          >
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/switch_compat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvEnocdeVideo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Encoding Video"
+                    android:textColor="@color/color_greyish"
+                    android:textSize="16sp" />
+
+                <ProgressBar
+                    android:id="@+id/progress_encoding_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/progress_encoding_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="0%"
+                    android:textColor="@color/color_greyish"
+
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvUploadVideo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Uploading Video"
+                    android:textColor="@color/color_greyish"
+                    android:textSize="16sp" />
+
+                <ProgressBar
+                    android:id="@+id/pbarUploadVideo"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:max="100" />
+
+                <TextView
+                    android:id="@+id/tvUploaPercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="0%"
+                    android:textColor="@color/color_greyish"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="false"
-                android:textOff="OFF"
-                android:textOn="ON"
-                android:layout_marginLeft="8dp"
-                />
+                android:layout_gravity="center_horizontal"
+                android:text="Job Title"
+                android:textColor="@color/color_greyish"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/etVideTitle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="top"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_white_fill_roundrect"
+                android:gravity="center_vertical"
+                android:hint="Your title..."
+                android:paddingLeft="8dp"
+                android:singleLine="true"
+                android:text="Title"
+                android:textColor="@color/color_greyish"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="One Discription\nFor all platform"
-                android:layout_marginLeft="5dp"/>
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="Job Discription"
+                android:textColor="@color/color_greyish"
+                android:textSize="16sp" />
 
-        </LinearLayout>
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="#605d5d5d"/>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:gravity="center_vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_white_fill_flat_rect"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switch_compat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:checked="false"
+                        android:textOff="OFF"
+                        android:textOn="ON" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="One Discription\nFor all platform"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#605d5d5d" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:text="Select Platform"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="#605d5d5d" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_gravity="top"
+                android:background="@drawable/bg_white_fill_flat_rect"
+                android:gravity="left|top"
+                android:hint="Add you description...."
+                android:paddingLeft="8dp"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Plateform"
-                android:layout_marginLeft="8dp"
-                android:textSize="18sp"/>
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="Job Tags"
+                android:textColor="@color/color_greyish"
+                android:textSize="16sp" />
 
-        </LinearLayout>
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#605d5d5d"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:hint="Add you description...."
-        android:layout_gravity="top"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:gravity="left|top"
-        android:textColor="@android:color/black"
-        android:paddingLeft="8dp"
-        android:background="@drawable/bg_white_fill_flat_rect"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Job Tags"
-        android:layout_marginTop="16dp"
-        android:textColor="@android:color/black"
-        android:layout_gravity="center_horizontal"
-        android:textSize="16sp"
-        />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="New Text"
-        android:layout_gravity="top"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:gravity="center_vertical"
-        android:textColor="@android:color/black"
-        android:layout_marginTop="8dp"
-        android:paddingLeft="8dp"
-        android:background="@drawable/bg_white_fill_roundrect"/>
-
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:orientation="horizontal"
-        android:id="@+id/rbg1"
-        android:layout_marginTop="16dp">
-
-   <LinearLayout
-       android:layout_width="0dp"
-       android:layout_height="wrap_content"
-       android:layout_weight="1"
-       android:orientation="vertical"
-       android:gravity="left|center_vertical">
-       <RadioButton
-           android:id="@+id/rbPublic"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:text="Public"
-           android:checked="true"
-
-           />
-       <TextView
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:textColor="#5d5d5d"
-           android:text="Publicly Searchable"
-           android:textSize="12sp"/>
-
-   </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="left|center_vertical">
-            <RadioButton
-                android:id="@+id/rbPrivate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Private"
-                />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="top"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_white_fill_roundrect"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
+                android:text="Tags"
+                android:textColor="@color/color_greyish" />
+
+            <RadioGroup
+                android:id="@+id/rbg1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#5d5d5d"
-                android:text="Invite Access Only"
-                android:textSize="12sp"/>
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
 
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="left|center_vertical">
-            <RadioButton
-                android:id="@+id/rbUnlisted"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="Unlisted"
-                />
-            <TextView
-                android:layout_width="wrap_content"
+
+                <RadioButton
+                    android:id="@+id/rbPublic"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="Public"
+                    android:textColor="@color/color_greyish"
+
+
+                    />
+
+
+                <RadioButton
+                    android:id="@+id/rbPrivate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Private"
+                    android:textColor="@color/color_greyish"
+
+                    />
+
+
+                <RadioButton
+                    android:id="@+id/rbUnlisted"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Unlisted"
+                    android:textColor="@color/color_greyish"
+
+                    />
+
+
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#5d5d5d"
-                android:text="Link Only - Not Searchable"
-                android:textSize="12sp"/>
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Publicly Searchable"
+                    android:textColor="#5d5d5d"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Invite Access Only"
+                    android:textColor="#5d5d5d"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Link Only - Not Searchable"
+                    android:textColor="#5d5d5d"
+                    android:textSize="12sp" />
+            </LinearLayout>
         </LinearLayout>
-
-
-    </RadioGroup>
+    </ScrollView>
 </LinearLayout>
