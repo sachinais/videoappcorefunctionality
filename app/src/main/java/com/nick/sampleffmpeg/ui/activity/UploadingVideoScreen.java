@@ -68,7 +68,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
         findViewById(R.id.btnNext).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              // if()
+                // if()
 
             }
         });
@@ -85,6 +85,18 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
             public void onClick(View v) {
                 // signInWithGplus();
                 pickFile();
+
+            }
+        });
+        findViewById(R.id.btnNext).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // signInWithGplus();
+              if(uri != null){
+                  Intent intent = new Intent(UploadingVideoScreen.this,SharingVideoScreen.class);
+                  intent.putExtra("uripath",uri.toString());
+                  startActivity(intent);
+              }
 
             }
         });

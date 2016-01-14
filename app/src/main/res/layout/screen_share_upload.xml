@@ -109,19 +109,16 @@
         android:textSize="16sp"
         android:layout_gravity="center_horizontal" />
 
-    <TextView
-        android:layout_width="match_parent"
+
+    <VideoView
+        android:id="@+id/videoview"
+        android:layout_width="fill_parent"
         android:layout_height="150dp"
-        android:text="Youtube"
-        android:id="@+id/textView5"
-        android:layout_gravity="top"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:gravity="center_vertical"
-        android:textColor="@android:color/black"
         android:layout_marginTop="8dp"
-        android:paddingLeft="8dp"
-        android:background="@drawable/bg_white_fill_roundrect"/>
+        android:layout_gravity="center_horizontal"
+        />
 
     <LinearLayout
     android:layout_width="match_parent"

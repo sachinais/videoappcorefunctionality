@@ -54,6 +54,10 @@
             android:name=".ui.activity.UploadingVideoScreen"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <activity
+            android:name=".ui.activity.SharingVideoScreen"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
 
         <service android:name=".utils.youtube.UploadService"/>
         <meta-data
