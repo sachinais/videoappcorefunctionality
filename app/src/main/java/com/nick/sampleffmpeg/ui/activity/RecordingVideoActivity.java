@@ -208,7 +208,8 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                 showDialog();
             }
         });
-
+        findViewById(R.id.img_left_person_template).setVisibility(View.VISIBLE);
+        findViewById(R.id.img_right_person_template).setVisibility(View.GONE);
         try{
             showPicker();
         }catch (JSONException e){
@@ -272,6 +273,13 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                     public void run() {
                         cameraView.switchCamera();
                         overlayview.setRecordingView(true, cameraView.isFrontCamera());
+                        if (cameraView.isFrontCamera()) {
+                            findViewById(R.id.img_left_person_template).setVisibility(View.VISIBLE);
+                            findViewById(R.id.img_right_person_template).setVisibility(View.GONE);
+                        } else {
+                            findViewById(R.id.img_left_person_template).setVisibility(View.GONE);
+                            findViewById(R.id.img_right_person_template).setVisibility(View.VISIBLE);
+                        }
                         overlayview.updateOverlay();
                     }
                 });

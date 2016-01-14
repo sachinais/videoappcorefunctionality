@@ -36,6 +36,42 @@
         android:alpha="1"
         android:visibility="gone"
         />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <View
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"></View>
+        <ImageView
+            android:id="@+id/img_left_person_template"
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="gone"
+            android:src="@drawable/person"/>
+        <View
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></View>
+        <View
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></View>
+        <ImageView
+            android:id="@+id/img_right_person_template"
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="visible"
+            android:src="@drawable/person"/>
+        <View
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"></View>
+    </LinearLayout>
+
 
     <ImageView
         android:id="@+id/img_status_recording"
