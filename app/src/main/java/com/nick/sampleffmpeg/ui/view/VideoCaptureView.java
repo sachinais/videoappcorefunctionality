@@ -203,4 +203,8 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
         }
         return cameraID;
     }
+
+    public boolean isFrontCamera() {
+        return flagFrontFaceCamera;
+    }
 }

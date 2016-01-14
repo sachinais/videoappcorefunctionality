@@ -50,6 +50,7 @@ public class OverlayView extends View {
     }
 
     private boolean isRecordingView = true;
+    private boolean isMirror = false;
 
     public OverlayView(Context context)
     {
@@ -70,8 +71,9 @@ public class OverlayView extends View {
         init();
     }
 
-    public void setRecordingView(boolean flag) {
+    public void setRecordingView(boolean flag, boolean flagFrontCamera) {
         this.isRecordingView = flag;
+        this.isMirror = true;
     }
 
     public void setCurrentVideoTime(double time) {
@@ -202,6 +204,9 @@ public class OverlayView extends View {
     private void drawOverlayBackground(Canvas canvas, OverlayBean.Overlay overlay, Bitmap bitmapBackground, Bitmap bitmapText) {
         int x = (int)(width * (overlay.x / 100.f));
         int y = (int)(height * (overlay.y / 100.f));
+        if (isMirror) {
+            x = width - x - bitmapBackground.getWidth();
+        }
         if (bitmapBackground != null) {
             canvas.drawBitmap(bitmapBackground, x, y, mBitmapPaint);
         }

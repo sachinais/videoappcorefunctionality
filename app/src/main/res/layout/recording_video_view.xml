@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/tools"
     android:background="#000">
 
     <RelativeLayout
@@ -46,6 +47,25 @@
         android:layout_alignParentLeft="true"
         android:src="@drawable/status_recording"/>
 
+    <RelativeLayout
+        android:layout_marginTop="30sp"
+        android:layout_marginLeft="40sp"
+        android:id="@+id/layout_loading_template"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ProgressBar
+            android:layout_width="40sp"
+            android:layout_height="40sp"
+            />
+        <TextView
+            android:layout_marginLeft="50sp"
+            android:layout_height="40sp"
+            android:layout_width="wrap_content"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textColor="#EEE"
+            android:text="Loading templates..."/>
+    </RelativeLayout>
     <ImageView
         android:id="@+id/btnStartCapture"
         android:layout_width="70sp"
@@ -125,14 +145,23 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <com.nick.sampleffmpeg.ui.control.DonutProgress
+            android:id="@+id/progressCountDown"
+            android:layout_width="200sp"
+            android:layout_height="200sp"
+            android:layout_centerInParent="true"/>
         <TextView
             android:id="@+id/txtCountDown"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:textColor="#FFF"
+            android:shadowColor="#000"
+            android:shadowRadius="1"
+            android:shadowDx="5"
+            android:shadowDy="5"
             android:textSize="100sp"
-            android:visibility="gone"
+            android:visibility="visible"
             android:text="3"/>
     </RelativeLayout>
 </RelativeLayout>

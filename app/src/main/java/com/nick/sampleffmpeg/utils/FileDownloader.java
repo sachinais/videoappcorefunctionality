@@ -22,7 +22,6 @@ import java.net.URLConnection;
 public class FileDownloader {
     public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
     private Button startBtn;
-    private ProgressDialog mProgressDialog;
     private String url;
     private  Context context;
     private  String fileName;
@@ -41,25 +40,11 @@ public class FileDownloader {
         this.runnable = callback;
     }
 
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DIALOG_DOWNLOAD_PROGRESS:
-                return mProgressDialog;
-            default:
-                return null;
-        }
-    }
-
     class DownloadFileAsync extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressDialog = new ProgressDialog(context);
-            mProgressDialog.setMessage("Downloading file..");
-            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            mProgressDialog.setCancelable(false);
-            mProgressDialog.show();
         }
 
         @Override
@@ -110,12 +95,11 @@ public class FileDownloader {
         }
         protected void onProgressUpdate(String... progress) {
             Log.d("ANDRO_ASYNC",progress[0]);
-            mProgressDialog.setProgress(Integer.parseInt(progress[0]));
         }
 
         @Override
         protected void onPostExecute(String unused) {
-            mProgressDialog.dismiss();
+
         }
     }
     private String getFilePath(String _directorName){

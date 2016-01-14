@@ -115,6 +115,7 @@ public class EditingVideoActivity extends BaseActivity {
     private int currentVideoSeekPosition = 0;
     private int videoLength = 0;
     private boolean flagPlay = false;
+    private boolean flagTimelineInitialized = false;
 
     private Handler mHandler = null;
     private View selectedVideoTimeline = null;
@@ -130,7 +131,7 @@ public class EditingVideoActivity extends BaseActivity {
         sharedPreferenceWriter = SharedPreferenceWriter.getInstance(this);
         initializeButtons();
 
-        overlayView.setRecordingView(false);
+        overlayView.setRecordingView(false, false);
         overlayView.setCaptionTimelayout(titleThumbsLayout);
         LogFile.clearLogText();
         mHandler = new Handler();
@@ -308,7 +309,9 @@ public class EditingVideoActivity extends BaseActivity {
                 videoView.seekTo(500);
                 txtVideoDuration.setText(getString(R.string.label_total_length) + StringUtils.getMinuteSecondString(videoLength / 1000, false));
                 videoControlLayout.setVisibility(View.VISIBLE);
-                initializeTimeLineView();
+                if (!flagTimelineInitialized) {
+                    initializeTimeLineView();
+                }
             }
         });
 
@@ -457,6 +460,7 @@ public class EditingVideoActivity extends BaseActivity {
             } catch (Exception ex) {
                 // Ignore failures while cleaning up.
             }
+            flagTimelineInitialized = true;
         }
 
         /**

@@ -47,6 +47,8 @@ public class OverlayBean {
         public int color = Color.argb(0, 255, 255, 255);
         public int fontSize;
         public String fontName;
+
+        public Object customObject = null;
     }
 
     public class BrandLogoOption {

@@ -58,7 +58,9 @@ public class CaptionPreviewAdapter extends BaseAdapter {
             ret.setLayoutParams(new GridView.LayoutParams(width / 4 - 10, width / 4 - 10));
         }
 
-        OverlayBean.Overlay overlay = (OverlayBean.Overlay)getItem(position);
+        final OverlayBean.Overlay overlay = (OverlayBean.Overlay)getItem(position);
+        overlay.customObject = ret;
+
         ret.findViewById(R.id.backgroundView).setBackgroundColor(overlay.backgroundColor);
         ((TextView)ret.findViewById(R.id.textView)).setTextColor(overlay.color);
 
@@ -70,11 +72,17 @@ public class CaptionPreviewAdapter extends BaseAdapter {
         ret.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (lastSelectedView != null) {
-                    lastSelectedView.setBackgroundColor(0x00000000);
+                for (int i = 0; i < overlayBean.captions.size(); i ++) {
+                    View view = (View)(overlayBean.captions.get(i).customObject);
+                    if (view != null) {
+                        view.setBackgroundColor(0x00000000);
+                    }
                 }
-                v.setBackgroundColor(0xFF000000);
-                lastSelectedView = v;
+                int index = (int)(v.getTag());
+                if (index < overlayBean.captions.size()) {
+                    View view = (View)(overlayBean.captions.get(index).customObject);
+                    view.setBackgroundColor(0xFF000000);
+                }
             }
         });
         return ret;

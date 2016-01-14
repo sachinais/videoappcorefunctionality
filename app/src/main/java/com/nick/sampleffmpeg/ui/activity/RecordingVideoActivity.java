@@ -31,6 +31,7 @@ import com.nick.sampleffmpeg.network.RequestHandler;
 import com.nick.sampleffmpeg.network.RequestListner;
 import com.nick.sampleffmpeg.sharedpreference.SPreferenceKey;
 import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
+import com.nick.sampleffmpeg.ui.control.DonutProgress;
 import com.nick.sampleffmpeg.ui.control.UITouchButton;
 import com.nick.sampleffmpeg.ui.view.OverlayView;
 import com.nick.sampleffmpeg.ui.view.VideoCaptureView;
@@ -91,18 +92,22 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     @InjectView(R.id.rl_Menu)
     RelativeLayout rl_Menu;
 
+    @InjectView(R.id.progressCountDown)
+    DonutProgress progressCountDown;
+
     private boolean isRecording = false;
     private static final String TAG = "Recorder";
     private boolean flagInitialized = false;
 
     private int recordingTime = 0;
     private Thread timerThread = null;
+    private Thread countDownThread = null;
     private Dialog optionDialog;
 
     private double defaultWidth = 0;
     private double defaultHeight = 0;
 
-    private int countDownValue = -1;
+    private int countDownValue = -1000;
     private SharedPreferenceWriter sharedPreferenceWriter = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +122,8 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
         initializeUIControls();
         showReadyForRecordingLayout();
+
+        progressCountDown.setProgress(10);
 
         LogFile.clearLogText();
         try {
@@ -139,24 +146,6 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                             public void run() {
                                 String time = StringUtils.getMinuteSecondString(recordingTime, true);
                                 txtRecordingTime.setText(time);
-
-                                if (countDownValue > 0) {
-                                    txtCountDown.setVisibility(View.VISIBLE);
-                                    txtCountDown.setText(Integer.toString(countDownValue));
-                                } else {
-                                    txtCountDown.setVisibility(View.GONE);
-                                }
-
-                                if (countDownValue == 0) {
-                                    if (!isRecording) {
-                                        isRecording = true;
-                                        cameraView.startVideoCapture();
-                                        showRecordingLayout();
-                                        recordingTime = 0;
-                                    }
-                                }
-
-                                countDownValue --;
                             }
                         });
                     } catch (InterruptedException e) {
@@ -168,17 +157,65 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
         timerThread.start();
 
+        countDownThread = (new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!Thread.interrupted()) {
+
+                    try {
+                        final int threadStep = 50;
+                        Thread.sleep(threadStep);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (countDownValue > 0) {
+                                    txtCountDown.setVisibility(View.VISIBLE);
+                                    progressCountDown.setVisibility(View.VISIBLE);
+                                    int percent = countDownValue % 1000;
+                                    int value = (countDownValue - percent) / 1000;
+
+                                    percent = 1000 - percent;
+                                    progressCountDown.setProgress(percent / 10);
+                                    txtCountDown.setText(Integer.toString(value + 1));
+                                } else {
+                                    txtCountDown.setVisibility(View.GONE);
+                                    progressCountDown.setVisibility(View.GONE);
+                                }
+
+                                if (countDownValue == -threadStep) {
+                                    if (!isRecording) {
+                                        isRecording = true;
+                                        cameraView.startVideoCapture();
+                                        showRecordingLayout();
+                                        recordingTime = 0;
+                                    }
+                                }
+
+                                countDownValue -= threadStep;
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                    }
+                }
+
+            }
+        }));
+        countDownThread.start();
+
         rl_Menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialog();
             }
         });
-       try{
-           showPicker();
-       }catch (JSONException e){
-           e.printStackTrace();
-       }
+
+        try{
+            showPicker();
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        selectTemplateItem(0);
     }
 
     @Override
@@ -192,6 +229,10 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         if (timerThread != null && !timerThread.isAlive()) {
             timerThread.start();
         }
+
+        if (countDownThread != null && !countDownThread.isAlive()) {
+            countDownThread.start();
+        }
     }
 
     @Override
@@ -201,6 +242,10 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         cameraView.stopPreview();
         if (timerThread != null && timerThread.isAlive()) {
             timerThread.interrupt();
+        }
+
+        if (countDownThread != null && countDownThread.isAlive()) {
+            countDownThread.interrupt();
         }
     }
 
@@ -216,7 +261,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                             showAlert(R.string.str_alert_title_information, "You should select a template first.", "OK");
                             return;
                         }
-                        countDownValue = 3;
+                        countDownValue = 3000;
 
                     }
                 });
@@ -251,13 +296,21 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        cameraView.startVideoCapture();
-                        isRecording = true;
-                        recordingTime = 0;
+                        showAlert(R.string.str_alert_title_information, R.string.str_stop_recording,
+                                getString(R.string.str_yes), new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        cameraView.startVideoCapture();
+                                        showReadyForRecordingLayout();
+                                        isRecording = false;
+                                    }
+                                }, getString(R.string.str_no));
+
+
                     }
                 });
 
-        overlayview.setRecordingView(true);
+        overlayview.setRecordingView(true, cameraView.isFrontCamera());
     }
 
     /**
@@ -270,6 +323,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         imgStatusRecording.setVisibility(View.VISIBLE);
         txtRecordingTime.setVisibility(View.VISIBLE);
         btnStartCapture.setVisibility(View.GONE);
+        rl_Menu.setVisibility(View.GONE);
     }
 
     /**
@@ -283,6 +337,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         imgStatusRecording.setVisibility(View.GONE);
         txtRecordingTime.setVisibility(View.GONE);
         btnStartCapture.setVisibility(View.VISIBLE);
+        rl_Menu.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -389,6 +444,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
             @Override
             public void onOptionsSelect(final int options1, int option2, int options3) {
+                selectTemplateItem(options1);
                 //返回的分别是三个级别的选中位置
                /* String tx = options1Items.get(options1).getPickerViewText()
                         + options2Items.get(options1).get(option2)
@@ -396,26 +452,32 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                 tvOptions.setText(tx);
                 vMasker.setVisibility(View.GONE);*/
                // Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
-                FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this,
-                        getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
-                fileDownloader.startDownload(new Runnable() {
-                    @Override
-                    public void run() {
-                        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                overlayview.updateOverlay();
-                            }
-                        });
-                    }
-                });
+
 
 //                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
 //                overlayview.invalidate();
             }
         });
 
+    }
+
+    private void selectTemplateItem(final int options1) {
+        FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this,
+                getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
+        findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
+        fileDownloader.startDownload(new Runnable() {
+            @Override
+            public void run() {
+                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
+                        overlayview.updateOverlay();
+                    }
+                });
+            }
+        });
     }
 
 
