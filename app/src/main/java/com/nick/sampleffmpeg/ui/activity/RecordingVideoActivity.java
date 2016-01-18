@@ -209,7 +209,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             }
         });
         findViewById(R.id.img_left_person_template).setVisibility(View.VISIBLE);
-        findViewById(R.id.img_right_person_template).setVisibility(View.GONE);
+        findViewById(R.id.img_right_person_template).setVisibility(View.INVISIBLE);
         try{
             showPicker();
         }catch (JSONException e){
@@ -275,9 +275,9 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                         overlayview.setRecordingView(true, cameraView.isFrontCamera());
                         if (cameraView.isFrontCamera()) {
                             findViewById(R.id.img_left_person_template).setVisibility(View.VISIBLE);
-                            findViewById(R.id.img_right_person_template).setVisibility(View.GONE);
+                            findViewById(R.id.img_right_person_template).setVisibility(View.INVISIBLE);
                         } else {
-                            findViewById(R.id.img_left_person_template).setVisibility(View.GONE);
+                            findViewById(R.id.img_left_person_template).setVisibility(View.INVISIBLE);
                             findViewById(R.id.img_right_person_template).setVisibility(View.VISIBLE);
                         }
                         overlayview.updateOverlay();
@@ -289,7 +289,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                     @Override
                     public void run() {
                         if (recordingTime <= 5) {
-                            showAlert(R.string.str_alert_title_information, "You have to record video more than 5 secs.", "OK");
+                            showAlert(R.string.str_alert_short_video_title, "Be sure you have recorded at least 5 secons of footage before stopping your recording.", "OK");
                             return;
                         }
                         if (isRecording) {
@@ -477,25 +477,25 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             return;
         }
 
-//        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
-//        overlayview.updateOverlay();
+        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+        overlayview.updateOverlay();
 
-        FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this,
-                getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
-        findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
-        fileDownloader.startDownload(new Runnable() {
-            @Override
-            public void run() {
-                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
-                        overlayview.updateOverlay();
-                    }
-                });
-            }
-        });
+//        FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this,
+//                getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
+//        findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
+//        fileDownloader.startDownload(new Runnable() {
+//            @Override
+//            public void run() {
+//                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
+//                        overlayview.updateOverlay();
+//                    }
+//                });
+//            }
+//        });
     }
 
 

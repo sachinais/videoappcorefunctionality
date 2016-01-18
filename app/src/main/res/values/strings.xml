@@ -22,6 +22,7 @@
     <string name="label_add_text_to_timeline">Tap here to add a caption</string>
     <string name="init_timeline">Initializing timeline now</string>
     <string name="str_alert_title_information">Information</string>
+    <string name="str_alert_short_video_title">Oops, we can\'t let you do that</string>
     <string name="str_alert_okay">Ok</string>
     <string name="str_title_already_exist">Title already exist in current timeline. Please select another timeline and add it.</string>
     <string name="str_add">Add</string>

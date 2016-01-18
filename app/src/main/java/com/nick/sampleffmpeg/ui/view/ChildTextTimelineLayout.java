@@ -98,20 +98,23 @@ public class ChildTextTimelineLayout extends LinearLayout{
             newLeft = left;
         }
 
+        double _startTime = newLeft / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
+        double _endTime = newRight / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
+
+        if (_endTime - _startTime < Constant.TIMELINE_UNIT_SECOND) {
+            return;
+        }
+        startTime = _startTime;
+        endTime = _endTime;
         left = newLeft;
         right = newRight;
 
-        startTime = left / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
-        endTime = right / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
-
-        if (endTime - startTime < Constant.TIMELINE_UNIT_SECOND) {
-            return;
-        }
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 (int)(right - left),
                 LayoutParams.MATCH_PARENT
         );
+
         params.setMargins((int)left, 0, 0, 0);
         setLayoutParams(params);
     }

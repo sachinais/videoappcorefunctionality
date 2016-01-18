@@ -13,8 +13,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -112,10 +114,16 @@ public class EditingVideoActivity extends BaseActivity {
     @InjectView(R.id.video_view_tap_area)
     View video_view_tap_area;
 
+    @InjectView(R.id.video_indicator)
+    View video_indicator;
+
     private int currentVideoSeekPosition = 0;
     private int videoLength = 0;
     private boolean flagPlay = false;
     private boolean flagTimelineInitialized = false;
+
+    private int defaultVideoInitialTime = 50;
+    private int videoIndicatorWidth = 10;
 
     private Handler mHandler = null;
     private View selectedVideoTimeline = null;
@@ -135,7 +143,11 @@ public class EditingVideoActivity extends BaseActivity {
         overlayView.setCaptionTimelayout(titleThumbsLayout);
         LogFile.clearLogText();
         mHandler = new Handler();
-        addTitle();
+        if (savedInstanceState == null) {
+            addTitle();
+        } else {
+
+        }
     }
 
     /**
@@ -250,7 +262,7 @@ public class EditingVideoActivity extends BaseActivity {
     private Runnable updateTimeTask = new Runnable() {
         public void run() {
             setCurrentSeekTime(videoView.getCurrentPosition());
-            mHandler.postDelayed(this, 300);
+            mHandler.postDelayed(this, 100);
         }
     };
 
@@ -258,15 +270,20 @@ public class EditingVideoActivity extends BaseActivity {
      * set current video 's seek time.
      * @param time
      */
-    public void setCurrentSeekTime(int time) {
-        currentVideoSeekPosition = time;
+    public void setCurrentSeekTime(double time) {
+        currentVideoSeekPosition = (int)time;
 
         if (!flagPlay) {
             videoView.seekTo(currentVideoSeekPosition);
             videoView.pause();
         }
+        double width = (videoIndicatorWidth * getDisplayMetric().scaledDensity);
+        double marginLeft = (double)time / 1000.0 * Constant.SP_PER_SECOND * (getDisplayMetric().scaledDensity) - width;
+        FrameLayout.LayoutParams param = new FrameLayout.LayoutParams((int)width, FrameLayout.LayoutParams.MATCH_PARENT);
+        param.setMargins((int)marginLeft, 0, 0, 0);
+        video_indicator.setLayoutParams(param);
 
-        int index = time / 1000 / Constant.TIMELINE_UNIT_SECOND;
+        int index = (int)(time / 1000 / Constant.TIMELINE_UNIT_SECOND);
         setTimelineVideo(videoThumbsLayout.findViewWithTag(index));
 
         updateOverlayView((float)time / 1000.f);
@@ -285,7 +302,7 @@ public class EditingVideoActivity extends BaseActivity {
         if (!flagPlay) {
             flagPlay = true;
             videoView.start();
-            mHandler.postDelayed(updateTimeTask, 300);
+            mHandler.postDelayed(updateTimeTask, 100);
         } else {
             flagPlay = false;
             videoView.pause();
@@ -306,7 +323,7 @@ public class EditingVideoActivity extends BaseActivity {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 videoLength = videoView.getDuration();
-                videoView.seekTo(500);
+                videoView.seekTo(defaultVideoInitialTime);
                 txtVideoDuration.setText(getString(R.string.label_total_length) + StringUtils.getMinuteSecondString(videoLength / 1000, false));
                 videoControlLayout.setVisibility(View.VISIBLE);
                 if (!flagTimelineInitialized) {
@@ -319,7 +336,7 @@ public class EditingVideoActivity extends BaseActivity {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 flagPlay = false;
-                setCurrentSeekTime(500);
+                setCurrentSeekTime(defaultVideoInitialTime);
             }
         });
     }
@@ -402,7 +419,7 @@ public class EditingVideoActivity extends BaseActivity {
     private class InitializeTimelineTask extends AsyncTask<Boolean, Boolean, Boolean> {
         @Override
         protected void onPreExecute() {
-            progressDialog.setMessage("Initializing timeline...");
+            progressDialog.setMessage("Preparing for video...");
             progressDialog.show();
             super.onPreExecute();
         }
@@ -424,35 +441,44 @@ public class EditingVideoActivity extends BaseActivity {
                 for (int i = 0; i < sec; i += Constant.TIMELINE_UNIT_SECOND) {
                     final Integer tagObj = new Integer(i);
                     final Bitmap bitmap = retriever.getFrameAtTime(i * 1000000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            final View thumbImageLayout = getLayoutInflater().inflate(R.layout.video_timeline_thumb_layout, null);
-                            ImageView imageView = (ImageView)thumbImageLayout.findViewById(R.id.img_thumb);
-                            if (bitmap != null && imageView != null) {
-                                imageView.setImageBitmap(bitmap);
-                                thumbImageLayout.setTag(tagObj / Constant.TIMELINE_UNIT_SECOND);
-                                videoThumbsLayout.addView(thumbImageLayout);
+                    if (bitmap != null) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final View thumbImageLayout = getLayoutInflater().inflate(R.layout.video_timeline_thumb_layout, null);
+                                ImageView imageView = (ImageView)thumbImageLayout.findViewById(R.id.img_thumb);
 
-                                /**
-                                 * once image is pressed, video seek position will be changed.
-                                 */
-                                UITouchButton.applyEffect(thumbImageLayout, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
-                                        Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                currentVideoSeekPosition = (Integer)thumbImageLayout.getTag() * 1000 * Constant.TIMELINE_UNIT_SECOND;
-                                                setCurrentSeekTime(currentVideoSeekPosition);
-                                            }
-                                        });
+                                if (tagObj == (int)videoLength / 1000 - 1) {
+                                    double offset = (double)videoLength /1000 - (double)tagObj;
+                                    int width = (int)(offset * 60 * getDisplayMetric().scaledDensity);
+                                    LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.MATCH_PARENT);
+                                    imageView.setLayoutParams(param);
+                                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                                }
+                                if (bitmap != null && imageView != null) {
+                                    imageView.setImageBitmap(bitmap);
+                                    thumbImageLayout.setTag(tagObj / Constant.TIMELINE_UNIT_SECOND);
+                                    videoThumbsLayout.addView(thumbImageLayout);
+
+                                    /**
+                                     * once image is pressed, video seek position will be changed.
+                                     */
+                                    UITouchButton.applyEffect(thumbImageLayout, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
+                                            Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    currentVideoSeekPosition = (Integer)thumbImageLayout.getTag() * 1000 * Constant.TIMELINE_UNIT_SECOND;
+                                                    setCurrentSeekTime(currentVideoSeekPosition);
+                                                }
+                                            });
+                                }
+
+                                if (tagObj == 0) {
+                                    setTimelineVideo(thumbImageLayout);
+                                }
                             }
-
-                            if (tagObj == 0) {
-                                setTimelineVideo(thumbImageLayout);
-                            }
-                        }
-                    });
-
+                        });
+                    }
                 }
             }
             try {
@@ -500,6 +526,7 @@ public class EditingVideoActivity extends BaseActivity {
         protected Boolean doInBackground(Boolean... params) {
             initializeVideoTimeLine();
             initializeAudioTimeline();
+            addDefaultOverlays();
             return true;
         }
 
@@ -509,27 +536,34 @@ public class EditingVideoActivity extends BaseActivity {
             progressDialog.dismiss();
         }
     }
+
+    private void addDefaultOverlays () {
+        //add default captions into timeline view (contact, name overlay)
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                OverlayBean template = MainApplication.getInstance().getTemplate();
+                OverlayBean.Overlay nameOverlay = template.name;
+                if (nameOverlay != null) {
+                    titleThumbsLayout.addNewTitleInformation(nameOverlay.defaultText, 0, Constant.TIMELINE_UNIT_SECOND, nameOverlay, false);
+                }
+
+                OverlayBean.Overlay contactOverlay = template.contact;
+                if (contactOverlay != null) {
+                    double lastSec = (double)videoLength / 1000;
+                    titleThumbsLayout.addNewTitleInformation(contactOverlay.defaultText, lastSec - Constant.TIMELINE_UNIT_SECOND, lastSec, contactOverlay, false);
+                }
+                updateOverlayView(0);
+            }
+        });
+    }
     /**
      * initialize Timeline view extract thumb image from video, add them into video timeline
      */
     private void initializeTimeLineView() {
         titleThumbsLayout.setActivity(this);
         titleThumbsLayout.removeChildTitleLayouts();
-
-        //add default captions into timeline view (contact, name overlay)
-        OverlayBean template = MainApplication.getInstance().getTemplate();
-        OverlayBean.Overlay nameOverlay = template.name;
-        if (nameOverlay != null) {
-            titleThumbsLayout.addNewTitleInformation(nameOverlay.defaultText, 0, Constant.TIMELINE_UNIT_SECOND, nameOverlay, false);
-        }
-
-        OverlayBean.Overlay contactOverlay = template.contact;
-        if (contactOverlay != null) {
-            double lastSec = videoLength / 1000;
-            titleThumbsLayout.addNewTitleInformation(contactOverlay.defaultText, lastSec - Constant.TIMELINE_UNIT_SECOND, lastSec, contactOverlay, false);
-        }
-        updateOverlayView(0);
-
         videoThumbsLayout.removeAllViews();
 
         new InitializeTimelineTask().execute(true);

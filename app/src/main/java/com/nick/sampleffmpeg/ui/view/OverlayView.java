@@ -41,12 +41,15 @@ public class OverlayView extends View {
     private Bitmap viewBitmap;
     private Canvas viewCanvas;
     private Paint mBitmapPaint;
-    private OverlayBean overlayInformation = MainApplication.getInstance().getTemplate();
+    private OverlayBean overlayInformation;
 
     private void init()
     {
-        setWillNotDraw (false);
-        mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+        if (!isInEditMode()) {
+            overlayInformation = MainApplication.getInstance().getTemplate();
+            setWillNotDraw(false);
+            mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+        }
     }
 
     private boolean isRecordingView = true;
@@ -56,7 +59,9 @@ public class OverlayView extends View {
     {
         super(context);
         this.appContext = context;
-        init();
+        if (!isInEditMode()) {
+            init();
+        }
     }
 
     public void updateOverlay(){
@@ -218,43 +223,46 @@ public class OverlayView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh)
     {
         super.onSizeChanged(w, h, oldw, oldh);
-        width = w;
-        height = h;
-        viewBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        overlayInformation = MainApplication.getInstance().getTemplate();
-        viewCanvas = new Canvas(viewBitmap);
+        if (!isInEditMode()) {
+            width = w;
+            height = h;
+            viewBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            overlayInformation = MainApplication.getInstance().getTemplate();
+            viewCanvas = new Canvas(viewBitmap);
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas)
     {
         super.onDraw(canvas);
-        if (overlayInformation == null) {
-            overlayInformation = MainApplication.getInstance().getTemplate();
-        }
-        canvas.drawBitmap(viewBitmap, 0, 0, mBitmapPaint);
-        if (overlayInformation != null) {
-            if (overlayInformation.brandLogo != null) {
-                Bitmap backgroundBitmap = createBackgroundBitmap(overlayInformation.brandLogo, width, height);
-                drawOverlayBackground(canvas, overlayInformation.brandLogo, backgroundBitmap, null);
+        if (!isInEditMode()) {
+            if (overlayInformation == null) {
+                overlayInformation = MainApplication.getInstance().getTemplate();
             }
-            if (!isRecordingView && this.captionTimelineLayout != null) {
-                ArrayList<ChildTextTimelineLayout> captions = this.captionTimelineLayout.getTimelineTitlesInformation();
-                for (int i = 0; i < captions.size(); i ++) {
-                    ChildTextTimelineLayout caption = captions.get(i);
+            canvas.drawBitmap(viewBitmap, 0, 0, mBitmapPaint);
+            if (overlayInformation != null) {
+                if (overlayInformation.brandLogo != null) {
+                    Bitmap backgroundBitmap = createBackgroundBitmap(overlayInformation.brandLogo, width, height);
+                    drawOverlayBackground(canvas, overlayInformation.brandLogo, backgroundBitmap, null);
+                }
+                if (!isRecordingView && this.captionTimelineLayout != null) {
+                    ArrayList<ChildTextTimelineLayout> captions = this.captionTimelineLayout.getTimelineTitlesInformation();
+                    for (int i = 0; i < captions.size(); i++) {
+                        ChildTextTimelineLayout caption = captions.get(i);
 
-                    if (caption.getStartTime() <= currentVideoTime && caption.getEndTime() > currentVideoTime) {
+                        if (caption.getStartTime() <= currentVideoTime && caption.getEndTime() > currentVideoTime) {
 
-                        OverlayBean.Overlay overlay = caption.getCaptionOverlay();
-                        if (overlay != null) {
-                            Bitmap backgroundBitmap = createBackgroundBitmap(overlay, width, height);
-                            Bitmap textBitmap = createOverlayTextBitmap(overlay, backgroundBitmap, caption.getTitleText());
-                            drawOverlayBackground(canvas, overlay, backgroundBitmap, textBitmap);
+                            OverlayBean.Overlay overlay = caption.getCaptionOverlay();
+                            if (overlay != null) {
+                                Bitmap backgroundBitmap = createBackgroundBitmap(overlay, width, height);
+                                Bitmap textBitmap = createOverlayTextBitmap(overlay, backgroundBitmap, caption.getTitleText());
+                                drawOverlayBackground(canvas, overlay, backgroundBitmap, textBitmap);
+                            }
                         }
                     }
                 }
             }
-
         }
     }
 }

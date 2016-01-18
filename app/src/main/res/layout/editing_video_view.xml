@@ -446,55 +446,70 @@
             android:layout_toLeftOf="@id/right_sidebar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:background="#EEE">
-
-                <LinearLayout
-                    android:id="@+id/timeline_video_thumbs_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0sp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                </LinearLayout>
-
-                <com.nick.sampleffmpeg.ui.view.TitleTimeLayout
-                    android:id="@+id/timeline_title_thumbs_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="0sp"
-                    android:layout_weight="1"
-                    android:paddingTop="0sp"
-                    android:paddingBottom="2sp"
-                    android:background="#000000">
-
-                    <TextView
-                        android:id="@+id/txt_hint_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_centerVertical="true"
-                        android:gravity="center"
-                        android:textSize="16sp"
-                        android:background="#404040"
-                        android:textColor="#696969"
-                        android:text="@string/label_add_text_to_timeline"/>
-                </com.nick.sampleffmpeg.ui.view.TitleTimeLayout>
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0sp"
-                    android:background="#454545"
-                    android:layout_weight="1">
-                    <com.nick.sampleffmpeg.ui.view.WaveformView
-                        android:id="@+id/wavform_view"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="#EEE">
+
+                    <LinearLayout
+                        android:id="@+id/timeline_video_thumbs_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0sp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    </LinearLayout>
+
+                    <com.nick.sampleffmpeg.ui.view.TitleTimeLayout
+                        android:id="@+id/timeline_title_thumbs_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="0sp"
+                        android:layout_weight="1"
+                        android:paddingTop="0sp"
+                        android:paddingBottom="2sp"
+                        android:background="#000000">
+
+                        <TextView
+                            android:id="@+id/txt_hint_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:textSize="16sp"
+                            android:background="#404040"
+                            android:textColor="#696969"
+                            android:text="@string/label_add_text_to_timeline"/>
+                    </com.nick.sampleffmpeg.ui.view.TitleTimeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0sp"
+                        android:background="#454545"
+                        android:layout_weight="1">
+                        <com.nick.sampleffmpeg.ui.view.WaveformView
+                            android:id="@+id/wavform_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
-            </LinearLayout>
+                <View
+                    android:id="@+id/video_indicator"
+                    android:layout_width="10sp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/video_indicator">
+
+                </View>
+            </FrameLayout>
+
+
+
         </HorizontalScrollView>
 
     </RelativeLayout>

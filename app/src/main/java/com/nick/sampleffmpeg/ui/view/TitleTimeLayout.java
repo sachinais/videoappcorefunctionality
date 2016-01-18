@@ -210,7 +210,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
 
             //if touch start & end in short time, press event will happen.
             if (((SystemClock.elapsedRealtime() - dragStartTime) < SINGLE_TAP_MAX_TIME)) {
-                int seekVideoTime = (int)((me.getX() / Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity) * 1000);
+                double seekVideoTime = ((double)me.getX() / (double)Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity) * 1000;
                 parentActivity.setCurrentSeekTime(seekVideoTime);
 
                 /**

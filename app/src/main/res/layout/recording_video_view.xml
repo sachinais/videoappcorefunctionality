@@ -43,24 +43,9 @@
         <View
             android:layout_width="0sp"
             android:layout_height="match_parent"
-            android:layout_weight="0.3"></View>
+            android:layout_weight="0.2"></View>
         <ImageView
             android:id="@+id/img_left_person_template"
-            android:layout_width="0sp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="gone"
-            android:src="@drawable/person"/>
-        <View
-            android:layout_width="0sp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"></View>
-        <View
-            android:layout_width="0sp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"></View>
-        <ImageView
-            android:id="@+id/img_right_person_template"
             android:layout_width="0sp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -69,7 +54,18 @@
         <View
             android:layout_width="0sp"
             android:layout_height="match_parent"
-            android:layout_weight="0.3"></View>
+            android:layout_weight="0.2"></View>
+        <ImageView
+            android:id="@+id/img_right_person_template"
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="invisible"
+            android:src="@drawable/person"/>
+        <View
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"></View>
     </LinearLayout>
 
 
