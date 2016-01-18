@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.bean.VideoOverlay;
+import com.nick.sampleffmpeg.ui.view.ChildTextTimelineLayout;
 import com.nick.sampleffmpeg.utils.LogFile;
 
 import org.json.JSONArray;
@@ -21,6 +22,12 @@ public class MainApplication extends Application{
     private JSONArray templateArray;
     private OverlayBean selectedOverlay = null;
     private int encodeingProgres=0;
+
+    private static ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = new ArrayList<>();
+
+    public static ArrayList<ChildTextTimelineLayout> getTimelineTitlesInformation() {
+        return  timelineTitlesInformation;
+    }
 
     public String getYoutubeUrl() {
         return youtubeUrl;

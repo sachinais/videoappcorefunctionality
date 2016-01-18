@@ -128,7 +128,10 @@ public class EditingVideoActivity extends BaseActivity {
     private Handler mHandler = null;
     private View selectedVideoTimeline = null;
 
+    private boolean flagFromBackground = false;
     private SharedPreferenceWriter sharedPreferenceWriter = null;
+
+    private static String strJobTitle = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,16 +143,23 @@ public class EditingVideoActivity extends BaseActivity {
         initializeButtons();
 
         overlayView.setRecordingView(false, false);
-        overlayView.setCaptionTimelayout(titleThumbsLayout);
         LogFile.clearLogText();
         mHandler = new Handler();
         if (savedInstanceState == null) {
+            flagFromBackground = false;
             addTitle();
         } else {
-
+            flagFromBackground = true;
+            initializeVideoView();
+            initializeThumbView();
+            editJobTitle.setText(strJobTitle);
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
     /**
      * show dialog which require input title information.
      */
@@ -160,8 +170,8 @@ public class EditingVideoActivity extends BaseActivity {
             @Override
             public void run() {
                 if (editTitle != null) {
-                    String strTitle = editTitle.getText().toString();
-                    editJobTitle.setText(strTitle);
+                    strJobTitle = editTitle.getText().toString();
+                    editJobTitle.setText(strJobTitle);
                     initializeVideoView();
                     initializeThumbView();
                 }
@@ -369,7 +379,7 @@ public class EditingVideoActivity extends BaseActivity {
         int videoWidth = VideoUtils.getVideoWidth(Constant.getCameraVideo());
         int videoHeight = VideoUtils.getVideoHeight(Constant.getCameraVideo());
 
-        ArrayList<ChildTextTimelineLayout> titleList = titleThumbsLayout.getTimelineTitlesInformation();
+        ArrayList<ChildTextTimelineLayout> titleList = MainApplication.getTimelineTitlesInformation();
          OverlayBean overlayBean = MainApplication.getInstance().getTemplate();
 
         //convert brand overlay into png
@@ -416,11 +426,20 @@ public class EditingVideoActivity extends BaseActivity {
     /**
      * Intialize timeline , extract images from video on every 1 secs, analyze audio, and showing into the wavform view.
      */
+    private boolean flagProgressDialogIsRunning = false;
     private class InitializeTimelineTask extends AsyncTask<Boolean, Boolean, Boolean> {
         @Override
         protected void onPreExecute() {
-            progressDialog.setMessage("Preparing for video...");
-            progressDialog.show();
+            try {
+                if (!flagProgressDialogIsRunning) {
+                    progressDialog.setMessage("Preparing for video...");
+                    progressDialog.show();
+                    flagProgressDialogIsRunning = true;
+                }
+
+            } catch (Exception e) {
+
+            }
             super.onPreExecute();
         }
 
@@ -439,6 +458,10 @@ public class EditingVideoActivity extends BaseActivity {
             if (flagInitialize) {
                 int sec = videoLength / 1000;
                 for (int i = 0; i < sec; i += Constant.TIMELINE_UNIT_SECOND) {
+                    if (isCancelled()) {
+                        videoThumbsLayout.removeAllViews();
+                        return;
+                    }
                     final Integer tagObj = new Integer(i);
                     final Bitmap bitmap = retriever.getFrameAtTime(i * 1000000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
                     if (bitmap != null) {
@@ -448,9 +471,9 @@ public class EditingVideoActivity extends BaseActivity {
                                 final View thumbImageLayout = getLayoutInflater().inflate(R.layout.video_timeline_thumb_layout, null);
                                 ImageView imageView = (ImageView)thumbImageLayout.findViewById(R.id.img_thumb);
 
-                                if (tagObj == (int)videoLength / 1000 - 1) {
+                                if (tagObj == (int)videoLength / 1000 - Constant.TIMELINE_UNIT_SECOND) {
                                     double offset = (double)videoLength /1000 - (double)tagObj;
-                                    int width = (int)(offset * 60 * getDisplayMetric().scaledDensity);
+                                    int width = (int)(offset * 60 * getDisplayMetric().scaledDensity / Constant.TIMELINE_UNIT_SECOND);
                                     LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.MATCH_PARENT);
                                     imageView.setLayoutParams(param);
                                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -526,47 +549,86 @@ public class EditingVideoActivity extends BaseActivity {
         protected Boolean doInBackground(Boolean... params) {
             initializeVideoTimeLine();
             initializeAudioTimeline();
-            addDefaultOverlays();
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    titleThumbsLayout.setActivity(EditingVideoActivity.this);
+
+                    ArrayList<ChildTextTimelineLayout> timelineInfo = MainApplication.getTimelineTitlesInformation();
+                    if (timelineInfo.size() > 0 && flagFromBackground == true) {
+                        cachedInfo = new ArrayList<ChildTextTimelineLayout>(timelineInfo.size());
+                        cachedInfo.addAll(timelineInfo);
+                    }
+
+                    titleThumbsLayout.removeChildTitleLayouts();
+                    if (flagFromBackground) {
+                        restoreTimelineLayout();
+                    } else {
+                        addDefaultOverlays();
+                    }
+                }
+            });
+
+
             return true;
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
-            progressDialog.dismiss();
+            try {
+                progressDialog.dismiss();
+                flagProgressDialogIsRunning = false;
+                mTask = null;
+            } catch (Exception e) {
+
+            }
         }
     }
 
+    private static ArrayList<ChildTextTimelineLayout> cachedInfo = null;
+    private void restoreTimelineLayout() {
+        titleThumbsLayout.removeChildTitleLayouts();
+        if (cachedInfo != null) {
+            for (int i = 0 ; i <cachedInfo.size(); i ++) {
+                ChildTextTimelineLayout cachedItem = cachedInfo.get(i);
+                titleThumbsLayout.addNewTitleInformation(cachedItem.getTitleText(), cachedItem.getStartTime(), cachedItem.getEndTime(), cachedItem.getCaptionOverlay(), cachedItem.isRemovable());
+            }
+        }
+        updateOverlayView(0);
+    }
+    /**
+     *
+     */
     private void addDefaultOverlays () {
         //add default captions into timeline view (contact, name overlay)
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                OverlayBean template = MainApplication.getInstance().getTemplate();
-                OverlayBean.Overlay nameOverlay = template.name;
-                if (nameOverlay != null) {
-                    titleThumbsLayout.addNewTitleInformation(nameOverlay.defaultText, 0, Constant.TIMELINE_UNIT_SECOND, nameOverlay, false);
-                }
+        OverlayBean template = MainApplication.getInstance().getTemplate();
+        OverlayBean.Overlay nameOverlay = template.name;
+        if (nameOverlay != null) {
+            titleThumbsLayout.addNewTitleInformation(nameOverlay.defaultText, 0, Constant.TIMELINE_UNIT_SECOND, nameOverlay, false);
+        }
 
-                OverlayBean.Overlay contactOverlay = template.contact;
-                if (contactOverlay != null) {
-                    double lastSec = (double)videoLength / 1000;
-                    titleThumbsLayout.addNewTitleInformation(contactOverlay.defaultText, lastSec - Constant.TIMELINE_UNIT_SECOND, lastSec, contactOverlay, false);
-                }
-                updateOverlayView(0);
-            }
-        });
+        OverlayBean.Overlay contactOverlay = template.contact;
+        if (contactOverlay != null) {
+            double lastSec = (double)videoLength / 1000;
+            titleThumbsLayout.addNewTitleInformation(contactOverlay.defaultText, lastSec - Constant.TIMELINE_UNIT_SECOND, lastSec, contactOverlay, false);
+        }
+        updateOverlayView(0);
     }
     /**
      * initialize Timeline view extract thumb image from video, add them into video timeline
      */
+    private InitializeTimelineTask mTask = null;
     private void initializeTimeLineView() {
-        titleThumbsLayout.setActivity(this);
-        titleThumbsLayout.removeChildTitleLayouts();
         videoThumbsLayout.removeAllViews();
-
-        new InitializeTimelineTask().execute(true);
+        if (mTask != null) {
+            mTask.cancel(true);
+            mTask = null;
+        }
+        mTask = new InitializeTimelineTask();
+        mTask.execute(true);
     }
 
     public int getCurrentSeekPosition() {

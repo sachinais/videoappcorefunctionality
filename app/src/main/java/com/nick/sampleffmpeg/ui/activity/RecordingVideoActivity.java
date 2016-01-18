@@ -332,6 +332,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         btnRestartCapture.setVisibility(View.VISIBLE);
         imgStatusRecording.setVisibility(View.VISIBLE);
         txtRecordingTime.setVisibility(View.VISIBLE);
+        btnSwitchCamera.setVisibility(View.GONE);
         btnStartCapture.setVisibility(View.GONE);
         rl_Menu.setVisibility(View.GONE);
     }
@@ -347,6 +348,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         imgStatusRecording.setVisibility(View.GONE);
         txtRecordingTime.setVisibility(View.GONE);
         btnStartCapture.setVisibility(View.VISIBLE);
+        btnSwitchCamera.setVisibility(View.VISIBLE);
         rl_Menu.setVisibility(View.VISIBLE);
     }
 

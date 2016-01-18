@@ -36,7 +36,6 @@ public class OverlayView extends View {
     private int width;
     private int height;
     private double currentVideoTime = 0;
-    private TitleTimeLayout captionTimelineLayout = null;
 
     private Bitmap viewBitmap;
     private Canvas viewCanvas;
@@ -84,10 +83,6 @@ public class OverlayView extends View {
     public void setCurrentVideoTime(double time) {
         currentVideoTime = time;
         invalidate();
-    }
-
-    public void setCaptionTimelayout(TitleTimeLayout layout) {
-        this.captionTimelineLayout = layout;
     }
 
     /**
@@ -246,8 +241,8 @@ public class OverlayView extends View {
                     Bitmap backgroundBitmap = createBackgroundBitmap(overlayInformation.brandLogo, width, height);
                     drawOverlayBackground(canvas, overlayInformation.brandLogo, backgroundBitmap, null);
                 }
-                if (!isRecordingView && this.captionTimelineLayout != null) {
-                    ArrayList<ChildTextTimelineLayout> captions = this.captionTimelineLayout.getTimelineTitlesInformation();
+                if (!isRecordingView) {
+                    ArrayList<ChildTextTimelineLayout> captions = MainApplication.getTimelineTitlesInformation();
                     for (int i = 0; i < captions.size(); i++) {
                         ChildTextTimelineLayout caption = captions.get(i);
 

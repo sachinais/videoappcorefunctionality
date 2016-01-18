@@ -23,9 +23,6 @@ import java.util.ArrayList;
  * Created by baebae on 12/25/15.
  */
 public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchListener {
-
-    private ArrayList<ChildTextTimelineLayout> timelineTitlesInformation = new ArrayList<>();
-
     private EditingVideoActivity parentActivity = null;
     private ChildTextTimelineLayout selectedItem = null;
     private boolean flagResizeLeft = false;
@@ -56,11 +53,10 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         super(context, attrs, defStyleAttr);
     }
 
-    public ArrayList<ChildTextTimelineLayout> getTimelineTitlesInformation() {
-        return  timelineTitlesInformation;
-    }
+
 
     public void removeChildTitleLayouts() {
+        ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
         for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
             removeView(timelineTitlesInformation.get(i));
         }
@@ -69,7 +65,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
 
     private boolean checkTitleAlreadyExistInCurrentTimeLine(int currentVideoSeekPosition) {
         boolean ret = false;
-
+        ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
         for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
             double startTime = timelineTitlesInformation.get(i).getStartTime();
             double endTime = timelineTitlesInformation.get(i).getEndTime();
@@ -101,14 +97,14 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
     }
 
     public void addNewTitleInformation(String title, double startTime, double endTime, OverlayBean.Overlay overlay, boolean flagRemovable) {
-
+        ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
         ChildTextTimelineLayout titleLayout = (ChildTextTimelineLayout)parentActivity.getLayoutInflater().inflate(R.layout.title_timeline_layout, null);
         titleLayout.setParentWidth(this.getWidth());
         titleLayout.setDisplayMetrics(parentActivity.getDisplayMetric());
         titleLayout.setInformation(startTime, endTime, title, System.currentTimeMillis(), overlay, flagRemovable);
 
-        addView(titleLayout);
         timelineTitlesInformation.add(titleLayout);
+        addView(titleLayout);
         parentActivity.updateOverlayView(startTime);
 
 
@@ -120,6 +116,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
      * @param layout
      */
     private void removeChildLayout(ChildTextTimelineLayout layout) {
+        ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
         timelineTitlesInformation.remove(layout);
         removeView(layout);
         selectedItem = null;
@@ -128,6 +125,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
      * show/hide hint text on title timeline are (Tap to add title...)
      */
     private void showHintTextView() {
+        ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
         if (timelineTitlesInformation.size() > 0) {
             findViewById(R.id.txt_hint_layout).setVisibility(View.GONE);
         } else {
@@ -148,6 +146,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
      * @return selected child layout
      */
     private ChildTextTimelineLayout getChildFromPosition(double position) {
+        ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
         flagMoving = flagResizeLeft = flagResizeRight = false;
         for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
             ChildTextTimelineLayout layout = timelineTitlesInformation.get(i);
@@ -175,6 +174,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
      * @return if position is in other title area it will return true
      */
     private boolean checkConflictTitleArea(double position) {
+        ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
         for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
             ChildTextTimelineLayout layout = timelineTitlesInformation.get(i);
             if (position > layout.getLayoutLeft() -  parentActivity.getPixelFromDensity(20)

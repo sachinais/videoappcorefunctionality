@@ -101,7 +101,7 @@ public class ChildTextTimelineLayout extends LinearLayout{
         double _startTime = newLeft / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
         double _endTime = newRight / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
 
-        if (_endTime - _startTime < Constant.TIMELINE_UNIT_SECOND) {
+        if (_endTime - _startTime < Constant.TIMELINE_UNIT_SECOND * 0.9f) {
             return;
         }
         startTime = _startTime;
