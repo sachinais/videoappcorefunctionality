@@ -204,6 +204,9 @@ public class OverlayView extends View {
     private void drawOverlayBackground(Canvas canvas, OverlayBean.Overlay overlay, Bitmap bitmapBackground, Bitmap bitmapText) {
         int x = (int)(width * (overlay.x / 100.f));
         int y = (int)(height * (overlay.y / 100.f));
+        if (bitmapBackground == null) {
+            return ;
+        }
         if (isMirror) {
             x = width - x - bitmapBackground.getWidth();
         }
@@ -237,7 +240,7 @@ public class OverlayView extends View {
             }
             canvas.drawBitmap(viewBitmap, 0, 0, mBitmapPaint);
             if (overlayInformation != null) {
-                if (overlayInformation.brandLogo != null) {
+                if (overlayInformation.brandLogo != null ) {
                     Bitmap backgroundBitmap = createBackgroundBitmap(overlayInformation.brandLogo, width, height);
                     drawOverlayBackground(canvas, overlayInformation.brandLogo, backgroundBitmap, null);
                 }

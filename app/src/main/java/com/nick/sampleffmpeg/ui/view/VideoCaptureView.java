@@ -27,6 +27,8 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
 
     private Camera mCamera;
     private boolean flagFrontFaceCamera = true;
+
+    private Runnable callback = null;
     public VideoCaptureView(Context context) {
         super(context);
         if (!isInEditMode()) {
@@ -101,6 +103,20 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
             mMediaRecorder.prepare();
             mMediaRecorder.start();
 
+            if (callback != null) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(500);
+                            callback.run();
+                            callback = null;
+                        }catch (Exception e) {
+
+                        }
+                    }
+                }).start();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -160,7 +176,8 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
         initializeRecording(true);
     }
 
-    public void startVideoCapture() {
+    public void startVideoCapture(Runnable callback) {
+        this.callback = callback;
         stopPreview();
         initializeRecording(false);
     }
@@ -171,7 +188,7 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
     public void switchCamera() {
         flagFrontFaceCamera = !flagFrontFaceCamera;
         stopPreview();
-        startVideoCapture();
+        stopVideoCapture();
     }
 
 

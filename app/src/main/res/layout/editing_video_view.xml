@@ -411,30 +411,50 @@
             android:orientation="horizontal"
             android:id="@+id/left_sidebar_layout"
             android:layout_toRightOf="@id/left_timeline_icon_layout"
-            android:layout_width="20sp"
+            android:layout_width="40sp"
             android:background="#000"
             android:layout_height="match_parent">
 
             <ImageView
+                android:id="@+id/redo_trim_left"
                 android:layout_marginTop="20sp"
                 android:layout_marginBottom="20sp"
-                android:layout_width="match_parent"
+                android:layout_width="20sp"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
                 android:src="@drawable/btn_slide_left"/>
+            <ImageView
+                android:id="@+id/trim_left"
+                android:layout_marginLeft="20sp"
+                android:layout_marginTop="20sp"
+                android:layout_marginBottom="20sp"
+                android:layout_width="20sp"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/btn_slide_right"/>
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/right_sidebar_layout"
-            android:layout_width="20sp"
+            android:layout_width="40sp"
             android:layout_height="match_parent"
             android:background="#000"
             android:layout_marginRight="1sp"
             android:layout_alignParentRight="true">
             <ImageView
+                android:id="@+id/trim_right"
                 android:layout_marginTop="20sp"
                 android:layout_marginBottom="20sp"
-                android:layout_width="match_parent"
+                android:layout_width="20sp"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/btn_slide_left"/>
+            <ImageView
+                android:id="@+id/redo_trim_right"
+                android:layout_marginLeft="20sp"
+                android:layout_marginTop="20sp"
+                android:layout_marginBottom="20sp"
+                android:layout_width="20sp"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
                 android:src="@drawable/btn_slide_right"/>
@@ -500,16 +520,28 @@
                 </LinearLayout>
 
                 <View
+                    android:id="@+id/video_trim_left_view"
+                    android:layout_width="10sp"
+                    android:layout_height="match_parent"
+                    android:alpha="0.5"
+                    android:background="#000"></View>
+
+                <View
+                    android:id="@+id/video_trim_right_view"
+                    android:layout_width="10sp"
+                    android:layout_height="match_parent"
+                    android:alpha="0.5"
+                    android:background="#000"></View>
+
+                <View
                     android:id="@+id/video_indicator"
                     android:layout_width="10sp"
                     android:layout_height="match_parent"
                     android:background="@drawable/video_indicator">
 
                 </View>
+
             </FrameLayout>
-
-
-
         </HorizontalScrollView>
 
     </RelativeLayout>

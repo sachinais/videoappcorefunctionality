@@ -102,11 +102,17 @@ public class EditingVideoActivity extends BaseActivity {
     @InjectView(R.id.scrollview_timeline)
     HorizontalScrollView scrollViewTimeline;
 
-    @InjectView(R.id.left_sidebar_layout)
-    RelativeLayout layoutTimelineLeftSidebar;
+    @InjectView(R.id.trim_left)
+    ImageView trimLeftLayout;
 
-    @InjectView(R.id.right_sidebar_layout)
-    RelativeLayout layoutTimelineRightSidebar;
+    @InjectView(R.id.redo_trim_left)
+    ImageView redoTrimLeftLayout;
+
+    @InjectView(R.id.trim_right)
+    ImageView trimRightLayout;
+
+    @InjectView(R.id.redo_trim_right)
+    ImageView redoTrimRightLayout;
 
     @InjectView(R.id.overlay_layout)
     OverlayView overlayView;
@@ -117,7 +123,15 @@ public class EditingVideoActivity extends BaseActivity {
     @InjectView(R.id.video_indicator)
     View video_indicator;
 
+    @InjectView(R.id.video_trim_left_view)
+    View video_trim_left;
+
+    @InjectView(R.id.video_trim_right_view)
+    View video_trim_right;
+
     private int currentVideoSeekPosition = 0;
+    private double trimLeft = 3.0;
+    private double trimRight = 1.0;
     private int videoLength = 0;
     private boolean flagPlay = false;
     private boolean flagTimelineInitialized = false;
@@ -180,6 +194,19 @@ public class EditingVideoActivity extends BaseActivity {
         editTitle = (EditText)v.findViewById(R.id.edit_title_name);
     }
 
+    private void updateVideoTrimLayout() {
+        double leftWidth = (trimLeft * Constant.SP_PER_SECOND * getDisplayMetric().scaledDensity);
+        FrameLayout.LayoutParams param = new FrameLayout.LayoutParams((int)leftWidth, FrameLayout.LayoutParams.MATCH_PARENT);
+        param.setMargins((int)0, 0, 0, 0);
+        video_trim_left.setLayoutParams(param);
+
+        double rightWidth = (trimRight * Constant.SP_PER_SECOND * getDisplayMetric().scaledDensity);
+        param = new FrameLayout.LayoutParams((int)rightWidth, FrameLayout.LayoutParams.MATCH_PARENT);
+        double marginLeft = (((double)videoLength / 1000.0 - trimRight) * Constant.SP_PER_SECOND * getDisplayMetric().scaledDensity);
+        param.setMargins((int)marginLeft, 0, 0, 0);
+        video_trim_right.setLayoutParams(param);
+
+    }
     private void initializeButtons() {
         UITouchButton.applyEffect(btnNext, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
@@ -241,19 +268,43 @@ public class EditingVideoActivity extends BaseActivity {
                     }
                 });
 
-        UITouchButton.applyEffect(layoutTimelineLeftSidebar, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
+        UITouchButton.applyEffect(trimLeftLayout, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        scrollViewTimeline.scrollBy(-getPixelFromDensity(Constant.SP_PER_SECOND * Constant.TIMELINE_UNIT_SECOND), 0);
+                        trimLeft ++;
+                        updateVideoTrimLayout();
                     }
                 });
 
-        UITouchButton.applyEffect(layoutTimelineRightSidebar, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
+        UITouchButton.applyEffect(trimRightLayout, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        scrollViewTimeline.scrollBy(getPixelFromDensity(Constant.SP_PER_SECOND * Constant.TIMELINE_UNIT_SECOND), 0);
+                        trimRight ++;
+                        updateVideoTrimLayout();
+                    }
+                });
+
+        UITouchButton.applyEffect(redoTrimLeftLayout, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
+                Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
+                    @Override
+                    public void run() {
+                        if (trimLeft > 0) {
+                            trimLeft --;
+                            updateVideoTrimLayout();
+                        }
+                    }
+                });
+
+        UITouchButton.applyEffect(redoTrimRightLayout, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
+                Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
+                    @Override
+                    public void run() {
+                        if (trimRight > 0) {
+                            trimRight --;
+                            updateVideoTrimLayout();
+                        }
                     }
                 });
 
@@ -548,7 +599,7 @@ public class EditingVideoActivity extends BaseActivity {
         @Override
         protected Boolean doInBackground(Boolean... params) {
             initializeVideoTimeLine();
-            initializeAudioTimeline();
+            //initializeAudioTimeline();
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -567,9 +618,9 @@ public class EditingVideoActivity extends BaseActivity {
                     } else {
                         addDefaultOverlays();
                     }
+                    updateVideoTrimLayout();
                 }
             });
-
 
             return true;
         }

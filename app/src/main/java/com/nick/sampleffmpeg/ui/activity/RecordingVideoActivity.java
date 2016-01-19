@@ -109,6 +109,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
     private int countDownValue = -1000;
     private SharedPreferenceWriter sharedPreferenceWriter = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,18 +138,19 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             @Override
             public void run() {
                 while (!Thread.interrupted()) {
-
-                    try {
-                        Thread.sleep(1000);
-                        recordingTime ++;
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                String time = StringUtils.getMinuteSecondString(recordingTime, true);
-                                txtRecordingTime.setText(time);
-                            }
-                        });
-                    } catch (InterruptedException e) {
+                    if (isRecording) {
+                        try {
+                            Thread.sleep(1000);
+                            recordingTime ++;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String time = StringUtils.getMinuteSecondString(recordingTime, true);
+                                    txtRecordingTime.setText(time);
+                                }
+                            });
+                        } catch (InterruptedException e) {
+                        }
                     }
                 }
 
@@ -183,12 +185,9 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                                 }
 
                                 if (countDownValue == -threadStep) {
-                                    if (!isRecording) {
-                                        isRecording = true;
-                                        cameraView.startVideoCapture();
-                                        showRecordingLayout();
-                                        recordingTime = 0;
-                                    }
+                                    isRecording = true;
+                                    showRecordingLayout();
+                                    recordingTime = 0;
                                 }
 
                                 countDownValue -= threadStep;
@@ -262,7 +261,17 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                             showAlert(R.string.str_alert_title_information, "Template is still loading.", "OK");
                             return;
                         }
-                        countDownValue = 3000;
+                        if (!isRecording) {
+                            showCountDownLayout();
+                            cameraView.startVideoCapture(new Runnable() {
+                                @Override
+                                public void run() {
+                                    countDownValue = 2900;
+                                }
+                            });
+                            recordingTime = 0;
+                        }
+
 
                     }
                 });
@@ -310,7 +319,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                                 getString(R.string.str_yes), new Runnable() {
                                     @Override
                                     public void run() {
-                                        cameraView.startVideoCapture();
+                                        cameraView.stopVideoCapture();
                                         showReadyForRecordingLayout();
                                         isRecording = false;
                                     }
@@ -332,6 +341,17 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         btnRestartCapture.setVisibility(View.VISIBLE);
         imgStatusRecording.setVisibility(View.VISIBLE);
         txtRecordingTime.setVisibility(View.VISIBLE);
+        btnSwitchCamera.setVisibility(View.GONE);
+        btnStartCapture.setVisibility(View.GONE);
+        rl_Menu.setVisibility(View.GONE);
+    }
+
+    private void showCountDownLayout() {
+        btnStopCapture.setVisibility(View.GONE);
+        imgRecordingFrameBorderLayout.setVisibility(View.GONE);
+        btnRestartCapture.setVisibility(View.GONE);
+        imgStatusRecording.setVisibility(View.GONE);
+        txtRecordingTime.setVisibility(View.GONE);
         btnSwitchCamera.setVisibility(View.GONE);
         btnStartCapture.setVisibility(View.GONE);
         rl_Menu.setVisibility(View.GONE);
@@ -435,7 +455,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     private void showPicker()throws JSONException{
         if(MainApplication.getInstance().getTemplateArray() != null && MainApplication.getInstance().getTemplateArray().length()>0){
             JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
-            for (int i = 0; i <jsonArray.length(); i++) {
+            for (int i = jsonArray.length() - 1; i >= 0; i--) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 options1Items.add(new ProvinceBean(i, jsonObject.optString("title"),jsonObject.optString("directory"),""));
             }
