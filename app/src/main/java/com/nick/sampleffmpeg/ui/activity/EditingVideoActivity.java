@@ -602,7 +602,7 @@ public class EditingVideoActivity extends BaseActivity {
         @Override
         protected Boolean doInBackground(Boolean... params) {
             initializeVideoTimeLine();
-            //initializeAudioTimeline();
+            initializeAudioTimeline();
 
             runOnUiThread(new Runnable() {
                 @Override

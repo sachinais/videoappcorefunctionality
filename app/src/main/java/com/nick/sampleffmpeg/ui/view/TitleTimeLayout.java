@@ -85,15 +85,15 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
      */
     private void addNewTitleInformation(String title, OverlayBean.Overlay overlay) {
         int currentVideoSeekPosition = parentActivity.getCurrentSeekPosition();
-        boolean flagAlreadyHaveTitle = checkTitleAlreadyExistInCurrentTimeLine(currentVideoSeekPosition);
-        if (flagAlreadyHaveTitle) {
-            parentActivity.showAlert(R.string.str_alert_title_information, R.string.str_title_already_exist, parentActivity.getString(R.string.str_alert_okay));
-        } else {
+//        boolean flagAlreadyHaveTitle = checkTitleAlreadyExistInCurrentTimeLine(currentVideoSeekPosition);
+//        if (flagAlreadyHaveTitle) {
+//            parentActivity.showAlert(R.string.str_alert_title_information, R.string.str_title_already_exist, parentActivity.getString(R.string.str_alert_okay));
+//        } else {
             int startTime = currentVideoSeekPosition / 1000;
             int endTime = startTime + Constant.TIMELINE_UNIT_SECOND;
 
             addNewTitleInformation(title, startTime, endTime, overlay, true);
-        }
+//        }
     }
 
     public void addNewTitleInformation(String title, double startTime, double endTime, OverlayBean.Overlay overlay, boolean flagRemovable) {
