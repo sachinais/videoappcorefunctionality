@@ -62,6 +62,8 @@ public class ResumableUpload {
     /**
      * Assigned to the upload
      */
+    private static final int KB = 0x400;
+
     public static final String[] DEFAULT_KEYWORDS = {"MultiSquash", "Game"};
     /**
      * Indicates that the video is fully processed, see https://www.googleapis.com/discovery/v1/apis/youtube/v3/rpc
@@ -153,7 +155,7 @@ public class ResumableUpload {
 
             // Set the upload type and add event listener.
             MediaHttpUploader uploader = videoInsert.getMediaHttpUploader();
-
+            uploader.setChunkSize(256 * KB);
       /*
        * Sets whether direct media upload is enabled or disabled. True = whole media content is
        * uploaded in a single request. False (default) = resumable media upload protocol to upload

@@ -52,9 +52,19 @@
         android:textSize="14sp"
         android:singleLine="true"/>
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="5dp"
+        android:text="Remember password "
+        android:textColor="@color/color_greyish"
+        android:id="@+id/checkBox" />
+
     <TextView
 
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Sign In"
         android:paddingLeft="16dp"
@@ -62,9 +72,32 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:id="@+id/tvSignInBtn"
+
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:background="@drawable/button"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center"
+        android:background="@drawable/bg_sign_in"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"/>
+
+    <TextView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Account"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:id="@+id/tvCreateAccount"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center"
+        android:background="@drawable/bg_create_account"
         android:textSize="16sp"
         android:textColor="@android:color/white"/>
 

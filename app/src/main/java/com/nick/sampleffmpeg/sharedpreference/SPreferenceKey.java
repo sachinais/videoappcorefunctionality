@@ -15,6 +15,10 @@ public class SPreferenceKey {
 	public static final String TITLE = "TITLE";
 	public static final String CONTACT = "CONTACT";
 	public static final String SESSION_ID ="session_id";
+	public static final String LAST_USER_NAME = "LAST_USER_NAME";
+	public  static final String LAST_PASSWORD = "LAST_PASSWORD";
+	public  static final String IS_REMEMBER_PSSWORD = "IS_REMEMBER_PSSWORD";
+	public static final String TEMPLATE_ARRAY ="TEMPLATE_ARRAY";
 
 
 

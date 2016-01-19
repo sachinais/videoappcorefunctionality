@@ -65,7 +65,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -147,7 +148,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="Job Title"
-                android:textColor="@color/color_greyish"
+                android:textColor="@color/color_black"
                 android:textSize="16sp" />
 
             <EditText
@@ -156,7 +157,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="top"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/bg_white_fill_roundrect"
+                android:background="#eeee"
                 android:gravity="center_vertical"
                 android:hint="Your title..."
                 android:paddingLeft="8dp"
@@ -166,12 +167,13 @@
                 android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/tvJobDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:text="Job Discription"
-                android:textColor="@color/color_greyish"
+                android:text="Job Description"
+                android:textColor="@color/color_black"
                 android:textSize="16sp" />
 
             <LinearLayout
@@ -179,7 +181,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/bg_white_fill_flat_rect"
+                android:background="#eeee"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -199,11 +201,17 @@
                         android:textOn="ON" />
 
                     <TextView
+                        android:id="@+id/tvOneDescription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:text="One Discription\nFor all platform"
-                        android:textSize="14sp" />
+                        android:layout_weight="1"
+                        android:layout_marginLeft="24dp"
+                        android:textColor="@color/color_black"
+                        android:text="One Description\nFor all platform"
+                        android:textSize="12sp"
+
+
+                        />
 
                 </LinearLayout>
 
@@ -216,15 +224,33 @@
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:orientation="vertical">
-
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    >
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/mlti_share"/>
                     <TextView
+                        android:id="@+id/tvSelectPlateForm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:text="Select Platform"
-                        android:textSize="14sp" />
+                        android:layout_marginLeft="12dp"
+                        android:text="Select\nPlatforms"
+                        android:textColor="@color/color_black"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_right_arraow"
+                        android:layout_marginLeft="6dp"
+                        />
 
                 </LinearLayout>
             </LinearLayout>
@@ -232,31 +258,75 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:background="#605d5d5d" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:background="#605d5d5d" />
+                android:layout_marginTop="6dp"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/socialShare"
+                android:visibility="visible"
+                android:background="#eeee"
+                >
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/youtube"
+                    />
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/twitter"
+                    />
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/linkedin"
+                    />
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/fb"
+                    />
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/fb"
+                    />
+            </LinearLayout>
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_gravity="top"
-                android:background="@drawable/bg_white_fill_flat_rect"
+                android:background="#eeee"
                 android:gravity="left|top"
-                android:hint="Add you description...."
+                android:hint="Write your description here"
                 android:paddingLeft="8dp"
+                android:paddingTop="10dp"
                 android:textColor="@android:color/black"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+               />
 
             <TextView
+                android:id="@+id/tvJobTags"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:text="Job Tags"
-                android:textColor="@color/color_greyish"
+                android:layout_marginTop="12dp"
+                android:text="Job Tags(for YouTube SEO)"
+                android:textColor="@color/color_black"
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/tvVideTitle"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_gravity="top"
@@ -264,7 +334,7 @@
                 android:background="@drawable/bg_white_fill_roundrect"
                 android:gravity="center_vertical"
                 android:paddingLeft="8dp"
-                android:text="Tags"
+                android:text="VideMyJob, Job, Add"
                 android:textColor="@color/color_greyish" />
 
             <RadioGroup
@@ -285,7 +355,7 @@
                     android:checked="true"
                     android:text="Public"
                     android:textColor="@color/color_greyish"
-
+                    android:textSize="12sp"
 
                     />
 
@@ -297,6 +367,7 @@
                     android:layout_weight="1"
                     android:text="Private"
                     android:textColor="@color/color_greyish"
+                    android:textSize="12sp"
 
                     />
 
@@ -308,6 +379,7 @@
                     android:layout_weight="1"
                     android:text="Unlisted"
                     android:textColor="@color/color_greyish"
+                    android:textSize="12sp"
 
                     />
 
@@ -327,7 +399,7 @@
                     android:layout_weight="1"
                     android:text="Publicly Searchable"
                     android:textColor="#5d5d5d"
-                    android:textSize="12sp" />
+                    android:textSize="8sp" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -335,7 +407,7 @@
                     android:layout_weight="1"
                     android:text="Invite Access Only"
                     android:textColor="#5d5d5d"
-                    android:textSize="12sp" />
+                    android:textSize="8sp" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -343,7 +415,7 @@
                     android:layout_weight="1"
                     android:text="Link Only - Not Searchable"
                     android:textColor="#5d5d5d"
-                    android:textSize="12sp" />
+                    android:textSize="8sp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -7,7 +7,6 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.IntegerRes;
 import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
 import android.view.View;
@@ -36,7 +35,6 @@ import com.nick.sampleffmpeg.ui.control.UITouchButton;
 import com.nick.sampleffmpeg.ui.view.OverlayView;
 import com.nick.sampleffmpeg.ui.view.VideoCaptureView;
 import com.nick.sampleffmpeg.utils.AppConstants;
-import com.nick.sampleffmpeg.utils.FileDownloader;
 import com.nick.sampleffmpeg.utils.FileUtils;
 import com.nick.sampleffmpeg.utils.LogFile;
 import com.nick.sampleffmpeg.utils.StringUtils;
@@ -112,11 +110,10 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         FileUtils.DeleteFolder(Constant.getPreviewDirectory());
         FileUtils.DeleteFolder(Constant.getOverlayDirectory());
-
         setContentView(R.layout.recording_video_view);
+        getStoredTemplateIfNull();
         ButterKnife.inject(this);
         getWindow().setFormat(PixelFormat.UNKNOWN);
 
@@ -217,6 +214,16 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         }
 
         selectTemplateItem(0);
+    }
+
+    private void getStoredTemplateIfNull(){
+        try {
+            if(MainApplication.getInstance().getTemplateArray() == null){
+                MainApplication.getInstance().setTemplateArray(new JSONObject(SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).getString(SPreferenceKey.TEMPLATE_ARRAY)).getJSONArray("templates"));
+            }
+        }catch (Exception e){
+
+        }
     }
 
     @Override
@@ -417,6 +424,27 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         ((Button)optionDialog.findViewById(R.id.btnOpenDashboard)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                optionDialog.dismiss();
+
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.APP_DOMAIN));
+                startActivity(browserIntent);
+            }
+        });
+        ((Button)optionDialog.findViewById(R.id.btnAddUser)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                optionDialog.dismiss();
+
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.APP_DOMAIN));
+                startActivity(browserIntent);
+            }
+        });
+
+        ((Button)optionDialog.findViewById(R.id.btnTutorials)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                optionDialog.dismiss();
+
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.APP_DOMAIN));
                 startActivity(browserIntent);
             }
@@ -425,6 +453,25 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             @Override
             public void onClick(View v) {
                 optionDialog.dismiss();
+            }
+        });
+        ((Button)optionDialog.findViewById(R.id.btnImportVideo)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                optionDialog.dismiss();
+
+                startActivity(new Intent(RecordingVideoActivity.this,ImportVideoActivty.class));
+            }
+        });
+
+        ((Button)optionDialog.findViewById(R.id.btnSignOut)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                optionDialog.dismiss();
+                finish();
+                SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).clearPreferenceValues();
+                startActivity(new Intent(RecordingVideoActivity.this, LoginActivity.class));
+
             }
         });
 

@@ -4,11 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
+import android.text.TextUtils;
 
-import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
+import com.nick.sampleffmpeg.sharedpreference.SPreferenceKey;
+import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 
 public class SplashScreen extends Activity {
     private Handler handler = new Handler();
@@ -20,10 +20,9 @@ public class SplashScreen extends Activity {
             @Override
             public void run() {
             // startActivity(new Intent(SplashScreen.this,RecordingVideoActivity.class));
-                CookieSyncManager.createInstance(MainApplication.getInstance());
-                if(CookieManager.getInstance().getCookie("live.videomyjob.com") != null){
-                    startActivity(new Intent(SplashScreen.this,LoginActivity.class));
-                    //startActivity(new Intent(SplashScreen.this,RecordingVideoActivity.class));
+                if(!TextUtils.isEmpty(SharedPreferenceWriter.getInstance(SplashScreen.this).getString(SPreferenceKey.USERID))){
+                    //startActivity(new Intent(SplashScreen.this,LoginActivity.class));
+                    startActivity(new Intent(SplashScreen.this,RecordingVideoActivity.class));
                     SplashScreen.this.finish();
                 }else {
                     startActivity(new Intent(SplashScreen.this,LoginActivity.class));

@@ -83,7 +83,7 @@
             android:background="@color/color_black"
             android:layout_height="1dp"></View>
         <Button
-            android:id="@+id/btnSetting"
+            android:id="@+id/btnSignOut"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:background="@color/transparent_color"

@@ -1,6 +1,8 @@
 package com.nick.sampleffmpeg;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.bean.VideoOverlay;
@@ -100,5 +102,10 @@ public class MainApplication extends Application{
 
     public OverlayBean getTemplate() {
         return selectedOverlay;
+    }
+
+    public SharedPreferences getEditor(){
+       SharedPreferences mPrefs = getApplicationContext().getSharedPreferences("LAST_LOGIN_DETAILS", Context.MODE_PRIVATE);
+        return mPrefs;
     }
 }

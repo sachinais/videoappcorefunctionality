@@ -2,9 +2,12 @@ package com.nick.sampleffmpeg.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -28,13 +31,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoginActivity extends Activity implements View.OnClickListener{
-
+    private boolean isChecked;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         findViewById(R.id.tvSignInBtn).setOnClickListener(this);
+        CheckBox checkBox = (CheckBox)findViewById(R.id.checkBox);
+      //  checkBox.setChecked( MainApplication.getInstance().getEditor().getBoolean(SPreferenceKey.IS_REMEMBER_PSSWORD,false));
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean value) {
+                MainApplication.getInstance().getEditor().edit().putBoolean(SPreferenceKey.IS_REMEMBER_PSSWORD, value).commit();
+                if(value){
+                    isChecked = value;
+                    setValueToEditText();
+                }else {
+                    isChecked = false;
+                    resetEditText();
+                }
+            }
+        });
+       findViewById(R.id.tvCreateAccount).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.APP_DOMAIN));
+                startActivity(browserIntent);
+            }
+        });
+    }
+
+    private void resetEditText(){
+        ((EditText)findViewById(R.id.etEmail)).setText("");
+        ((EditText)findViewById(R.id.etPassword)).setText("");
+
+    }
+
+    private void setValueToEditText(){
+        ((EditText)findViewById(R.id.etEmail)).setText(MainApplication.getInstance().getEditor().getString(SPreferenceKey.LAST_USER_NAME,""));
+        ((EditText)findViewById(R.id.etPassword)).setText(MainApplication.getInstance().getEditor().getString(SPreferenceKey.LAST_PASSWORD,""));
+
+    }
+
+    private void saveValueToPref(){
+        MainApplication.getInstance().getEditor().edit().putString(SPreferenceKey.LAST_USER_NAME, ((EditText) findViewById(R.id.etEmail)).getText().toString()).commit();
+        MainApplication.getInstance().getEditor().edit().putString(SPreferenceKey.LAST_PASSWORD, ((EditText) findViewById(R.id.etPassword)).getText().toString()).commit();
+
     }
 
     @Override
@@ -74,6 +117,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     private void sendRequest(){
         try{
             if(CheckNetworkConnection.isNetworkAvailable(LoginActivity.this)){
+                saveValueToPref();
                 List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
                 paramePairs.add(new BasicNameValuePair("email",((EditText)findViewById(R.id.etEmail)).getText().toString().trim()));
                 paramePairs.add(new BasicNameValuePair("password",((EditText)findViewById(R.id.etPassword)).getText().toString().trim()));
@@ -140,6 +184,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
                 if(!jsonObject.isNull("templates")){
                     MainApplication.getInstance().setTemplateArray(jsonObject.getJSONArray("templates"));
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.TEMPLATE_ARRAY,jsonObject.toString());
                 }
                 startActivity(new Intent(LoginActivity.this,RecordingVideoActivity.class));
                 LoginActivity.this.finish();
