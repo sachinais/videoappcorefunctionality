@@ -12,9 +12,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
@@ -29,6 +31,8 @@ import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.encoding.VideoEncoding;
+import com.nick.sampleffmpeg.utils.AppConstants;
+import com.nick.sampleffmpeg.utils.FontTypeface;
 import com.nick.sampleffmpeg.utils.VideoUtils;
 import com.nick.sampleffmpeg.utils.youtube.UploadService;
 
@@ -73,6 +77,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
         intentfilter.addAction(ACTION_UPLOAD_COMPLETED);
         registerReceiver(receiver, intentfilter);
         googlePlusLogin();
+        setFonts();
         findViewById(R.id.btnNext).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,19 +105,46 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
             @Override
             public void onClick(View v) {
                 // signInWithGplus();
-              if(uri != null){
-                  Intent intent = new Intent(UploadingVideoScreen.this,SharingVideoScreen.class);
-                  intent.putExtra("uripath",uri.toString());
-                  intent.putExtra("encoding_progress",encodingProgress);
-                  intent.putExtra("uploading_progress",uploadingProgress);
-                  intent.putExtra("video_link",videoLink);
-                  startActivity(intent);
-              }
+                if (uri != null) {
+                    Intent intent = new Intent(UploadingVideoScreen.this, SharingVideoScreen.class);
+                    intent.putExtra("uripath", uri.toString());
+                    intent.putExtra("encoding_progress", encodingProgress);
+                    intent.putExtra("uploading_progress", uploadingProgress);
+                    intent.putExtra("video_link", videoLink);
+                    startActivity(intent);
+                }
 
+            }
+        });
+        SwitchCompat switchCompat = (SwitchCompat)findViewById(R.id.switch_compat);
+        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    findViewById(R.id.socialShare).setVisibility(View.GONE);
+                }else {
+                    findViewById(R.id.socialShare).setVisibility(View.VISIBLE);
+                }
             }
         });
 
         encodingVideo();
+    }
+
+    private void setFonts() {
+        ((TextView)findViewById(R.id.btnNext)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_SEMIBOLD));
+        ((TextView)findViewById(R.id.tvEnocdeVideo)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((TextView)findViewById(R.id.progress_encoding_text)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((TextView)findViewById(R.id.tvUploadVideo)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((TextView)findViewById(R.id.tvUploaPercent)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+
+        ((TextView)findViewById(R.id.textView4)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((TextView)findViewById(R.id.etVideTitle)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((TextView)findViewById(R.id.tvOneDescription)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((TextView)findViewById(R.id.tvSelectPlateForm)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((TextView)findViewById(R.id.tvJobTags)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((TextView)findViewById(R.id.tvVideTitle)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+
     }
 
     private void encodingVideo() {
@@ -124,7 +156,8 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
             @Override
             public void onProgress(int progress) {
                 encodingProgress = progress;
-                ((ProgressBar)findViewById(R.id.progress_encoding_bar)).setProgress(progress);
+                MainApplication.getInstance().setEncodeingProgres(progress);
+                        ((ProgressBar) findViewById(R.id.progress_encoding_bar)).setProgress(progress);
                 ((TextView)findViewById(R.id.progress_encoding_text)).setText(progress + "%");
             }
 
@@ -162,7 +195,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
             startService(uploadIntent);
             Toast.makeText(this, R.string.youtube_upload_started,
                     Toast.LENGTH_LONG).show();
-            // Go back to MainActivity after upload
+            // Go back to ImportVideoActivty after upload
             //      finish();
         }
     }
@@ -293,7 +326,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
                         + PROFILE_PIC_SIZE;
 
                 new LoadProfileImage(imgProfilePic).execute(personPhotoUrl);*/
-                //   startActivity(new Intent(UploadingVideoScreen.this,MainActivity.class));
+                //   startActivity(new Intent(UploadingVideoScreen.this,ImportVideoActivty.class));
 
             } else {
                 Toast.makeText(getApplicationContext(),

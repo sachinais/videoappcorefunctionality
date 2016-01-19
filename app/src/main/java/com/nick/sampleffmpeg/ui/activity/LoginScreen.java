@@ -108,7 +108,7 @@ public class LoginScreen extends AppCompatActivity implements  GoogleApiClient.C
             startService(uploadIntent);
             Toast.makeText(this, R.string.youtube_upload_started,
                     Toast.LENGTH_LONG).show();
-            // Go back to MainActivity after upload
+            // Go back to ImportVideoActivty after upload
       //      finish();
         }
     }
@@ -239,7 +239,7 @@ public class LoginScreen extends AppCompatActivity implements  GoogleApiClient.C
                         + PROFILE_PIC_SIZE;
 
                 new LoadProfileImage(imgProfilePic).execute(personPhotoUrl);*/
-             //   startActivity(new Intent(LoginScreen.this,MainActivity.class));
+             //   startActivity(new Intent(LoginScreen.this,ImportVideoActivty.class));
 
             } else {
                 Toast.makeText(getApplicationContext(),

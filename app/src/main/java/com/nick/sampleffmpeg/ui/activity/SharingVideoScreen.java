@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.ui.view.StretchVideoView;
+import com.nick.sampleffmpeg.utils.AppConstants;
+import com.nick.sampleffmpeg.utils.FontTypeface;
 
 public class SharingVideoScreen extends Activity {
     public static String ACTION_PROGRESS_UPDATE = "ACTION_PROGRESS_UPDATE";
@@ -38,6 +40,12 @@ public class SharingVideoScreen extends Activity {
         ((TextView)findViewById(R.id.tvUploaPercent)).setText(MainApplication.getInstance().getUploadingProgress() + "%");
         ((TextView)findViewById(R.id.progress_encoding_text)).setText(MainApplication.getInstance().getEncodeingProgres() + "%");
         ((TextView)findViewById(R.id.tvVideoUrl)).setText(MainApplication.getInstance().getYoutubeUrl());
+
+        ((TextView)findViewById(R.id.tvEnocdeVideo)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((TextView)findViewById(R.id.progress_encoding_text)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((TextView)findViewById(R.id.tvUploadVideo)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((TextView)findViewById(R.id.tvUploaPercent)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+
         getBundleData();
     }
 
