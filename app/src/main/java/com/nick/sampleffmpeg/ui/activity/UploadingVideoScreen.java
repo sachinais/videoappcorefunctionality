@@ -149,8 +149,8 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
 
     private void encodingVideo() {
 
-        int videoWidth = VideoUtils.getVideoWidth(Constant.getCameraVideo());
-        int videoHeight = VideoUtils.getVideoHeight(Constant.getCameraVideo());
+        int videoWidth = VideoUtils.getVideoWidth(Constant.getSourceVideo());
+        int videoHeight = VideoUtils.getVideoHeight(Constant.getSourceVideo());
 
         VideoEncoding.startVideoEncoding(new VideoEncoding.Callback() {
             @Override

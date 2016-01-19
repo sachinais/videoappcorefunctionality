@@ -17,12 +17,13 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.nick.sampleffmpeg.R;
+import com.nick.sampleffmpeg.utils.VideoUtils;
 
 
 /**
  * Created by Vindhya Pratap on 1/19/2016.
  */
-public class ImportVideoActivty extends Activity {
+public class ImportVideoActivty extends BaseActivity {
     //set constants for MediaStore to query, and show videos
     private final static Uri MEDIA_EXTERNAL_CONTENT_URI = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
     private final static String _ID = MediaStore.Video.Media._ID;
@@ -82,6 +83,14 @@ public class ImportVideoActivty extends Activity {
             _cursor.moveToPosition(position);
             // And here we get the filename
             filename = _cursor.getString(_columnIndex);
+
+            if (VideoUtils.getVideoLength(filename) < 5) {
+                showAlert(R.string.str_alert_short_video_title, "Be sure you have select video file at least 5 seconds of footage", "OK");
+                return;
+            }
+            ImportVideoActivty.this.finish();
+            showActivity(EditingVideoActivity.class, null);
+
             //*********** You can do anything when you know the file path :-)
             showToast(filename);
       }

@@ -35,6 +35,7 @@ import com.nick.sampleffmpeg.ui.control.UITouchButton;
 import com.nick.sampleffmpeg.ui.view.OverlayView;
 import com.nick.sampleffmpeg.ui.view.VideoCaptureView;
 import com.nick.sampleffmpeg.utils.AppConstants;
+import com.nick.sampleffmpeg.utils.FileDownloader;
 import com.nick.sampleffmpeg.utils.FileUtils;
 import com.nick.sampleffmpeg.utils.LogFile;
 import com.nick.sampleffmpeg.utils.StringUtils;
@@ -228,17 +229,21 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     @Override
     protected void onResume() {
         super.onResume();
-        if (flagInitialized) {
-            cameraView.stopVideoCapture();
-            flagInitialized = false;
-        }
+        try {
+            if (flagInitialized) {
+                cameraView.stopVideoCapture();
+                flagInitialized = false;
+            }
 
-        if (timerThread != null && !timerThread.isAlive()) {
-            timerThread.start();
-        }
+            if (timerThread != null && !timerThread.isAlive()) {
+                timerThread.start();
+            }
 
-        if (countDownThread != null && !countDownThread.isAlive()) {
-            countDownThread.start();
+            if (countDownThread != null && !countDownThread.isAlive()) {
+                countDownThread.start();
+            }
+        } catch (Exception e) {
+
         }
     }
 
@@ -305,7 +310,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                     @Override
                     public void run() {
                         if (recordingTime <= 5) {
-                            showAlert(R.string.str_alert_short_video_title, "Be sure you have recorded at least 5 secons of footage before stopping your recording.", "OK");
+                            showAlert(R.string.str_alert_short_video_title, "Be sure you have recorded at least 5 seconds of footage before stopping your recording.", "OK");
                             return;
                         }
                         if (isRecording) {
@@ -386,7 +391,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
         String commands = "-y -i src.mp4 -vn dst.wav";
 
-        String srcVideoFilePath = Constant.getCameraVideo();
+        String srcVideoFilePath = Constant.getSourceVideo();
         String dstAudioFilePath = Constant.getConvertedAudio();
 
         commands = commands.replace("src.mp4", srcVideoFilePath);
@@ -546,25 +551,25 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             return;
         }
 
-        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
-        overlayview.updateOverlay();
+//        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+//        overlayview.updateOverlay();
 
-//        FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this,
-//                getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
-//        findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
-//        fileDownloader.startDownload(new Runnable() {
-//            @Override
-//            public void run() {
-//                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
-//                        overlayview.updateOverlay();
-//                    }
-//                });
-//            }
-//        });
+        FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this,
+                getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
+        findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
+        fileDownloader.startDownload(new Runnable() {
+            @Override
+            public void run() {
+                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
+                        overlayview.updateOverlay();
+                    }
+                });
+            }
+        });
     }
 
 

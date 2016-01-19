@@ -364,11 +364,13 @@ public class EditingVideoActivity extends BaseActivity {
             flagPlay = true;
             videoView.start();
             mHandler.postDelayed(updateTimeTask, 100);
+            btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.btn_pause));
         } else {
             flagPlay = false;
             videoView.pause();
             currentVideoSeekPosition = videoView.getCurrentPosition();
             mHandler.removeCallbacks(updateTimeTask);
+            btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.btn_play));
         }
     }
     /**
@@ -378,7 +380,7 @@ public class EditingVideoActivity extends BaseActivity {
     private void initializeVideoView() {
         videoControlLayout.setVisibility(View.GONE);
 
-        videoView.setVideoPath(Constant.getCameraVideo());
+        videoView.setVideoPath(Constant.getSourceVideo());
         videoView.requestFocus();
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -397,6 +399,7 @@ public class EditingVideoActivity extends BaseActivity {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 flagPlay = false;
+                btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.btn_play));
                 setCurrentSeekTime(defaultVideoInitialTime);
             }
         });
@@ -413,7 +416,7 @@ public class EditingVideoActivity extends BaseActivity {
         bmTopThumb = ThumbnailUtils.createVideoThumbnail(Constant.getAssetTopVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
 
         Bitmap bmThumb;
-        bmThumb = ThumbnailUtils.createVideoThumbnail(Constant.getCameraVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
+        bmThumb = ThumbnailUtils.createVideoThumbnail(Constant.getSourceVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
 
         imgThumbVideo1.setImageBitmap(bmThumb);
         imgThumbVideo2.setImageBitmap(bmTopThumb);
@@ -427,8 +430,8 @@ public class EditingVideoActivity extends BaseActivity {
         ArrayList<VideoOverlay> videoOverlayInformation = MainApplication.getInstance().getVideoOverlayInformation();
         videoOverlayInformation.clear();
 
-        int videoWidth = VideoUtils.getVideoWidth(Constant.getCameraVideo());
-        int videoHeight = VideoUtils.getVideoHeight(Constant.getCameraVideo());
+        int videoWidth = VideoUtils.getVideoWidth(Constant.getSourceVideo());
+        int videoHeight = VideoUtils.getVideoHeight(Constant.getSourceVideo());
 
         ArrayList<ChildTextTimelineLayout> titleList = MainApplication.getTimelineTitlesInformation();
          OverlayBean overlayBean = MainApplication.getInstance().getTemplate();
@@ -483,7 +486,7 @@ public class EditingVideoActivity extends BaseActivity {
         protected void onPreExecute() {
             try {
                 if (!flagProgressDialogIsRunning) {
-                    progressDialog.setMessage("Preparing for video...");
+                    progressDialog.setMessage("Preparing video...");
                     progressDialog.show();
                     flagProgressDialogIsRunning = true;
                 }
@@ -501,7 +504,7 @@ public class EditingVideoActivity extends BaseActivity {
             boolean flagInitialize = false;
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             try {
-                retriever.setDataSource(Constant.getCameraVideo());
+                retriever.setDataSource(Constant.getSourceVideo());
                 flagInitialize = true;
             } catch (Exception ex) {
             }

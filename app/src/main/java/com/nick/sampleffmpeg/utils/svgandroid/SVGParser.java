@@ -1104,10 +1104,12 @@ public class SVGParser {
                 Properties props = new Properties(atts);
                 if (doFill(props, gradientMap)) {
                     doLimits(x, y, width, height);
-                    canvas.drawRoundRect(x, y, x + width, y + height, rx, ry, paint);
+                    RectF rect = new RectF(x, y, x + width, y + height);
+                    canvas.drawRoundRect(rect, rx, ry, paint);
                 }
                 if (doStroke(props)) {
-                    canvas.drawRoundRect(x, y, x + width, y + height, rx, ry, paint);
+                    RectF rect = new RectF(x, y, x + width, y + height);
+                    canvas.drawRoundRect(rect, rx, ry, paint);
                 }
                 popTransform();
             } else if (!hidden && localName.equals("line")) {

@@ -52,8 +52,18 @@ public class Constant {
         return dirName;
     }
 
-    public synchronized static String getCameraVideo() {
-        return getApplicationDirectory() + "camera.mp4";
+    private static String strSrcVideoFilePath = "";
+    public synchronized static String getSourceVideo() {
+        if (strSrcVideoFilePath.length() == 0) {
+            strSrcVideoFilePath = getApplicationDirectory() + "camera.mp4";
+        }
+        return strSrcVideoFilePath;
+    }
+
+    public synchronized static void setSourceVideo(String path) {
+        if (path.length() > 0) {
+            strSrcVideoFilePath = path;
+        }
     }
 
     public synchronized static String getConvertedVideo() {

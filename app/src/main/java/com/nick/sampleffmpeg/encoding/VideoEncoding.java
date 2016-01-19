@@ -82,7 +82,7 @@ public class VideoEncoding {
         progress = 0;
         String commands = "-y -threads 5 -i src.mp4 -crf 30 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s " + strVideoSize + " -r 30 -force_key_frames expr:gte(t,n_forced*1) -c:v libx264 dst.mp4";
 
-        String srcVideoFilePath = Constant.getCameraVideo();
+        String srcVideoFilePath = Constant.getSourceVideo();
         String dstVideoFilePath = Constant.getConvertedVideo();
 
         final int videoLength = VideoUtils.getVideoLength(srcVideoFilePath);
@@ -163,11 +163,11 @@ public class VideoEncoding {
         progress += stepProgress;
 
         ArrayList<VideoOverlay> videoOverlayInformation = MainApplication.getInstance().getVideoOverlayInformation();
-        final int videoLength = VideoUtils.getVideoLength(Constant.getCameraVideo());
+        final int videoLength = VideoUtils.getVideoLength(Constant.getSourceVideo());
         if (videoOverlayInformation.size() > 0) {
             //make ffmpeg command
             String command = "-y ";
-            command = command + "-i" + " " + Constant.getCameraVideo() +" ";
+            command = command + "-i" + " " + Constant.getSourceVideo() +" ";
 
             for (int i = 0; i < videoOverlayInformation.size(); i ++) {
                 command = command + "-i" + " " + Constant.getOverlayDirectory() + i + ".png ";

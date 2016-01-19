@@ -177,7 +177,7 @@ public class CameraHelper {
         if (flagPreview) {
             return Constant.getPreviewDirectory() + "VID_"+ timeStamp + ".mp4";
         } else {
-            return Constant.getCameraVideo();
+            return Constant.getSourceVideo();
         }
     }
 
