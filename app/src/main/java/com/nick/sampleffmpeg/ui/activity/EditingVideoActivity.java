@@ -97,17 +97,6 @@ public class EditingVideoActivity extends BaseActivity {
     @InjectView(R.id.scrollview_timeline)
     HorizontalScrollView scrollViewTimeline;
 
-    @InjectView(R.id.trim_left)
-    ImageView trimLeftLayout;
-
-    @InjectView(R.id.redo_trim_left)
-    ImageView redoTrimLeftLayout;
-
-    @InjectView(R.id.trim_right)
-    ImageView trimRightLayout;
-
-    @InjectView(R.id.redo_trim_right)
-    ImageView redoTrimRightLayout;
 
     @InjectView(R.id.overlay_layout)
     OverlayView overlayView;
@@ -263,46 +252,6 @@ public class EditingVideoActivity extends BaseActivity {
                     }
                 });
 
-        UITouchButton.applyEffect(trimLeftLayout, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
-                Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
-                    @Override
-                    public void run() {
-                        trimLeft ++;
-                        updateVideoTrimLayout();
-                    }
-                });
-
-        UITouchButton.applyEffect(trimRightLayout, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
-                Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
-                    @Override
-                    public void run() {
-                        trimRight ++;
-                        updateVideoTrimLayout();
-                    }
-                });
-
-        UITouchButton.applyEffect(redoTrimLeftLayout, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
-                Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
-                    @Override
-                    public void run() {
-                        if (trimLeft > 0) {
-                            trimLeft --;
-                            updateVideoTrimLayout();
-                        }
-                    }
-                });
-
-        UITouchButton.applyEffect(redoTrimRightLayout, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
-                Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
-                    @Override
-                    public void run() {
-                        if (trimRight > 0) {
-                            trimRight --;
-                            updateVideoTrimLayout();
-                        }
-                    }
-                });
-
         scrollViewTimeline.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -313,8 +262,50 @@ public class EditingVideoActivity extends BaseActivity {
                 return true;
             }
         });
+
+        setOnVideoIndicatorListener();
     }
 
+    /**
+     * drag video indicator on timeline view
+     */
+    private float lastVideoIndicatorTapPosition = 0;
+    private int _xDelta = 0;
+    private int _yDelta = 0;
+
+    private void setOnVideoIndicatorListener() {
+        final double indicatorWidth = (videoIndicatorWidth * getDisplayMetric().scaledDensity);
+        video_indicator.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int X = (int) event.getRawX();
+                final int Y = (int) event.getRawY();
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    FrameLayout.LayoutParams lParams = (FrameLayout.LayoutParams) video_indicator.getLayoutParams();
+                    _xDelta = X - lParams.leftMargin;
+                    _yDelta = Y - lParams.topMargin;
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    float currentPosition = event.getX();
+                    if (Math.abs(lastVideoIndicatorTapPosition - currentPosition) > Constant.SP_PER_SECOND / 10) {
+                        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) video_indicator.getLayoutParams();
+
+                        float time = (float)(X - _xDelta  + indicatorWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity* 1000.f;
+                        setCurrentSeekTime(time);
+                        lastVideoIndicatorTapPosition = currentPosition;
+                    }
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                }
+                return true;
+            }
+        });
+    }
     private Runnable updateTimeTask = new Runnable() {
         public void run() {
             setCurrentSeekTime(videoView.getCurrentPosition());
@@ -326,23 +317,27 @@ public class EditingVideoActivity extends BaseActivity {
      * set current video 's seek time.
      * @param time
      */
-    public void setCurrentSeekTime(double time) {
-        currentVideoSeekPosition = (int)time;
+    public void setCurrentSeekTime(float time) {
+        if (time >=0 && time <= videoLength) {
+            currentVideoSeekPosition = (int)time;
 
-        if (!flagPlay) {
-            videoView.seekTo(currentVideoSeekPosition);
-            videoView.pause();
+            if (!flagPlay) {
+                videoView.seekTo(currentVideoSeekPosition);
+                videoView.pause();
+            }
+            float width = (videoIndicatorWidth * getDisplayMetric().scaledDensity);
+            float marginLeft = (float)time / 1000.f * Constant.SP_PER_SECOND * (getDisplayMetric().scaledDensity) - width;
+            FrameLayout.LayoutParams param = new FrameLayout.LayoutParams((int)width, FrameLayout.LayoutParams.MATCH_PARENT);
+            param.setMargins((int)marginLeft, 0, 0, 0);
+            video_indicator.setLayoutParams(param);
+            updateOverlayView((float)time / 1000.f);
         }
-        double width = (videoIndicatorWidth * getDisplayMetric().scaledDensity);
-        double marginLeft = (double)time / 1000.0 * Constant.SP_PER_SECOND * (getDisplayMetric().scaledDensity) - width;
-        FrameLayout.LayoutParams param = new FrameLayout.LayoutParams((int)width, FrameLayout.LayoutParams.MATCH_PARENT);
-        param.setMargins((int)marginLeft, 0, 0, 0);
-        video_indicator.setLayoutParams(param);
 
-        int index = (int)(time / 1000 / Constant.TIMELINE_UNIT_SECOND);
-        setTimelineVideo(videoThumbsLayout.findViewWithTag(index));
 
-        updateOverlayView((float)time / 1000.f);
+//        int index = (int)(time / 1000 / Constant.TIMELINE_UNIT_SECOND);
+//        setTimelineVideo(videoThumbsLayout.findViewWithTag(index));
+//
+//
     }
 
     /**
@@ -532,21 +527,6 @@ public class EditingVideoActivity extends BaseActivity {
                                     thumbImageLayout.setTag(tagObj / Constant.TIMELINE_UNIT_SECOND);
                                     videoThumbsLayout.addView(thumbImageLayout);
 
-                                    /**
-                                     * once image is pressed, video seek position will be changed.
-                                     */
-                                    UITouchButton.applyEffect(thumbImageLayout, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
-                                            Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    currentVideoSeekPosition = (Integer)thumbImageLayout.getTag() * 1000 * Constant.TIMELINE_UNIT_SECOND;
-                                                    setCurrentSeekTime(currentVideoSeekPosition);
-                                                }
-                                            });
-                                }
-
-                                if (tagObj == 0) {
-                                    setTimelineVideo(thumbImageLayout);
                                 }
                             }
                         });
