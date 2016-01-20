@@ -449,6 +449,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Publicly Searchable"
+                    android:layout_marginLeft="8dp"
                     android:textColor="#5d5d5d"
                     android:textSize="8sp" />
 
@@ -457,6 +458,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Invite Access Only"
+                    android:layout_marginLeft="8dp"
+
                     android:textColor="#5d5d5d"
                     android:textSize="8sp" />
 
@@ -466,6 +469,8 @@
                     android:layout_weight="1"
                     android:text="Link Only - Not Searchable"
                     android:textColor="#5d5d5d"
+                    android:layout_marginLeft="8dp"
+
                     android:textSize="8sp" />
             </LinearLayout>
         </LinearLayout>

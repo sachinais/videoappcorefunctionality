@@ -8,6 +8,7 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/llBack"
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"

@@ -173,7 +173,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
 
             @Override
             public void onFinish() {
-                ((TextView)findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_sky_blue));
+                //((TextView)findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_sky_blue));
                 uri = Uri.fromFile(new File(Constant.getMergedVideo()));
                 uploadVideo();
             }
