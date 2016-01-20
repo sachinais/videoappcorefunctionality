@@ -99,6 +99,7 @@ public class MainApplication extends Application{
             selectedOverlay = new OverlayBean();
             selectedOverlay.parseFromJson(overlayObj, directoryID);
         } catch (Exception e) {
+            e.printStackTrace();
             LogFile.logText(e.getMessage(), null);
         }
     }

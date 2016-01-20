@@ -101,6 +101,9 @@ public class OverlayBean {
         Overlay ret = null;
         if (!obj.isNull("color")) {
             String color = obj.getString("color");
+            if (color.length() == 4) {
+                color = "#" + color.charAt(1) + color.charAt(1) + color.charAt(2) + color.charAt(2) + color.charAt(3) + color.charAt(3);
+            }
             overlay.color = Color.parseColor(color);
         }
 
@@ -148,6 +151,9 @@ public class OverlayBean {
             color = color.substring(5, color.length() - 1);
 
             String colors[] = color.split(",");
+            for (int i = 0; i < colors.length; i ++) {
+                colors[i] = colors[i].replace(" ", "");
+            }
             overlay.backgroundColor = Color.argb((int)(Double.parseDouble(colors[3]) * 255), Integer.parseInt(colors[0]), Integer.parseInt(colors[1]), Integer.parseInt(colors[2]));
         }
 

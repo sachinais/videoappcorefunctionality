@@ -1,6 +1,8 @@
 package com.nick.sampleffmpeg.ui.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -8,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.nick.sampleffmpeg.Define.Constant;
@@ -17,6 +20,7 @@ import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.ui.activity.EditingVideoActivity;
 import com.nick.sampleffmpeg.ui.adapter.CaptionPreviewAdapter;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -310,7 +314,15 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
                     }, parentActivity.getString(R.string.str_cancel));
                     editTitle = (EditText)v.findViewById(R.id.edit_title_name);
                     editTitle.setTextColor(overlay.color);
-                    v.setBackgroundColor(overlay.backgroundColor);
+                    ImageView overlayBackground = (ImageView)v.findViewById(R.id.overlay_background);
+                    String filePath = Constant.getApplicationDirectory() + MainApplication.getInstance().getTemplate().strDirectoryID + File.separator + overlay.backgroundImage;;
+
+                    File imgFile = new  File(filePath);
+                    if(imgFile.exists()){
+                        Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                        overlayBackground.setImageBitmap(myBitmap);
+                        overlayBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+                    }
                 }
             });
 

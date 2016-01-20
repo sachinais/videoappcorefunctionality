@@ -2,6 +2,8 @@ package com.nick.sampleffmpeg.ui.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +13,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.OverlayBean;
+
+import java.io.File;
 
 /**
  * Created by baebae on 1/12/16.
@@ -64,7 +69,16 @@ public class CaptionPreviewAdapter extends BaseAdapter {
             ret.setLayoutParams(new GridView.LayoutParams(width / 4 - 10, width / 4 - 10));
         }
 
-        ret.findViewById(R.id.backgroundView).setBackgroundColor(overlay.backgroundColor);
+        ImageView overlayView = (ImageView)ret.findViewById(R.id.backgroundView);
+
+        String filePath = Constant.getApplicationDirectory() + MainApplication.getInstance().getTemplate().strDirectoryID + File.separator + overlay.backgroundImage;;
+
+        File imgFile = new  File(filePath);
+        if(imgFile.exists()){
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            overlayView.setImageBitmap(myBitmap);
+            overlayView.setScaleType(ImageView.ScaleType.FIT_XY);
+        }
         ((TextView)ret.findViewById(R.id.textView)).setTextColor(overlay.color);
 
         if (selectedItem == -1 && position == 0) {
