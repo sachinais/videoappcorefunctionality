@@ -16,6 +16,9 @@ public class SplashScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+
+      //  ((TextView)findViewById(R.id.tvComplete)).setTypeface(FontTypeface.getTypeface(SplashScreen.this, AppConstants.FONT_SUFI_SEMIBOLD));
+
       handler.postDelayed(new Runnable() {
             @Override
             public void run() {

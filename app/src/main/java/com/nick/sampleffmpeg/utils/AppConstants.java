@@ -11,5 +11,6 @@ public class AppConstants {
     public static final String APP_DOMAIN = "https://live.videomyjob.com/";
     public static final String FONT_SUFI_REGULAR = "SF-UI-Display-Regular.otf";
     public static final String FONT_SUFI_SEMIBOLD = "SF-UI-Display-Semibold.otf";
+    public static final String FONT_AWESOME = "FontAwesome.otf";
 
 }

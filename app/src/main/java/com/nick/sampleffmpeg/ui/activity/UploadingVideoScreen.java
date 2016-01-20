@@ -63,12 +63,21 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
     public static String ACTION_UPLOAD_COMPLETED = "ACTION_UPLOAD_COMPLETED";
     private int encodingProgress, uploadingProgress;
     private static String videoLink;
-
+    private static String videoTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_upload);
+        if(getIntent() != null){
+             videoTitle = getIntent().getExtras().getString("parameter1");
+         //   Toast.makeText(getBaseContext(),text,Toast.LENGTH_LONG).show();
+            ((EditText)findViewById(R.id.etVideTitle)).setText(videoTitle);
+            Log.d("",videoTitle);
+        }
+        ((TextView)findViewById(R.id.btnNext)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_SEMIBOLD));
+        ((TextView)findViewById(R.id.btnCancel)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_SEMIBOLD));
+
         MainApplication.getInstance().setEncodeingProgres(0);
         MainApplication.getInstance().setUploadingProgress(0);
         MainApplication.getInstance().setYoutubeUrl("");
@@ -111,6 +120,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
                     intent.putExtra("encoding_progress", encodingProgress);
                     intent.putExtra("uploading_progress", uploadingProgress);
                     intent.putExtra("video_link", videoLink);
+                    intent.putExtra("parameter1",videoTitle);
                     startActivity(intent);
                 }
 
@@ -465,6 +475,11 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
                 }
                 ((ProgressBar)findViewById(R.id.pbarUploadVideo)).setProgress(intent.getExtras().getInt("progress"));
                 ((TextView)findViewById(R.id.tvUploaPercent)).setText(intent.getExtras().getInt("progress") + "%");
+                if(intent.getExtras().getInt("progress") == 100){
+                    findViewById(R.id.llProgressEncode).setVisibility(View.GONE);
+                    findViewById(R.id.llUploadComple).setVisibility(View.VISIBLE);
+
+                }
             }else if(intent.getAction() == ACTION_PROGRESS_UPDATE){
                 videoLink = intent.getExtras().getString("url");
             }

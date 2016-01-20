@@ -8,7 +8,9 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -27,6 +29,12 @@ public class SharingVideoScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_share_upload);
+        if(getIntent() != null){
+          String  videoTitle = getIntent().getExtras().getString("parameter1");
+            //   Toast.makeText(getBaseContext(),text,Toast.LENGTH_LONG).show();
+            ((TextView)findViewById(R.id.tvVideTitle)).setText(videoTitle);
+            Log.d("", videoTitle);
+        }
         IntentFilter intentfilter = new IntentFilter();
         intentfilter.addAction(ACTION_PROGRESS_UPDATE);
         intentfilter.addAction(ACTION_UPLOAD_COMPLETED);
@@ -41,11 +49,15 @@ public class SharingVideoScreen extends Activity {
         ((TextView)findViewById(R.id.progress_encoding_text)).setText(MainApplication.getInstance().getEncodeingProgres() + "%");
         ((TextView)findViewById(R.id.tvVideoUrl)).setText(MainApplication.getInstance().getYoutubeUrl());
 
-        ((TextView)findViewById(R.id.tvEnocdeVideo)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+      //  ((TextView)findViewById(R.id.tvEnocdeVideo)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
         ((TextView)findViewById(R.id.progress_encoding_text)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
-        ((TextView)findViewById(R.id.tvUploadVideo)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+       // ((TextView)findViewById(R.id.tvUploadVideo)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
         ((TextView)findViewById(R.id.tvUploaPercent)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        if(MainApplication.getInstance().getUploadingProgress() == 100){
+            findViewById(R.id.llProgress).setVisibility(View.GONE);
+            findViewById(R.id.llUploadComple).setVisibility(View.VISIBLE);
 
+        }
         getBundleData();
     }
 
@@ -76,6 +88,11 @@ public class SharingVideoScreen extends Activity {
                 ((TextView)findViewById(R.id.tvUploaPercent)).setText(intent.getExtras().getInt("progress") + "%");
             }else if(intent.getAction() == ACTION_PROGRESS_UPDATE){
                 ((TextView)findViewById(R.id.tvVideoUrl)).setText(intent.getExtras().getString("url"));
+
+            }
+            if(intent.getExtras().getInt("progress") == 100){
+                findViewById(R.id.llProgress).setVisibility(View.GONE);
+                findViewById(R.id.llUploadComple).setVisibility(View.VISIBLE);
 
             }
         }

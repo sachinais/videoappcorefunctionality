@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,6 @@ import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.bean.VideoOverlay;
-import com.nick.sampleffmpeg.encoding.VideoEncoding;
 import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 import com.nick.sampleffmpeg.ui.control.UITouchButton;
 import com.nick.sampleffmpeg.ui.view.ChildTextTimelineLayout;
@@ -33,15 +31,12 @@ import com.nick.sampleffmpeg.ui.view.OverlayView;
 import com.nick.sampleffmpeg.ui.view.StretchVideoView;
 import com.nick.sampleffmpeg.ui.view.TitleTimeLayout;
 import com.nick.sampleffmpeg.ui.view.WaveformView;
-import com.nick.sampleffmpeg.utils.FileUtils;
 import com.nick.sampleffmpeg.utils.LogFile;
 import com.nick.sampleffmpeg.utils.StringUtils;
 import com.nick.sampleffmpeg.utils.VideoUtils;
 import com.nick.sampleffmpeg.utils.audio.soundfile.SoundFile;
-import com.nick.sampleffmpeg.utils.ffmpeg.FFMpegUtils;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -459,7 +454,7 @@ public class EditingVideoActivity extends BaseActivity {
             videoOverlayInformation.add(info);
         }
 
-        showActivity(UploadingVideoScreen.class, null);
+        showActivity(UploadingVideoScreen.class, editJobTitle.getText().toString());
         return;
 
     }

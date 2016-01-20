@@ -507,7 +507,8 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     private void showPicker()throws JSONException{
         if(MainApplication.getInstance().getTemplateArray() != null && MainApplication.getInstance().getTemplateArray().length()>0){
             JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
-            for (int i = jsonArray.length() - 1; i >= 0; i--) {
+           // for (int i = jsonArray.length() - 1; i >= 0; i--) {
+            for (int i = 0; i<jsonArray.length();i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 options1Items.add(new ProvinceBean(i, jsonObject.optString("title"),jsonObject.optString("directory"),""));
             }

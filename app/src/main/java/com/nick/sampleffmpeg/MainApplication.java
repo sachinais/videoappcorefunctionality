@@ -9,6 +9,9 @@ import com.nick.sampleffmpeg.bean.VideoOverlay;
 import com.nick.sampleffmpeg.ui.view.ChildTextTimelineLayout;
 import com.nick.sampleffmpeg.utils.LogFile;
 
+import org.acra.ACRA;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,7 +21,10 @@ import java.util.ArrayList;
 /**
  * Created by Vindhya Pratap on 1/7/2016.
  */
+@ReportsCrashes(formKey = "", // will not be used
+        mailTo = "sachink@auxiliumit.com.au", mode = ReportingInteractionMode.TOAST, resToastText = R.string.app_name)
 public class MainApplication extends Application{
+
     private static  MainApplication mainApplication;
     private CookieStore cookieStore;
     private JSONArray templateArray;
@@ -68,6 +74,7 @@ public class MainApplication extends Application{
     public void onCreate() {
         super.onCreate();
         mainApplication =(MainApplication)getApplicationContext();
+        ACRA.init(MainApplication.this);
     }
 
     public void setCookieStore(CookieStore cookieStore){
