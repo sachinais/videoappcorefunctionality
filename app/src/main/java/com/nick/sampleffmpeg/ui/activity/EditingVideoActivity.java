@@ -139,8 +139,8 @@ public class EditingVideoActivity extends BaseActivity {
     private static String strJobTitle = "";
 
     private static int videoLength = 0;
-    private static int trimLeft = 0;
-    private static int trimRight = 0;
+    private static int trimStart = 0;
+    private static int trimEnd = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,7 +190,10 @@ public class EditingVideoActivity extends BaseActivity {
     }
 
     private void updateTimelineAfterTrim() {
-        titleThumbsLayout.setTrimLeftRight(videoLength, trimLeft, trimRight);
+        titleThumbsLayout.setTrimLeftRight(trimStart, trimEnd);
+        if (currentVideoSeekPosition < trimStart) {
+            setCurrentSeekTime(trimStart);
+        }
     }
 
     private void initializeButtons() {
@@ -294,7 +297,7 @@ public class EditingVideoActivity extends BaseActivity {
                             lParams.width = (int)trimBarWidth;
                         }
                         video_trim_left.setLayoutParams(lParams);
-                        trimLeft = (int)((lParams.width - trimBarWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity  * 1000);
+                        trimStart = (int)((lParams.width - trimBarWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity  * 1000);
                         updateTimelineAfterTrim();
                     }
                 }
@@ -331,7 +334,7 @@ public class EditingVideoActivity extends BaseActivity {
                         lParams.leftMargin = parentWidth - lParams.width;
                         video_trim_right.setLayoutParams(lParams);
 
-                        trimRight = (int)((lParams.width - trimBarWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity  * 1000);
+                        trimEnd = videoLength - (int)((lParams.width - trimBarWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity  * 1000);
                         updateTimelineAfterTrim();
                     }
                 }
@@ -391,7 +394,7 @@ public class EditingVideoActivity extends BaseActivity {
      * @param time
      */
     public void setCurrentSeekTime(float time) {
-        if (time >=0 && time <= videoLength) {
+        if (time >=trimStart && time <= trimEnd) {
             final float trimBarWidth = trimImageViewWidth * getDisplayMetric().scaledDensity;
             currentVideoSeekPosition = (int)time;
 
@@ -406,12 +409,6 @@ public class EditingVideoActivity extends BaseActivity {
             video_indicator.setLayoutParams(param);
             updateOverlayView((float)time / 1000.f);
         }
-
-
-//        int index = (int)(time / 1000 / Constant.TIMELINE_UNIT_SECOND);
-//        setTimelineVideo(videoThumbsLayout.findViewWithTag(index));
-//
-//
     }
 
     /**
@@ -456,6 +453,8 @@ public class EditingVideoActivity extends BaseActivity {
                 if (!flagTimelineInitialized) {
                     initializeTimeLineView();
                 }
+                trimStart = 0;
+                trimEnd = videoLength;
                 setCurrentSeekTime(0);
             }
         });

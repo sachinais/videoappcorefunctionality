@@ -205,7 +205,10 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
                 flagDragging = true;
                 getParent().requestDisallowInterceptTouchEvent(true);
             } else {
-                setAlpha(0.5f);
+                float seekVideoTime = ((float)me.getX() / (float)Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity) * 1000;
+                if (seekVideoTime < trimEnd && seekVideoTime > trimStart) {
+                    setAlpha(0.5f);
+                }
             }
             return true;
         }
@@ -363,11 +366,11 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             caption.updateStartEndTime(startTime, endTime);
         }
     }
-    public void setTrimLeftRight(int videoLength, int trimLeft, int trimRight) {
+    public void setTrimLeftRight(int trimStart, int trimEnd) {
         ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
 
-        trimStart = trimLeft / 1000.f;
-        trimEnd = (videoLength - trimRight) / 1000.f;
+        this.trimStart = trimStart / 1000.f;
+        this.trimEnd = (trimEnd) / 1000.f;
         for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
             ChildTextTimelineLayout caption = timelineTitlesInformation.get(i);
             updateCaptionLayoutForTrimView(caption);
