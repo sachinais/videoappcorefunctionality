@@ -1,10 +1,12 @@
 package com.nick.sampleffmpeg.ui.activity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +16,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -127,7 +130,7 @@ public class EditingVideoActivity extends BaseActivity {
     private boolean flagTimelineInitialized = false;
 
     private final int defaultVideoInitialTime = 50;
-    private final int videoIndicatorWidth = 5;
+    private final int videoIndicatorWidth = 8;
     private final int trimImageViewWidth = 20;
 
     private Handler mHandler = null;
@@ -145,6 +148,11 @@ public class EditingVideoActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         setContentView(R.layout.editing_video_view);
         ButterKnife.inject(this);
 
@@ -155,6 +163,7 @@ public class EditingVideoActivity extends BaseActivity {
         LogFile.clearLogText();
         mHandler = new Handler();
         if (savedInstanceState == null) {
+            flagTimelineInitialized = false;
             flagFromBackground = false;
             addTitle();
         } else {
@@ -254,6 +263,14 @@ public class EditingVideoActivity extends BaseActivity {
                     @Override
                     public void run() {
                         convertOverlaysPNG();
+                    }
+                });
+
+        UITouchButton.applyEffect(imgThumbVideo4, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
+                Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
+                    @Override
+                    public void run() {
+                        showTutorialPage();
                     }
                 });
 
@@ -382,6 +399,15 @@ public class EditingVideoActivity extends BaseActivity {
             }
         });
     }
+
+    /**
+     * show tutorial page via webview
+     */
+    private void showTutorialPage() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://live.videomyjob.com"));
+        startActivity(browserIntent);
+    }
+
     private Runnable updateTimeTask = new Runnable() {
         public void run() {
             setCurrentSeekTime(videoView.getCurrentPosition());
@@ -450,11 +476,16 @@ public class EditingVideoActivity extends BaseActivity {
                 videoView.seekTo(defaultVideoInitialTime);
                 txtVideoDuration.setText(getString(R.string.label_total_length) + StringUtils.getMinuteSecondString(videoLength / 1000, false));
                 videoControlLayout.setVisibility(View.VISIBLE);
+
+                if (!flagFromBackground && !flagTimelineInitialized) {
+                    trimStart = 0;
+                    trimEnd = videoLength;
+                }
+
                 if (!flagTimelineInitialized) {
                     initializeTimeLineView();
                 }
-                trimStart = 0;
-                trimEnd = videoLength;
+
                 setCurrentSeekTime(0);
                 titleThumbsLayout.setTrimLeftRight(trimStart, trimEnd);
             }

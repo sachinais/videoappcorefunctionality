@@ -114,7 +114,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         parentActivity.updateOverlayView(startTime);
 
 
-        showHintTextView();
+        //showHintTextView();
     }
 
     /**
@@ -192,40 +192,32 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         return false;
     }
 
+    private boolean firstTouch = false;
+
     @Override
     public boolean onTouch(View view, MotionEvent me) {
         // Only capture drag events if we start
         // Touch begin and get title from selected position
         if (me.getAction() == MotionEvent.ACTION_DOWN) {
-            selectedItem = null;
-            lastDragX = startDragX = me.getX();
-            selectedItem = getChildFromPosition(startDragX);
-            dragStartTime = SystemClock.elapsedRealtime();
-            if (selectedItem != null) {
-                flagDragging = true;
-                getParent().requestDisallowInterceptTouchEvent(true);
-            } else {
-                float seekVideoTime = ((float)me.getX() / (float)Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity);
-                if (seekVideoTime < trimEnd && seekVideoTime > trimStart) {
-                    setAlpha(0.5f);
+            float seekVideoTime = ((float) me.getX() / (float) Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity);
+
+            if (seekVideoTime < trimEnd && seekVideoTime > trimStart) {
+                selectedItem = null;
+                lastDragX = startDragX = me.getX();
+                selectedItem = getChildFromPosition(startDragX);
+
+                if (selectedItem != null) {
+                    flagDragging = true;
+                    getParent().requestDisallowInterceptTouchEvent(true);
                 }
-            }
-            return true;
-        }
-        //Touch end event
-        else if (me.getAction() == MotionEvent.ACTION_UP) {
-            getParent().requestDisallowInterceptTouchEvent(false);
-            flagDragging = false;
 
-            //if touch start & end in short time, press event will happen.
-            if (((SystemClock.elapsedRealtime() - dragStartTime) < SINGLE_TAP_MAX_TIME)) {
-                float seekVideoTime = ((float)me.getX() / (float)Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity);
-                if (seekVideoTime < trimEnd && seekVideoTime > trimStart) {
+                if (firstTouch && (SystemClock.elapsedRealtime() - dragStartTime) <= SINGLE_TAP_MAX_TIME * 2) {
+                    firstTouch = false;
+
                     parentActivity.setCurrentSeekTime(seekVideoTime * 1000);
-
                     /**
                      * if item is already selected on touch down event, it will show alert to delete current title.
-                     * if no itme is selected, add dialog will show
+                     * if no item is selected, add dialog will show
                      */
 
                     if (selectedItem != null) {
@@ -241,9 +233,17 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
                     } else {
                         addNewTitleToTimeline();
                     }
+                } else {
+                    firstTouch = true;
+                    dragStartTime = SystemClock.elapsedRealtime();
                 }
             }
-            setAlpha(1.f);
+            return true;
+        }
+        //Touch end event
+        else if (me.getAction() == MotionEvent.ACTION_UP) {
+            getParent().requestDisallowInterceptTouchEvent(false);
+            flagDragging = false;
             return true;
         } else if (me.getAction() == MotionEvent.ACTION_MOVE) {
             float x = me.getX();
@@ -256,7 +256,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
                     } else if (flagMoving) {
                         selectedItem.moveLayout(me.getX() + movingOffset);
                     }
-                    updateCaptionLayoutForTrimView(selectedItem);
+                    updateCaptionLayoutForTrimView(selectedItem, false);
                 }
             }
             lastDragX = x;
@@ -337,7 +337,11 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         }
     }
 
-    private void updateCaptionLayoutForTrimView(ChildTextTimelineLayout caption) {
+    /**
+     * when video is trimming, it must affected to captions too.
+     * @param caption
+     */
+    private void updateCaptionLayoutForTrimView(ChildTextTimelineLayout caption, boolean flagResize) {
         boolean flagUpdate = false;
         float startTime = caption.getStartTime();
         float endTime = caption.getEndTime();
@@ -346,9 +350,11 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             flagUpdate = true;
             float delta = trimStart - startTime;
             startTime = startTime + delta;
-            endTime = endTime + delta;
-            if (endTime >= trimEnd) {
-                endTime = trimEnd;
+            if (flagResize) {
+                endTime = endTime + delta;
+                if (endTime >= trimEnd) {
+                    endTime = trimEnd;
+                }
             }
         }
 
@@ -356,10 +362,13 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             flagUpdate = true;
             float delta = endTime - trimEnd;
             endTime = endTime - delta;
-            startTime = startTime - delta;
-            if (startTime < trimStart) {
-                startTime = trimStart;
+            if (flagResize) {
+                startTime = startTime - delta;
+                if (startTime < trimStart) {
+                    startTime = trimStart;
+                }
             }
+
         }
 
         if (flagUpdate) {
@@ -373,7 +382,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         this.trimEnd = (trimEnd) / 1000.f;
         for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
             ChildTextTimelineLayout caption = timelineTitlesInformation.get(i);
-            updateCaptionLayoutForTrimView(caption);
+            updateCaptionLayoutForTrimView(caption, true);
         }
     }
 }

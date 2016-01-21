@@ -7,13 +7,23 @@
 
     <RelativeLayout
         android:orientation="vertical"
-        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <com.nick.sampleffmpeg.ui.view.VideoCaptureView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:id="@+id/surface_view" />
+
+        <ImageView
+            android:id="@+id/btnSwitchCamera"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            android:layout_marginTop="20sp"
+            android:layout_marginRight="30sp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/btn_switch_camera"/>
+
         <com.nick.sampleffmpeg.ui.view.OverlayView
             android:id="@+id/overlayview"
             android:layout_width="match_parent"
@@ -164,16 +174,6 @@
             android:layout_height="wrap_content" />
 
     </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/btnSwitchCamera"
-        android:layout_width="50sp"
-        android:layout_height="50sp"
-        android:layout_marginTop="20sp"
-        android:layout_marginRight="30sp"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/btn_switch_camera"/>
-
 
     <RelativeLayout
         android:layout_width="match_parent"

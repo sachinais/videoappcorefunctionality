@@ -1,12 +1,14 @@
 package com.nick.sampleffmpeg.ui.activity;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
 import android.view.View;
@@ -98,7 +100,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     private static final String TAG = "Recorder";
     private boolean flagInitialized = false;
 
-    private int recordingTime = 0;
+    private float recordingTime = 0;
     private Thread timerThread = null;
     private Thread countDownThread = null;
     private Dialog optionDialog;
@@ -109,6 +111,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     private int countDownValue = -1000;
     private SharedPreferenceWriter sharedPreferenceWriter = null;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +121,11 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         getStoredTemplateIfNull();
         ButterKnife.inject(this);
         getWindow().setFormat(PixelFormat.UNKNOWN);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         initializeUIControls();
         showReadyForRecordingLayout();
@@ -138,12 +146,17 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                 while (!Thread.interrupted()) {
                     if (isRecording) {
                         try {
-                            Thread.sleep(1000);
-                            recordingTime ++;
+                            Thread.sleep(500);
+                            recordingTime += 0.5f;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    String time = StringUtils.getMinuteSecondString(recordingTime, true);
+                                    if (imgStatusRecording.getVisibility() == View.VISIBLE) {
+                                        imgStatusRecording.setVisibility(View.GONE);
+                                    } else {
+                                        imgStatusRecording.setVisibility(View.VISIBLE);
+                                    }
+                                    String time = StringUtils.getMinuteSecondString((int)recordingTime, true);
                                     txtRecordingTime.setText(time);
                                 }
                             });
@@ -309,7 +322,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        if (recordingTime <= 5) {
+                        if (recordingTime <= 5.f) {
                             showAlert(R.string.str_alert_short_video_title, "Be sure you have recorded at least 5 seconds of footage before stopping your recording.", "OK");
                             return;
                         }
@@ -411,7 +424,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             public void onFinish() {
                 progressDialog.dismiss();
                 RecordingVideoActivity.this.finish();
-                if (recordingTime > 15) {
+                if (recordingTime > 15.f) {
                     Constant.updateTimeUnit(2);
                 }
 
