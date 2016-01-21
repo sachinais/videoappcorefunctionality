@@ -9,6 +9,8 @@ import java.io.File;
  * Created by baebae on 12/22/15.
  */
 public class Constant {
+    public final static int         VIDEO_WIDTH = 1280;
+    public final static int         VIDEO_HEIGHT = 720;
     public final static int			BUTTON_NORMAL_ALPHA	= 100;
     public final static int			BUTTON_FOCUS_ALPHA	= 50;
     public static int               TIMELINE_UNIT_SECOND = 1;

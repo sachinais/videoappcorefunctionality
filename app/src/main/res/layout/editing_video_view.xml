@@ -505,14 +505,19 @@
                         android:src="@drawable/btn_slide_right"/>
                 </RelativeLayout>
 
-                <View
+                <RelativeLayout
                     android:id="@+id/video_indicator"
                     android:layout_width="0sp"
                     android:layout_marginLeft="20sp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/video_indicator">
+                    android:layout_height="match_parent">
+                    <View
+                        android:layout_width="8sp"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/video_indicator">
 
-                </View>
+                    </View>
+                </RelativeLayout>
             </FrameLayout>
         </HorizontalScrollView>
 

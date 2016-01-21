@@ -130,7 +130,7 @@ public class EditingVideoActivity extends BaseActivity {
     private boolean flagTimelineInitialized = false;
 
     private final int defaultVideoInitialTime = 50;
-    private final int videoIndicatorWidth = 8;
+    private final int videoIndicatorWidth = 20;
     private final int trimImageViewWidth = 20;
 
     private Handler mHandler = null;
@@ -526,8 +526,10 @@ public class EditingVideoActivity extends BaseActivity {
         ArrayList<VideoOverlay> videoOverlayInformation = MainApplication.getInstance().getVideoOverlayInformation();
         videoOverlayInformation.clear();
 
-        int videoWidth = VideoUtils.getVideoWidth(Constant.getSourceVideo());
-        int videoHeight = VideoUtils.getVideoHeight(Constant.getSourceVideo());
+//        int videoWidth = VideoUtils.getVideoWidth(Constant.getSourceVideo());
+//        int videoHeight = VideoUtils.getVideoHeight(Constant.getSourceVideo());
+        int videoWidth = Constant.VIDEO_WIDTH;
+        int videoHeight = Constant.VIDEO_HEIGHT;
 
         ArrayList<ChildTextTimelineLayout> titleList = MainApplication.getTimelineTitlesInformation();
          OverlayBean overlayBean = MainApplication.getInstance().getTemplate();

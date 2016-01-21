@@ -214,10 +214,6 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
 
     private void encodingVideo() {
 
-        int videoWidth = VideoUtils.getVideoWidth(Constant.getSourceVideo());
-        int videoHeight = VideoUtils.getVideoHeight(Constant.getSourceVideo());
-
-
         VideoEncoding.startVideoEncoding(new VideoEncoding.Callback() {
             @Override
             public void onProgress(int progress) {
@@ -233,7 +229,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
                 uri = Uri.fromFile(new File(Constant.getMergedVideo()));
                 //uploadVideo();
             }
-        }, 1280, 720, false);
+        }, Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, false);
     }
     public void uploadVideo() {
         if (mChosenAccountName == null) {
