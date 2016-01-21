@@ -217,6 +217,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
         int videoWidth = VideoUtils.getVideoWidth(Constant.getSourceVideo());
         int videoHeight = VideoUtils.getVideoHeight(Constant.getSourceVideo());
 
+
         VideoEncoding.startVideoEncoding(new VideoEncoding.Callback() {
             @Override
             public void onProgress(int progress) {
@@ -230,9 +231,9 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
             public void onFinish() {
                 ((TextView)findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_light_sign_btn));
                 uri = Uri.fromFile(new File(Constant.getMergedVideo()));
-                uploadVideo();
+                //uploadVideo();
             }
-        }, videoWidth, videoHeight, true);
+        }, 1280, 720, false);
     }
     public void uploadVideo() {
         if (mChosenAccountName == null) {

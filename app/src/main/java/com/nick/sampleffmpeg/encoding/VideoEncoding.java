@@ -163,11 +163,11 @@ public class VideoEncoding {
         progress += stepProgress;
 
         ArrayList<VideoOverlay> videoOverlayInformation = MainApplication.getInstance().getVideoOverlayInformation();
-        final int videoLength = VideoUtils.getVideoLength(Constant.getSourceVideo());
+        final int videoLength = VideoUtils.getVideoLength(Constant.getConvertedVideo());
         if (videoOverlayInformation.size() > 0) {
             //make ffmpeg command
             String command = "-y ";
-            command = command + "-i" + " " + Constant.getSourceVideo() +" ";
+            command = command + "-i" + " " + Constant.getConvertedVideo() +" ";
 
             for (int i = 0; i < videoOverlayInformation.size(); i ++) {
                 command = command + "-i" + " " + Constant.getOverlayDirectory() + i + ".png ";
