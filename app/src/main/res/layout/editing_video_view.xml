@@ -419,6 +419,8 @@
                 android:layout_height="match_parent">
 
                 <LinearLayout
+                    android:layout_marginLeft="20sp"
+                    android:layout_marginRight="20sp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -474,7 +476,7 @@
                     android:alpha="1"
                     android:background="#000">
                     <ImageView
-                        android:id="@+id/redo_trim_left"
+                        android:id="@+id/trim_left"
                         android:paddingTop="20sp"
                         android:paddingBottom="20sp"
                         android:layout_alignParentRight="true"
@@ -500,12 +502,13 @@
                         android:layout_width="20sp"
                         android:layout_height="match_parent"
                         android:scaleType="fitXY"
-                        android:src="@drawable/btn_slide_left"/>
+                        android:src="@drawable/btn_slide_right"/>
                 </RelativeLayout>
 
                 <View
                     android:id="@+id/video_indicator"
                     android:layout_width="10sp"
+                    android:layout_marginLeft="25sp"
                     android:layout_height="match_parent"
                     android:background="@drawable/video_indicator">
 

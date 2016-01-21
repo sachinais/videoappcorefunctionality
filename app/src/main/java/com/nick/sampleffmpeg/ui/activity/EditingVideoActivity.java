@@ -1,6 +1,7 @@
 package com.nick.sampleffmpeg.ui.activity;
 
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.media.ThumbnailUtils;
@@ -8,6 +9,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,6 +116,12 @@ public class EditingVideoActivity extends BaseActivity {
     @InjectView(R.id.video_trim_right_view)
     View video_trim_right;
 
+    @InjectView(R.id.trim_left)
+    ImageView btnTrimLeft;
+
+    @InjectView(R.id.trim_right)
+    ImageView btnTrimRight;
+
     private int currentVideoSeekPosition = 0;
     private double trimLeft = 3.0;
     private double trimRight = 1.0;
@@ -120,8 +129,9 @@ public class EditingVideoActivity extends BaseActivity {
     private boolean flagPlay = false;
     private boolean flagTimelineInitialized = false;
 
-    private int defaultVideoInitialTime = 50;
-    private int videoIndicatorWidth = 10;
+    private final int defaultVideoInitialTime = 50;
+    private final int videoIndicatorWidth = 5;
+    private final int trimImageViewWidth = 20;
 
     private Handler mHandler = null;
     private View selectedVideoTimeline = null;
@@ -264,36 +274,102 @@ public class EditingVideoActivity extends BaseActivity {
         });
 
         setOnVideoIndicatorListener();
+        setOnVideoTrimTouchListener();
     }
 
+    private int lastXTrimLeft = 0;
+    private int lastXTrimRight = 0;
+    private int trimWidthOnTap = 0;
+    private void setOnVideoTrimTouchListener() {
+        final float trimMinWidth = trimImageViewWidth * getDisplayMetric().scaledDensity;
+        btnTrimLeft.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int X = (int) event.getRawX();
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    lastXTrimLeft = X;
+                    FrameLayout.LayoutParams lParams = (FrameLayout.LayoutParams) video_trim_left.getLayoutParams();
+                    trimWidthOnTap = lParams.width;
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    if (Math.abs(lastXTrimLeft - X) > Constant.SP_PER_SECOND / 10) {
+                        FrameLayout.LayoutParams lParams = (FrameLayout.LayoutParams) video_trim_left.getLayoutParams();
+                        lParams.width = (int)(trimWidthOnTap + (X - lastXTrimLeft));
+                        if (lParams.width < trimMinWidth) {
+                            lParams.width = (int)trimMinWidth;
+                        }
+                        video_trim_left.setLayoutParams(lParams);
+                    }
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                }
+                return true;
+            }
+        });
+
+        btnTrimRight.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int X = (int) event.getRawX();
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    lastXTrimRight = X;
+                    FrameLayout.LayoutParams lParams = (FrameLayout.LayoutParams) video_trim_right.getLayoutParams();
+                    trimWidthOnTap = lParams.width;
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    Log.d("Width", Integer.toString(trimWidthOnTap) + " " + Integer.toString(X));
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    if (Math.abs(lastXTrimRight - X) > Constant.SP_PER_SECOND / 10) {
+                        FrameLayout.LayoutParams lParams = (FrameLayout.LayoutParams) video_trim_right.getLayoutParams();
+                        lParams.width = (int)(trimWidthOnTap + (lastXTrimRight - X));
+                        if (lParams.width < trimMinWidth) {
+                            lParams.width = (int)trimMinWidth;
+                        }
+                        Log.d("Width", Integer.toString(lParams.width) + " " + Integer.toString(X) + " " + Integer.toString(lastXTrimRight));
+                        int parentWidth = ((View)video_trim_right.getParent()).getWidth();
+                        lParams.leftMargin = parentWidth - lParams.width;
+                        video_trim_right.setLayoutParams(lParams);
+                    }
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                }
+                return true;
+            }
+        });
+    }
     /**
      * drag video indicator on timeline view
      */
     private float lastVideoIndicatorTapPosition = 0;
     private int _xDelta = 0;
-    private int _yDelta = 0;
 
     private void setOnVideoIndicatorListener() {
-        final double indicatorWidth = (videoIndicatorWidth * getDisplayMetric().scaledDensity);
+        final float indicatorWidth = (videoIndicatorWidth * getDisplayMetric().scaledDensity);
+        final float trimBarWidth = trimImageViewWidth * getDisplayMetric().scaledDensity;
         video_indicator.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 final int X = (int) event.getRawX();
-                final int Y = (int) event.getRawY();
 
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     FrameLayout.LayoutParams lParams = (FrameLayout.LayoutParams) video_indicator.getLayoutParams();
                     _xDelta = X - lParams.leftMargin;
-                    _yDelta = Y - lParams.topMargin;
                     v.getParent().requestDisallowInterceptTouchEvent(true);
                 }
 
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
                     float currentPosition = event.getX();
                     if (Math.abs(lastVideoIndicatorTapPosition - currentPosition) > Constant.SP_PER_SECOND / 10) {
-                        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) video_indicator.getLayoutParams();
-
-                        float time = (float)(X - _xDelta  + indicatorWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity* 1000.f;
+                        float time = (float)(X - _xDelta  + indicatorWidth - trimBarWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity* 1000.f;
                         setCurrentSeekTime(time);
                         lastVideoIndicatorTapPosition = currentPosition;
                     }
@@ -319,6 +395,7 @@ public class EditingVideoActivity extends BaseActivity {
      */
     public void setCurrentSeekTime(float time) {
         if (time >=0 && time <= videoLength) {
+            final float trimBarWidth = trimImageViewWidth * getDisplayMetric().scaledDensity;
             currentVideoSeekPosition = (int)time;
 
             if (!flagPlay) {
@@ -326,7 +403,7 @@ public class EditingVideoActivity extends BaseActivity {
                 videoView.pause();
             }
             float width = (videoIndicatorWidth * getDisplayMetric().scaledDensity);
-            float marginLeft = (float)time / 1000.f * Constant.SP_PER_SECOND * (getDisplayMetric().scaledDensity) - width;
+            float marginLeft = (float)time / 1000.f * Constant.SP_PER_SECOND * (getDisplayMetric().scaledDensity) - width + trimBarWidth;
             FrameLayout.LayoutParams param = new FrameLayout.LayoutParams((int)width, FrameLayout.LayoutParams.MATCH_PARENT);
             param.setMargins((int)marginLeft, 0, 0, 0);
             video_indicator.setLayoutParams(param);
@@ -596,7 +673,6 @@ public class EditingVideoActivity extends BaseActivity {
                     } else {
                         addDefaultOverlays();
                     }
-                    updateVideoTrimLayout();
                 }
             });
 
