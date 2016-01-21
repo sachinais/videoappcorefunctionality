@@ -8,6 +8,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -16,6 +17,8 @@ import android.widget.RelativeLayout;
 import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.utils.FileUtils;
 import com.nick.sampleffmpeg.utils.camera.CameraHelper;
+
+import java.util.List;
 
 /**
  * Created by baebae on 12/22/15.
@@ -56,13 +59,33 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
+    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
+        if (sizes == null)
+            return null;
+
+        Camera.Size optimalSize = null;
+        double minDiff = Double.MAX_VALUE;
+
+        int targetHeight = h;
+
+
+        minDiff = Double.MAX_VALUE;
+        for (Camera.Size size : sizes) {
+            if (Math.abs(size.height - targetHeight) < minDiff) {
+                optimalSize = size;
+                minDiff = Math.abs(size.height - targetHeight);
+            }
+        }
+        return optimalSize;
+    }
 
     @SuppressLint("NewApi")
     public void initializeRecording(boolean flagPreview) {
         try {
             mMediaRecorder = new MediaRecorder();
-
             int cameraID = initializeCamera();
+            Camera.Parameters p = mCamera.getParameters();
+            List<Camera.Size> videoSizes = p.getSupportedVideoSizes();
             mCamera.unlock();
 
             CamcorderProfile mProfile = CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_HIGH );
@@ -85,16 +108,13 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
             setLayoutParams(param);
 
             //3rd. config
-            mMediaRecorder.setOutputFormat( mProfile.fileFormat );
-            mMediaRecorder.setAudioEncoder( mProfile.audioCodec );
-            mMediaRecorder.setVideoEncoder( mProfile.videoCodec );
+            Camera.Size optimalVideoSize = getOptimalPreviewSize(videoSizes, Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT);
 
-            mMediaRecorder.setVideoSize( mProfile.videoFrameWidth, mProfile.videoFrameHeight );
-            mMediaRecorder.setVideoFrameRate( mProfile.videoFrameRate );
-            mMediaRecorder.setVideoEncodingBitRate( mProfile.videoBitRate );
-            mMediaRecorder.setAudioEncodingBitRate( mProfile.audioBitRate );
-            mMediaRecorder.setAudioChannels( mProfile.audioChannels );
-            mMediaRecorder.setAudioSamplingRate( mProfile.audioSampleRate );
+            mProfile.videoFrameWidth = optimalVideoSize.width;
+            mProfile.videoFrameHeight = optimalVideoSize.height;
+
+            Constant.setVideoSize(optimalVideoSize.width, optimalVideoSize.height);
+            mMediaRecorder.setProfile(mProfile);
 
             mMediaRecorder.setOutputFile(CameraHelper.getOutputMediaFilePath(flagPreview));
 

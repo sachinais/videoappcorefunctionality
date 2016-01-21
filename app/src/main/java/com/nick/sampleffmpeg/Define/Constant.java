@@ -9,8 +9,8 @@ import java.io.File;
  * Created by baebae on 12/22/15.
  */
 public class Constant {
-    public final static int         VIDEO_WIDTH = 1280;
-    public final static int         VIDEO_HEIGHT = 720;
+    public static int               VIDEO_WIDTH = 1280;
+    public static int               VIDEO_HEIGHT = 720;
     public final static int			BUTTON_NORMAL_ALPHA	= 100;
     public final static int			BUTTON_FOCUS_ALPHA	= 50;
     public static int               TIMELINE_UNIT_SECOND = 1;
@@ -21,6 +21,11 @@ public class Constant {
     public static void updateTimeUnit(int time) {
         TIMELINE_UNIT_SECOND = time;
         SP_PER_SECOND = 60 / TIMELINE_UNIT_SECOND;
+    }
+
+    public static void setVideoSize(int width, int height) {
+        VIDEO_WIDTH = width;
+        VIDEO_HEIGHT = height;
     }
     /**
      * get Device FFMpeg folder path in sdcard

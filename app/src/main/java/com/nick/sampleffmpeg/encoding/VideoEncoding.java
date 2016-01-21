@@ -68,6 +68,9 @@ public class VideoEncoding {
 
             int progressTime = sec + min * 60 + hour * 3600;
             int progress = (progressTime * stepProgress) / videoLength;
+            if (progress >= stepProgress) {
+                progress = stepProgress;
+            }
             return progress;
         } else {
             return 0;
@@ -163,11 +166,11 @@ public class VideoEncoding {
         progress += stepProgress;
 
         ArrayList<VideoOverlay> videoOverlayInformation = MainApplication.getInstance().getVideoOverlayInformation();
-        final int videoLength = VideoUtils.getVideoLength(Constant.getConvertedVideo());
+        final int videoLength = VideoUtils.getVideoLength(Constant.getSourceVideo());
         if (videoOverlayInformation.size() > 0) {
             //make ffmpeg command
             String command = "-y ";
-            command = command + "-i" + " " + Constant.getConvertedVideo() +" ";
+            command = command + "-i" + " " + Constant.getSourceVideo() +" ";
 
             for (int i = 0; i < videoOverlayInformation.size(); i ++) {
                 command = command + "-i" + " " + Constant.getOverlayDirectory() + i + ".png ";

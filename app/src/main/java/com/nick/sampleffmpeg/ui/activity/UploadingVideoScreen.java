@@ -229,7 +229,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
                 uri = Uri.fromFile(new File(Constant.getMergedVideo()));
                 //uploadVideo();
             }
-        }, Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, false);
+        }, Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, true);
     }
     public void uploadVideo() {
         if (mChosenAccountName == null) {
