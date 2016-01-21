@@ -397,7 +397,7 @@ public class WaveformView extends View {
                 mValuesByZoomLevel[2][i] = averageValue;
             }
         } else {
-            nZoom = mLenByZoomLevel[2] / mLenByZoomLevel[1];
+            nZoom = (double)mLenByZoomLevel[2] / (double)mLenByZoomLevel[1];
             for (int i = 0; i < mLenByZoomLevel[1] - 1; i ++) {
                 int index = (int)(nZoom * i);
                 int endIndex = (int)(nZoom * (i + 1));

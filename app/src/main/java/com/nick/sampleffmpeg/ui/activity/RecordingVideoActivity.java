@@ -102,7 +102,6 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
     private float recordingTime = 0;
     private Thread timerThread = null;
-    private Thread countDownThread = null;
     private Dialog optionDialog;
 
     private double defaultWidth = 0;
@@ -162,6 +161,39 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                             });
                         } catch (InterruptedException e) {
                         }
+                    } else {
+                        try {
+                            final int threadStep = 50;
+                            Thread.sleep(threadStep);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (countDownValue > 0) {
+                                        txtCountDown.setVisibility(View.VISIBLE);
+                                        progressCountDown.setVisibility(View.VISIBLE);
+                                        int percent = countDownValue % 1000;
+                                        int value = (countDownValue - percent) / 1000;
+
+                                        percent = 1000 - percent;
+                                        progressCountDown.setProgress(percent / 10);
+                                        txtCountDown.setText(Integer.toString(value + 1));
+                                    } else {
+                                        txtCountDown.setVisibility(View.GONE);
+                                        progressCountDown.setVisibility(View.GONE);
+                                    }
+
+                                    if (countDownValue == -threadStep) {
+                                        recordingTime = 0;
+                                        txtRecordingTime.setText("");
+                                        isRecording = true;
+                                        showRecordingLayout();
+                                    }
+
+                                    countDownValue -= threadStep;
+                                }
+                            });
+                        } catch (InterruptedException e) {
+                        }
                     }
                 }
 
@@ -169,48 +201,6 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         }));
 
         timerThread.start();
-
-        countDownThread = (new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!Thread.interrupted()) {
-
-                    try {
-                        final int threadStep = 50;
-                        Thread.sleep(threadStep);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (countDownValue > 0) {
-                                    txtCountDown.setVisibility(View.VISIBLE);
-                                    progressCountDown.setVisibility(View.VISIBLE);
-                                    int percent = countDownValue % 1000;
-                                    int value = (countDownValue - percent) / 1000;
-
-                                    percent = 1000 - percent;
-                                    progressCountDown.setProgress(percent / 10);
-                                    txtCountDown.setText(Integer.toString(value + 1));
-                                } else {
-                                    txtCountDown.setVisibility(View.GONE);
-                                    progressCountDown.setVisibility(View.GONE);
-                                }
-
-                                if (countDownValue == -threadStep) {
-                                    isRecording = true;
-                                    showRecordingLayout();
-                                    recordingTime = 0;
-                                }
-
-                                countDownValue -= threadStep;
-                            }
-                        });
-                    } catch (InterruptedException e) {
-                    }
-                }
-
-            }
-        }));
-        countDownThread.start();
 
         rl_Menu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,9 +242,6 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                 timerThread.start();
             }
 
-            if (countDownThread != null && !countDownThread.isAlive()) {
-                countDownThread.start();
-            }
         } catch (Exception e) {
 
         }
@@ -269,9 +256,6 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             timerThread.interrupt();
         }
 
-        if (countDownThread != null && countDownThread.isAlive()) {
-            countDownThread.interrupt();
-        }
     }
 
     /**
