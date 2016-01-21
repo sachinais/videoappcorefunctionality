@@ -507,8 +507,8 @@
 
                 <View
                     android:id="@+id/video_indicator"
-                    android:layout_width="10sp"
-                    android:layout_marginLeft="25sp"
+                    android:layout_width="0sp"
+                    android:layout_marginLeft="20sp"
                     android:layout_height="match_parent"
                     android:background="@drawable/video_indicator">
 

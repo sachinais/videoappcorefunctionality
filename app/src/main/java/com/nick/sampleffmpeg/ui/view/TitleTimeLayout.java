@@ -33,12 +33,15 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
     private boolean flagResizeRight = false;
     private boolean flagMoving = false;
 
-    private double movingOffset = 0;
+    private float movingOffset = 0;
+
+    private float trimStart = 0f;
+    private float trimEnd = 0f;
 
     private boolean flagDragging;
     private long dragStartTime;
     private float startDragX;
-    private double lastDragX;
+    private float lastDragX;
 
     private CaptionPreviewAdapter captionPreviewAdapter = null;
 
@@ -71,8 +74,8 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         boolean ret = false;
         ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
         for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
-            double startTime = timelineTitlesInformation.get(i).getStartTime();
-            double endTime = timelineTitlesInformation.get(i).getEndTime();
+            float startTime = timelineTitlesInformation.get(i).getStartTime();
+            float endTime = timelineTitlesInformation.get(i).getEndTime();
             if (currentVideoSeekPosition > (startTime - 0.5) * 1000 && currentVideoSeekPosition < (endTime + 0.5) * 1000) {
                 return true;
             }
@@ -93,14 +96,13 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
 //        if (flagAlreadyHaveTitle) {
 //            parentActivity.showAlert(R.string.str_alert_title_information, R.string.str_title_already_exist, parentActivity.getString(R.string.str_alert_okay));
 //        } else {
-            int startTime = currentVideoSeekPosition / 1000;
-            int endTime = startTime + Constant.TIMELINE_UNIT_SECOND;
-
+            float startTime = currentVideoSeekPosition / 1000.f;
+            float endTime = startTime + Constant.TIMELINE_UNIT_SECOND;
             addNewTitleInformation(title, startTime, endTime, overlay, true);
 //        }
     }
 
-    public void addNewTitleInformation(String title, double startTime, double endTime, OverlayBean.Overlay overlay, boolean flagRemovable) {
+    public void addNewTitleInformation(String title, float startTime, float endTime, OverlayBean.Overlay overlay, boolean flagRemovable) {
         ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
         ChildTextTimelineLayout titleLayout = (ChildTextTimelineLayout)parentActivity.getLayoutInflater().inflate(R.layout.title_timeline_layout, null);
         titleLayout.setParentWidth(this.getWidth());
@@ -149,14 +151,14 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
      * @param position position
      * @return selected child layout
      */
-    private ChildTextTimelineLayout getChildFromPosition(double position) {
+    private ChildTextTimelineLayout getChildFromPosition(float position) {
         ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
         flagMoving = flagResizeLeft = flagResizeRight = false;
         for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
             ChildTextTimelineLayout layout = timelineTitlesInformation.get(i);
             if (position > layout.getLayoutLeft() && position < layout.getLayoutRight()) {
-                double leftMovingArea = layout.getLayoutLeft() + (layout.getLayoutRight() - layout.getLeft()) / 4.f;
-                double rightMovingArea = layout.getLayoutLeft() + (layout.getLayoutRight() - layout.getLeft()) / 4.f * 3;
+                float leftMovingArea = layout.getLayoutLeft() + (layout.getLayoutRight() - layout.getLeft()) / 4.f;
+                float rightMovingArea = layout.getLayoutLeft() + (layout.getLayoutRight() - layout.getLeft()) / 4.f * 3;
                 if (position < leftMovingArea) {
                     flagResizeLeft = true;
                 } else if (position > rightMovingArea){
@@ -177,7 +179,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
      * @param position moving position
      * @return if position is in other title area it will return true
      */
-    private boolean checkConflictTitleArea(double position) {
+    private boolean checkConflictTitleArea(float position) {
         ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
         for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
             ChildTextTimelineLayout layout = timelineTitlesInformation.get(i);
@@ -215,31 +217,33 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             //if touch start & end in short time, press event will happen.
             if (((SystemClock.elapsedRealtime() - dragStartTime) < SINGLE_TAP_MAX_TIME)) {
                 float seekVideoTime = ((float)me.getX() / (float)Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity) * 1000;
-                parentActivity.setCurrentSeekTime(seekVideoTime);
+                if (seekVideoTime < trimEnd && seekVideoTime > trimStart) {
+                    parentActivity.setCurrentSeekTime(seekVideoTime);
 
-                /**
-                 * if item is already selected on touch down event, it will show alert to delete current title.
-                 * if no itme is selected, add dialog will show
-                 */
+                    /**
+                     * if item is already selected on touch down event, it will show alert to delete current title.
+                     * if no itme is selected, add dialog will show
+                     */
 
-                if (selectedItem != null) {
-                    if (selectedItem.isRemovable()) {
-                        parentActivity.showAlert(R.string.str_alert_title_information, R.string.str_delete_time_line,
-                                parentActivity.getString(R.string.str_yes), new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        removeChildLayout(selectedItem);
-                                    }
-                                }, parentActivity.getString(R.string.str_no));
+                    if (selectedItem != null) {
+                        if (selectedItem.isRemovable()) {
+                            parentActivity.showAlert(R.string.str_alert_title_information, R.string.str_delete_time_line,
+                                    parentActivity.getString(R.string.str_yes), new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            removeChildLayout(selectedItem);
+                                        }
+                                    }, parentActivity.getString(R.string.str_no));
+                        }
+                    } else {
+                        addNewTitleToTimeline();
                     }
-                } else {
-                    addNewTitleToTimeline();
                 }
             }
             setAlpha(1.f);
             return true;
         } else if (me.getAction() == MotionEvent.ACTION_MOVE) {
-            double x = me.getX();
+            float x = me.getX();
             if (Math.abs(x - lastDragX) > 5) {
                 if (flagDragging && (flagResizeLeft || flagResizeRight || flagMoving) && !checkConflictTitleArea(x)) {
                     if (flagResizeLeft) {
@@ -249,6 +253,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
                     } else if (flagMoving) {
                         selectedItem.moveLayout(me.getX() + movingOffset);
                     }
+                    updateCaptionLayoutForTrimView(selectedItem);
                 }
             }
             lastDragX = x;
@@ -327,6 +332,45 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             });
 
         }
+    }
 
+    private void updateCaptionLayoutForTrimView(ChildTextTimelineLayout caption) {
+        boolean flagUpdate = false;
+        float startTime = caption.getStartTime();
+        float endTime = caption.getEndTime();
+
+        if (startTime < trimStart) {
+            flagUpdate = true;
+            float delta = trimStart - startTime;
+            startTime = startTime + delta;
+            endTime = endTime + delta;
+            if (endTime >= trimEnd) {
+                endTime = trimEnd;
+            }
+        }
+
+        if (endTime > trimEnd) {
+            flagUpdate = true;
+            float delta = endTime - trimEnd;
+            endTime = endTime - delta;
+            startTime = startTime - delta;
+            if (startTime < trimStart) {
+                startTime = trimStart;
+            }
+        }
+
+        if (flagUpdate) {
+            caption.updateStartEndTime(startTime, endTime);
+        }
+    }
+    public void setTrimLeftRight(int videoLength, int trimLeft, int trimRight) {
+        ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = MainApplication.getTimelineTitlesInformation();
+
+        trimStart = trimLeft / 1000.f;
+        trimEnd = (videoLength - trimRight) / 1000.f;
+        for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
+            ChildTextTimelineLayout caption = timelineTitlesInformation.get(i);
+            updateCaptionLayoutForTrimView(caption);
+        }
     }
 }

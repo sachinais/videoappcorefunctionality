@@ -19,8 +19,8 @@ import com.nick.sampleffmpeg.bean.OverlayBean;
  * Created by baebae on 12/25/15.
  */
 public class ChildTextTimelineLayout extends LinearLayout{
-    private double startTime = 0;
-    private double endTime = 0;
+    private float startTime = 0;
+    private float endTime = 0;
     private OverlayBean.Overlay overlay = null;
     private boolean flagRemovable = false;
 
@@ -28,8 +28,8 @@ public class ChildTextTimelineLayout extends LinearLayout{
     private DisplayMetrics displayMetrics = null;
 
     long childTagID = 0;
-    private double left = 0.f;
-    private double right = 0.f;
+    private float left = 0.f;
+    private float right = 0.f;
 
     private int parentWidth = 0;
     public ChildTextTimelineLayout(Context context) {
@@ -48,11 +48,11 @@ public class ChildTextTimelineLayout extends LinearLayout{
         parentWidth = width;
     }
 
-    public double getStartTime() {
+    public float getStartTime() {
         return startTime;
     }
 
-    public double getEndTime() {
+    public float getEndTime() {
         return endTime;
     }
 
@@ -72,7 +72,7 @@ public class ChildTextTimelineLayout extends LinearLayout{
         this.displayMetrics = displayMetrics;
     }
 
-    public void setInformation(double startTime, double endTime, String strText, long tagID, OverlayBean.Overlay overlay, boolean flagRemovable) {
+    public void setInformation(float startTime, float endTime, String strText, long tagID, OverlayBean.Overlay overlay, boolean flagRemovable) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.titleText = strText;
@@ -87,7 +87,11 @@ public class ChildTextTimelineLayout extends LinearLayout{
         ((TextView)findViewById(R.id.txt_title)).setText(strText);
     }
 
-    private void setLayoutParameters(double newLeft, double newRight) {
+    public void updateStartEndTime(float startTime, float endTime) {
+        setInformation(startTime, endTime, this.titleText, this.childTagID, this.overlay, this.flagRemovable);
+    }
+
+    private void setLayoutParameters(float newLeft, float newRight) {
         if (newLeft < 0) {
             newLeft = 0;
             newRight = this.right;
@@ -98,8 +102,8 @@ public class ChildTextTimelineLayout extends LinearLayout{
             newLeft = left;
         }
 
-        double _startTime = newLeft / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
-        double _endTime = newRight / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
+        float _startTime = newLeft / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
+        float _endTime = newRight / Constant.SP_PER_SECOND / displayMetrics.scaledDensity ;
 
         if (_endTime - _startTime < Constant.TIMELINE_UNIT_SECOND * 0.9f) {
             return;
@@ -123,7 +127,7 @@ public class ChildTextTimelineLayout extends LinearLayout{
      * get timeline object (caption timeline area)'s left position
      * @return left position of selected caption
      */
-    public double getLayoutLeft() {
+    public float getLayoutLeft() {
         return left;
     }
 
@@ -131,16 +135,16 @@ public class ChildTextTimelineLayout extends LinearLayout{
      * get timeline object (caption timeline area)'s right position
      * @return right position of selected caption
      */
-    public double getLayoutRight() {
+    public float getLayoutRight() {
         return right;
     }
 
     /**
      * set timeline object (caption timeline area)'s left position
      */
-    public void setLayoutLeft(double left) {
+    public void setLayoutLeft(float left) {
         if (left < right - displayMetrics.scaledDensity * 30 ) {
-            double newLeft = left;
+            float newLeft = left;
             setLayoutParameters(newLeft, this.right);
         }
     }
@@ -148,9 +152,9 @@ public class ChildTextTimelineLayout extends LinearLayout{
     /**
      * set timeline object (caption timeline area)'s right position
      */
-    public void setLayoutRight(double right) {
+    public void setLayoutRight(float right) {
         if (right > left + displayMetrics.scaledDensity * 30 ) {
-            double newRight = right;
+            float newRight = right;
             setLayoutParameters(this.left, newRight);
         }
     }
@@ -158,10 +162,10 @@ public class ChildTextTimelineLayout extends LinearLayout{
     /**
      * move timeline object (caption timeline area)'s left position
      */
-    public void moveLayout(double x) {
-        double offset = x - this.left;
-        double newLeft = x;
-        double newRight = this.right + offset;
+    public void moveLayout(float x) {
+        float offset = x - this.left;
+        float newLeft = x;
+        float newRight = this.right + offset;
         setLayoutParameters(newLeft, newRight);
     }
 

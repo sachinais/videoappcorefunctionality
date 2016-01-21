@@ -123,9 +123,6 @@ public class EditingVideoActivity extends BaseActivity {
     ImageView btnTrimRight;
 
     private int currentVideoSeekPosition = 0;
-    private double trimLeft = 3.0;
-    private double trimRight = 1.0;
-    private int videoLength = 0;
     private boolean flagPlay = false;
     private boolean flagTimelineInitialized = false;
 
@@ -140,6 +137,10 @@ public class EditingVideoActivity extends BaseActivity {
     private SharedPreferenceWriter sharedPreferenceWriter = null;
 
     private static String strJobTitle = "";
+
+    private static int videoLength = 0;
+    private static int trimLeft = 0;
+    private static int trimRight = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -188,19 +189,10 @@ public class EditingVideoActivity extends BaseActivity {
         editTitle = (EditText)v.findViewById(R.id.edit_title_name);
     }
 
-    private void updateVideoTrimLayout() {
-        double leftWidth = (trimLeft * Constant.SP_PER_SECOND * getDisplayMetric().scaledDensity);
-        FrameLayout.LayoutParams param = new FrameLayout.LayoutParams((int)leftWidth, FrameLayout.LayoutParams.MATCH_PARENT);
-        param.setMargins((int)0, 0, 0, 0);
-        video_trim_left.setLayoutParams(param);
-
-        double rightWidth = (trimRight * Constant.SP_PER_SECOND * getDisplayMetric().scaledDensity);
-        param = new FrameLayout.LayoutParams((int)rightWidth, FrameLayout.LayoutParams.MATCH_PARENT);
-        double marginLeft = (((double)videoLength / 1000.0 - trimRight) * Constant.SP_PER_SECOND * getDisplayMetric().scaledDensity);
-        param.setMargins((int)marginLeft, 0, 0, 0);
-        video_trim_right.setLayoutParams(param);
-
+    private void updateTimelineAfterTrim() {
+        titleThumbsLayout.setTrimLeftRight(videoLength, trimLeft, trimRight);
     }
+
     private void initializeButtons() {
         UITouchButton.applyEffect(btnNext, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
@@ -281,7 +273,7 @@ public class EditingVideoActivity extends BaseActivity {
     private int lastXTrimRight = 0;
     private int trimWidthOnTap = 0;
     private void setOnVideoTrimTouchListener() {
-        final float trimMinWidth = trimImageViewWidth * getDisplayMetric().scaledDensity;
+        final float trimBarWidth = trimImageViewWidth * getDisplayMetric().scaledDensity;
         btnTrimLeft.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -298,10 +290,12 @@ public class EditingVideoActivity extends BaseActivity {
                     if (Math.abs(lastXTrimLeft - X) > Constant.SP_PER_SECOND / 10) {
                         FrameLayout.LayoutParams lParams = (FrameLayout.LayoutParams) video_trim_left.getLayoutParams();
                         lParams.width = (int)(trimWidthOnTap + (X - lastXTrimLeft));
-                        if (lParams.width < trimMinWidth) {
-                            lParams.width = (int)trimMinWidth;
+                        if (lParams.width < trimBarWidth) {
+                            lParams.width = (int)trimBarWidth;
                         }
                         video_trim_left.setLayoutParams(lParams);
+                        trimLeft = (int)((lParams.width - trimBarWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity  * 1000);
+                        updateTimelineAfterTrim();
                     }
                 }
 
@@ -329,13 +323,16 @@ public class EditingVideoActivity extends BaseActivity {
                     if (Math.abs(lastXTrimRight - X) > Constant.SP_PER_SECOND / 10) {
                         FrameLayout.LayoutParams lParams = (FrameLayout.LayoutParams) video_trim_right.getLayoutParams();
                         lParams.width = (int)(trimWidthOnTap + (lastXTrimRight - X));
-                        if (lParams.width < trimMinWidth) {
-                            lParams.width = (int)trimMinWidth;
+                        if (lParams.width < trimBarWidth) {
+                            lParams.width = (int)trimBarWidth;
                         }
                         Log.d("Width", Integer.toString(lParams.width) + " " + Integer.toString(X) + " " + Integer.toString(lastXTrimRight));
                         int parentWidth = ((View)video_trim_right.getParent()).getWidth();
                         lParams.leftMargin = parentWidth - lParams.width;
                         video_trim_right.setLayoutParams(lParams);
+
+                        trimRight = (int)((lParams.width - trimBarWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity  * 1000);
+                        updateTimelineAfterTrim();
                     }
                 }
 
@@ -369,7 +366,7 @@ public class EditingVideoActivity extends BaseActivity {
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
                     float currentPosition = event.getX();
                     if (Math.abs(lastVideoIndicatorTapPosition - currentPosition) > Constant.SP_PER_SECOND / 10) {
-                        float time = (float)(X - _xDelta  + indicatorWidth - trimBarWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity* 1000.f;
+                        float time = (float)(X - _xDelta  + indicatorWidth / 2 - trimBarWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity* 1000.f;
                         setCurrentSeekTime(time);
                         lastVideoIndicatorTapPosition = currentPosition;
                     }
@@ -403,7 +400,7 @@ public class EditingVideoActivity extends BaseActivity {
                 videoView.pause();
             }
             float width = (videoIndicatorWidth * getDisplayMetric().scaledDensity);
-            float marginLeft = (float)time / 1000.f * Constant.SP_PER_SECOND * (getDisplayMetric().scaledDensity) - width + trimBarWidth;
+            float marginLeft = (float)time / 1000.f * Constant.SP_PER_SECOND * (getDisplayMetric().scaledDensity) - width / 2 + trimBarWidth;
             FrameLayout.LayoutParams param = new FrameLayout.LayoutParams((int)width, FrameLayout.LayoutParams.MATCH_PARENT);
             param.setMargins((int)marginLeft, 0, 0, 0);
             video_indicator.setLayoutParams(param);
@@ -420,7 +417,7 @@ public class EditingVideoActivity extends BaseActivity {
     /**
      * update overlay view during play or once timeline is selected
      */
-    public void updateOverlayView(double time) {
+    public void updateOverlayView(float time) {
         overlayView.setCurrentVideoTime(time);
     }
     /**
@@ -459,6 +456,7 @@ public class EditingVideoActivity extends BaseActivity {
                 if (!flagTimelineInitialized) {
                     initializeTimeLineView();
                 }
+                setCurrentSeekTime(0);
             }
         });
 
@@ -593,7 +591,7 @@ public class EditingVideoActivity extends BaseActivity {
                                 ImageView imageView = (ImageView)thumbImageLayout.findViewById(R.id.img_thumb);
 
                                 if (tagObj == (int)videoLength / 1000 - Constant.TIMELINE_UNIT_SECOND) {
-                                    double offset = (double)videoLength /1000 - (double)tagObj;
+                                    float offset = (float)videoLength /1000 - (float)tagObj;
                                     int width = (int)(offset * 60 * getDisplayMetric().scaledDensity / Constant.TIMELINE_UNIT_SECOND);
                                     LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.MATCH_PARENT);
                                     imageView.setLayoutParams(param);
@@ -717,7 +715,7 @@ public class EditingVideoActivity extends BaseActivity {
 
         OverlayBean.Overlay contactOverlay = template.contact;
         if (contactOverlay != null) {
-            double lastSec = (double)videoLength / 1000;
+            float lastSec = (float)videoLength / 1000;
             titleThumbsLayout.addNewTitleInformation(contactOverlay.defaultText, lastSec - Constant.TIMELINE_UNIT_SECOND, lastSec, contactOverlay, false);
         }
         updateOverlayView(0);
