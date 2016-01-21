@@ -11,6 +11,7 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/ll_Cancel"
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true">
@@ -54,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|center_vertical"
                 android:text="Next"
-                android:textColor="@color/color_sign_btn"
+                android:textColor="@color/color_light_sign_btn"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -77,6 +78,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
+                android:visibility="visible"
                 android:orientation="vertical">
                 <LinearLayout
                     android:id="@+id/llProgressEncode"

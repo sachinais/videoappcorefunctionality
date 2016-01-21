@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -14,8 +16,11 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -64,6 +69,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
     private int encodingProgress, uploadingProgress;
     private static String videoLink;
     private static String videoTitle;
+    private Dialog optionDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +126,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
                     intent.putExtra("encoding_progress", encodingProgress);
                     intent.putExtra("uploading_progress", uploadingProgress);
                     intent.putExtra("video_link", videoLink);
-                    intent.putExtra("parameter1",videoTitle);
+                    intent.putExtra("parameter1", videoTitle);
                     startActivity(intent);
                 }
 
@@ -135,6 +141,13 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
                 }else {
                     findViewById(R.id.socialShare).setVisibility(View.VISIBLE);
                 }
+            }
+        });
+
+        findViewById(R.id.ll_Cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelEncodingandUploadingDilaod();
             }
         });
 
@@ -157,6 +170,48 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
 
     }
 
+
+
+    private void cancelEncodingandUploadingDilaod() {
+        try {
+
+
+              optionDialog = new Dialog(UploadingVideoScreen.this);
+            optionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            optionDialog.setContentView(R.layout.encoding_uplaoding_cancel_dialog);
+            ((TextView) optionDialog.findViewById(R.id.buttonNo)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    optionDialog.dismiss();
+
+
+                }
+            });
+            ((TextView) optionDialog.findViewById(R.id.buttonYes)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    optionDialog.dismiss();
+                    finish();
+
+                }
+            });
+            optionDialog.show();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+
+        cancelEncodingandUploadingDilaod();
+
+    }
+
+
     private void encodingVideo() {
 
         int videoWidth = VideoUtils.getVideoWidth(Constant.getSourceVideo());
@@ -173,7 +228,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
 
             @Override
             public void onFinish() {
-                //((TextView)findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_sky_blue));
+                ((TextView)findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_light_sign_btn));
                 uri = Uri.fromFile(new File(Constant.getMergedVideo()));
                 uploadVideo();
             }
