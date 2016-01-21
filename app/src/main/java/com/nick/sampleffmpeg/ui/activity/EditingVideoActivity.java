@@ -456,6 +456,7 @@ public class EditingVideoActivity extends BaseActivity {
                 trimStart = 0;
                 trimEnd = videoLength;
                 setCurrentSeekTime(0);
+                titleThumbsLayout.setTrimLeftRight(trimStart, trimEnd);
             }
         });
 

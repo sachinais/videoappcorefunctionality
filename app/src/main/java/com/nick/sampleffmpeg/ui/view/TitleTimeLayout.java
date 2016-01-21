@@ -205,7 +205,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
                 flagDragging = true;
                 getParent().requestDisallowInterceptTouchEvent(true);
             } else {
-                float seekVideoTime = ((float)me.getX() / (float)Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity) * 1000;
+                float seekVideoTime = ((float)me.getX() / (float)Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity);
                 if (seekVideoTime < trimEnd && seekVideoTime > trimStart) {
                     setAlpha(0.5f);
                 }
@@ -219,9 +219,9 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
 
             //if touch start & end in short time, press event will happen.
             if (((SystemClock.elapsedRealtime() - dragStartTime) < SINGLE_TAP_MAX_TIME)) {
-                float seekVideoTime = ((float)me.getX() / (float)Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity) * 1000;
+                float seekVideoTime = ((float)me.getX() / (float)Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity);
                 if (seekVideoTime < trimEnd && seekVideoTime > trimStart) {
-                    parentActivity.setCurrentSeekTime(seekVideoTime);
+                    parentActivity.setCurrentSeekTime(seekVideoTime * 1000);
 
                     /**
                      * if item is already selected on touch down event, it will show alert to delete current title.
