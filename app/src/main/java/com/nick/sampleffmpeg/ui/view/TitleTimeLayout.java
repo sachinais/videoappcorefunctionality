@@ -214,7 +214,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
                 if (firstTouch && (SystemClock.elapsedRealtime() - dragStartTime) <= SINGLE_TAP_MAX_TIME * 2) {
                     firstTouch = false;
 
-                    parentActivity.setCurrentSeekTime(seekVideoTime * 1000);
+                    //parentActivity.setCurrentSeekTime(seekVideoTime * 1000);
                     /**
                      * if item is already selected on touch down event, it will show alert to delete current title.
                      * if no item is selected, add dialog will show
