@@ -155,7 +155,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                                     } else {
                                         imgStatusRecording.setVisibility(View.VISIBLE);
                                     }
-                                    String time = StringUtils.getMinuteSecondString((int)recordingTime, true);
+                                    String time = StringUtils.getMinuteSecondString((int) recordingTime, true);
                                     txtRecordingTime.setText(time);
                                 }
                             });
@@ -210,21 +210,21 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         });
         findViewById(R.id.img_left_person_template).setVisibility(View.VISIBLE);
         findViewById(R.id.img_right_person_template).setVisibility(View.INVISIBLE);
-        try{
+        try {
             showPicker();
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
         selectTemplateItem(0);
     }
 
-    private void getStoredTemplateIfNull(){
+    private void getStoredTemplateIfNull() {
         try {
-            if(MainApplication.getInstance().getTemplateArray() == null){
+            if (MainApplication.getInstance().getTemplateArray() == null) {
                 MainApplication.getInstance().setTemplateArray(new JSONObject(SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).getString(SPreferenceKey.TEMPLATE_ARRAY)).getJSONArray("templates"));
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
@@ -433,7 +433,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         optionDialog.getWindow().setAttributes(lp);
         optionDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         optionDialog.setContentView(R.layout.dialog_menu_options);
-        ((Button)optionDialog.findViewById(R.id.btnChangeTemplate)).setOnClickListener(new View.OnClickListener() {
+        ((Button) optionDialog.findViewById(R.id.btnChangeTemplate)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 optionDialog.dismiss();
@@ -443,7 +443,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
             }
         });
-        ((Button)optionDialog.findViewById(R.id.btnOpenDashboard)).setOnClickListener(new View.OnClickListener() {
+        ((Button) optionDialog.findViewById(R.id.btnOpenDashboard)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 optionDialog.dismiss();
@@ -452,7 +452,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                 startActivity(browserIntent);
             }
         });
-        ((Button)optionDialog.findViewById(R.id.btnAddUser)).setOnClickListener(new View.OnClickListener() {
+        ((Button) optionDialog.findViewById(R.id.btnAddUser)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 optionDialog.dismiss();
@@ -462,7 +462,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             }
         });
 
-        ((Button)optionDialog.findViewById(R.id.btnTutorials)).setOnClickListener(new View.OnClickListener() {
+        ((Button) optionDialog.findViewById(R.id.btnTutorials)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 optionDialog.dismiss();
@@ -471,22 +471,22 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                 startActivity(browserIntent);
             }
         });
-        ((Button)optionDialog.findViewById(R.id.btnCancel)).setOnClickListener(new View.OnClickListener() {
+        ((Button) optionDialog.findViewById(R.id.btnCancel)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 optionDialog.dismiss();
             }
         });
-        ((Button)optionDialog.findViewById(R.id.btnImportVideo)).setOnClickListener(new View.OnClickListener() {
+        ((Button) optionDialog.findViewById(R.id.btnImportVideo)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 optionDialog.dismiss();
 
-                startActivity(new Intent(RecordingVideoActivity.this,ImportVideoActivty.class));
+                startActivity(new Intent(RecordingVideoActivity.this, ImportVideoActivty.class));
             }
         });
 
-        ((Button)optionDialog.findViewById(R.id.btnSignOut)).setOnClickListener(new View.OnClickListener() {
+        ((Button) optionDialog.findViewById(R.id.btnSignOut)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 optionDialog.dismiss();
@@ -501,13 +501,14 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
 
     }
-    private void showPicker()throws JSONException{
-        if(MainApplication.getInstance().getTemplateArray() != null && MainApplication.getInstance().getTemplateArray().length()>0){
+
+    private void showPicker() throws JSONException {
+        if (MainApplication.getInstance().getTemplateArray() != null && MainApplication.getInstance().getTemplateArray().length() > 0) {
             JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
-           // for (int i = jsonArray.length() - 1; i >= 0; i--) {
-            for (int i = 0; i<jsonArray.length();i++){
+            // for (int i = jsonArray.length() - 1; i >= 0; i--) {
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                options1Items.add(new ProvinceBean(i, jsonObject.optString("title"),jsonObject.optString("directory"),""));
+                options1Items.add(new ProvinceBean(i, jsonObject.optString("title"), jsonObject.optString("directory"), ""));
             }
         }
 
@@ -527,13 +528,14 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             @Override
             public void onOptionsSelect(final int options1, int option2, int options3) {
                 selectTemplateItem(options1);
+                MainApplication.getInstance().setSelectedTemplePosition(options1);
                 //返回的分别是三个级别的选中位置
                /* String tx = options1Items.get(options1).getPickerViewText()
                         + options2Items.get(options1).get(option2)
                         + options3Items.get(options1).get(option2).get(options3);
                 tvOptions.setText(tx);
                 vMasker.setVisibility(View.GONE);*/
-               // Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
+                // Toast.makeText(getBaseContext(), options1Items.get(options1).getPickerViewText(), Toast.LENGTH_LONG).show();
 
 
 //                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
@@ -549,31 +551,30 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             return;
         }
 
-        MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
+        MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
         overlayview.updateOverlay();
 
-//        FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this,
-//                getTemplateUrl((int)options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(),options1Items.get(options1).getDirectoryId());
-//        findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
-//        fileDownloader.startDownload(new Runnable() {
-//            @Override
-//            public void run() {
-//                MainApplication.getInstance().setTemplate((int)options1Items.get(options1).getId());
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
-//                        overlayview.updateOverlay();
-//                    }
-//                });
-//            }
-//        });
+        FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this, getTemplateUrl((int) options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(), options1Items.get(options1).getDirectoryId());
+        findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
+        fileDownloader.startDownload(new Runnable() {
+            @Override
+            public void run() {
+                MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
+                        overlayview.updateOverlay();
+                    }
+                });
+            }
+        });
     }
 
 
-    private void sendTemplateRequest(){
-        try{
-            if(CheckNetworkConnection.isNetworkAvailable(RecordingVideoActivity.this)){
+    private void sendTemplateRequest() {
+        try {
+            if (CheckNetworkConnection.isNetworkAvailable(RecordingVideoActivity.this)) {
                 List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
                 //   paramePairs.add(new BasicNameValuePair("login_resource",String.valueOf(AppConstants.DEVICE_TYPE_ANDROID)));
                 //   paramePairs.add(new BasicNameValuePair("device_key", GCMRegistrar.getRegistrationId(LoginActivity.this)));
@@ -584,10 +585,10 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                 requestBean.setIsProgressBarEnable(true);
                 RequestHandler requestHandler = new RequestHandler(requestBean, requestListner);
                 requestHandler.execute(null, null, null);
-            }else {
+            } else {
                 CustomDialogs.showOkDialog(RecordingVideoActivity.this, "Please check network connection");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -597,37 +598,37 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
         @Override
         public void getResponse(JSONObject jsonObject) {
-            try{
-                if(jsonObject != null){
+            try {
+                if (jsonObject != null) {
                     parseJsonData(jsonObject);
                 }
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     };
 
-    private void parseJsonData(JSONObject jsonObject) throws JSONException{
-        if(!jsonObject.isNull(AppConstants.SUCCESS)){
-            if(jsonObject.getBoolean(AppConstants.SUCCESS)){
-                if(!jsonObject.isNull("user_id")){
-                    SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).writeStringValue(SPreferenceKey.USERID,jsonObject.getString("user_id"));
+    private void parseJsonData(JSONObject jsonObject) throws JSONException {
+        if (!jsonObject.isNull(AppConstants.SUCCESS)) {
+            if (jsonObject.getBoolean(AppConstants.SUCCESS)) {
+                if (!jsonObject.isNull("user_id")) {
+                    SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).writeStringValue(SPreferenceKey.USERID, jsonObject.getString("user_id"));
                 }
-                if(!jsonObject.isNull("email")){
-                    SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).writeStringValue(SPreferenceKey.EMAIL,jsonObject.getString("email"));
+                if (!jsonObject.isNull("email")) {
+                    SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).writeStringValue(SPreferenceKey.EMAIL, jsonObject.getString("email"));
                 }
-                if(!jsonObject.isNull("firstname")){
-                    SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).writeStringValue(SPreferenceKey.FIRST_NAME,jsonObject.getString("firstname"));
+                if (!jsonObject.isNull("firstname")) {
+                    SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).writeStringValue(SPreferenceKey.FIRST_NAME, jsonObject.getString("firstname"));
                 }
-                if(!jsonObject.isNull("lastname")){
-                    SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).writeStringValue(SPreferenceKey.LAST_NAME,jsonObject.getString("lastname"));
+                if (!jsonObject.isNull("lastname")) {
+                    SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).writeStringValue(SPreferenceKey.LAST_NAME, jsonObject.getString("lastname"));
                 }
-                startActivity(new Intent(RecordingVideoActivity.this,RecordingVideoActivity.class));
+                startActivity(new Intent(RecordingVideoActivity.this, RecordingVideoActivity.class));
                 RecordingVideoActivity.this.finish();
 
-            }else {
-                if(!jsonObject.isNull(AppConstants.MESSAGE)){
-                    Toast.makeText(getBaseContext(),"Error",Toast.LENGTH_LONG).show();
+            } else {
+                if (!jsonObject.isNull(AppConstants.MESSAGE)) {
+                    Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
 
                 }
             }
@@ -635,37 +636,33 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         }
     }
 
-    private String getTemplateUrl(int postion){
+    private String getTemplateUrl(int postion) {
         StringBuilder builder = new StringBuilder();
 
-        try{
-            JSONArray jsonArray =  MainApplication.getInstance().getTemplateArray();
+        try {
+            JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
 
             builder.append("http://")
                     .append(getServer(sharedPreferenceWriter.getString(SPreferenceKey.REGION)))
                     .append("/company/")
                     .append(sharedPreferenceWriter.getString(SPreferenceKey.COMPANY_DIRECTORY))
-                    .append("/"+jsonArray.getJSONObject(postion).optString("directory"))
-                    .append("/template_" + jsonArray.getJSONObject(postion).getInt("id")+".zip");
+                    .append("/" + jsonArray.getJSONObject(postion).optString("directory"))
+                    .append("/template_" + jsonArray.getJSONObject(postion).getInt("id") + ".zip");
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return  builder.toString();
+        return builder.toString();
     }
 
-    public  String getServer(String company_region)
-    {
+    public String getServer(String company_region) {
         String toReturn = "syd.static.videomyjob.com";
 
         //Should we ever change the default
-        if (company_region == "AU")
-        {
+        if (company_region == "AU") {
             toReturn = "syd.static.videomyjob.com";
-        }
-        else if (company_region == "HN")
-        {
+        } else if (company_region == "HN") {
             toReturn = "hn.static.videomyjob.com";
         }
 

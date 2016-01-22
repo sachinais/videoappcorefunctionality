@@ -55,8 +55,8 @@ public class YoutubeUploader {
     private static final String AUTH_URL = "https://www.google.com/accounts/ClientLogin";
 
     // Uploader's user-name and password
-    private static final String USER_NAME = "usersemail@useremail.usersemail";
-    private static final String PASSWORD = "userspassword";
+    private static final String USER_NAME = "Sachink@sirconrad.com";
+    private static final String PASSWORD = "green123";
 
     private static final String INITIAL_UPLOAD_URL = "https://uploads.gdata.youtube.com/resumable/feeds/api/users/default/uploads";
 
