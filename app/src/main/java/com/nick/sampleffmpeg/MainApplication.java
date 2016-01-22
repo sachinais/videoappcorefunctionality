@@ -31,6 +31,14 @@ public class MainApplication extends Application{
     private OverlayBean selectedOverlay = null;
     private int encodeingProgres=0;
 
+    public static class VideoInformation {
+        public int videoLength = 0;
+        public int trimStart = 0;
+        public int trimEnd = 0;
+    }
+
+    private VideoInformation videoInformation = new VideoInformation();
+
     private static ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = new ArrayList<>();
 
     public static ArrayList<ChildTextTimelineLayout> getTimelineTitlesInformation() {
@@ -115,5 +123,29 @@ public class MainApplication extends Application{
     public SharedPreferences getEditor(){
        SharedPreferences mPrefs = getApplicationContext().getSharedPreferences("LAST_LOGIN_DETAILS", Context.MODE_PRIVATE);
         return mPrefs;
+    }
+
+    public int getVideoLength() {
+        return videoInformation.videoLength;
+    }
+
+    public int getVideoStart() {
+        return videoInformation.trimStart;
+    }
+
+    public int getVideoEnd() {
+        return videoInformation.trimEnd;
+    }
+
+    public void setVideoLength(int length) {
+        videoInformation.videoLength = length;
+    }
+
+    public void setVideoStart(int start) {
+        videoInformation.trimStart = start;
+    }
+
+    public void setVideoEnd(int end) {
+        videoInformation.trimEnd = end;
     }
 }

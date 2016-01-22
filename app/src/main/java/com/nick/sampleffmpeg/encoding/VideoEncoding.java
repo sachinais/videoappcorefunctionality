@@ -34,9 +34,8 @@ public class VideoEncoding {
      * @param callback callback
      * @param width new video width
      * @param height new video height
-     * @param isCameraSize if width, height is same as camera recording video size, it will be true
      */
-    public static void startVideoEncoding(Callback callback, int width, int height, boolean isCameraSize) {
+    public static void startVideoEncoding(Callback callback, int width, int height) {
         progress = 0;
         VideoEncoding.callback = callback;
         outputVideoWidth = width;
@@ -44,15 +43,9 @@ public class VideoEncoding {
         strVideoSize = Integer.toString(width) + "x" + Integer.toString(height);
 
         //skip convert recorded video if size is same...
-        if (isCameraSize) {
-            progress = -25;
-            stepProgress = 25;
-            convertTopTailVideoToUniqueFormat(true);
-        } else {
-            progress = -20;
-            stepProgress = 20;
-            convertVideoToUniqueFormat();
-        }
+        progress = -20;
+        stepProgress = 20;
+        trimVideo();
     }
 
     private static int getProgressStatus(String str, int videoLength) {
@@ -78,12 +71,14 @@ public class VideoEncoding {
     }
 
     /**
-     * Convert recording videos(top, tail, camera video) into unique video format with captured video size
+     * trim source video
      */
-    private static void convertVideoToUniqueFormat() {
+    private static void trimVideo() {
+        String strStart = Float.toString(MainApplication.getInstance().getVideoStart() / 1000.f);
+        String strEnd = Float.toString(MainApplication.getInstance().getVideoEnd() / 1000.f);
 
         progress = 0;
-        String commands = "-y -threads 5 -i src.mp4 -crf 30 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s " + strVideoSize + " -r 30 -force_key_frames expr:gte(t,n_forced*1) -c:v libx264 dst.mp4";
+        String commands = "-y -threads 5 -i src.mp4 -crf 22 -preset ultrafast -ar 44100 -c:a aac -strict experimental -ss " + strStart + " -t " + strEnd + " -s " + strVideoSize + " -r 25 -c:v libx264 dst.mp4";
 
         String srcVideoFilePath = Constant.getSourceVideo();
         String dstVideoFilePath = Constant.getConvertedVideo();
@@ -119,7 +114,7 @@ public class VideoEncoding {
             progress += stepProgress;
         }
 
-        String commands = "-y -threads 5 -i src.mp4 -crf 30 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s " + strVideoSize + " -r 30 -force_key_frames expr:gte(t,n_forced*1) -c:v libx264 dst.mp4";
+        String commands = "-y -threads 5 -i src.mp4 -crf 22 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s " + strVideoSize + " -r 25 -c:v libx264 dst.mp4";
         String srcVideoFilePath = "";
         String dstVideoFilePath = "";
         //progressDialog.show();
@@ -166,17 +161,17 @@ public class VideoEncoding {
         progress += stepProgress;
 
         ArrayList<VideoOverlay> videoOverlayInformation = MainApplication.getInstance().getVideoOverlayInformation();
-        final int videoLength = VideoUtils.getVideoLength(Constant.getSourceVideo());
+        final int videoLength = VideoUtils.getVideoLength(Constant.getConvertedVideo());
         if (videoOverlayInformation.size() > 0) {
             //make ffmpeg command
             String command = "-y ";
-            command = command + "-i" + " " + Constant.getSourceVideo() +" ";
+            command = command + "-i" + " " + Constant.getConvertedVideo() +" ";
 
             for (int i = 0; i < videoOverlayInformation.size(); i ++) {
                 command = command + "-i" + " " + Constant.getOverlayDirectory() + i + ".png ";
             }
 
-            command = command + "-c:a aac -strict experimental -threads 5 -preset ultrafast -r 30 -c:v libx264 -filter_complex";
+            command = command + "-c:a aac -strict experimental -threads 5 -crf 22 -preset ultrafast -r 25 -c:v libx264 -filter_complex";
             VideoOverlay title = videoOverlayInformation.get(0);
 
             String strFilterComplex = "[0:v][1:v] overlay=" + Integer.toString(title.xPos) + ":" + Integer.toString(title.yPos) +
@@ -230,7 +225,7 @@ public class VideoEncoding {
         command = command + "-i" + " " + Constant.getEncodedVideo() +" ";
         command = command + "-i" + " " + Constant.getTailVideo() +" ";
 
-        command = command + "-c:a aac -strict experimental -threads 5 -preset ultrafast -r 30 -c:v libx264 -map [v] -map [a] -filter_complex";
+        command = command + "-c:a aac -strict experimental -threads 5 -crf 22 -preset ultrafast -r 25 -c:v libx264 -map [v] -map [a] -filter_complex";
 
         String strFilterComplex = "[0:0] [0:1] [1:0] [1:1] [2:0] [2:1] concat=n=3:v=1:a=1 [v] [a]";
 
