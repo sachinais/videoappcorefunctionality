@@ -39,110 +39,25 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main1);
 
-        btnCaptureVideo = (Button) findViewById(R.id.btnCaptureVideo);
-        btnCaptureVideo.setOnClickListener(new OnClickListener() {
+      /*  YouTubeService service = new YouTubeService("project id on console.developer.google.com","androidkey");
+        service.setUserCredentials("yourYouTubeAccount@gmail.com", "yourPassword");
+        VideoEntry newEntry = new VideoEntry();
+        YouTubeMediaGroup mg = newEntry.getOrCreateMediaGroup();
+        mg.setTitle(new MediaTitle());
+        mg.getTitle().setPlainTextContent("Video Title");
+        mg.addCategory(new MediaCategory(YouTubeNamespace.CATEGORY_SCHEME, "Tech"));
+        mg.setKeywords(new MediaKeywords());
+        mg.getKeywords().addKeyword("anyKeyword");
+        mg.setDescription(new MediaDescription());
+        mg.getDescription().setPlainTextContent("VIDEO DESCRIPTION");
+        mg.setPrivate(false);
+        mg.addCategory(new MediaCategory(YouTubeNamespace.DEVELOPER_TAG_SCHEME, "mydevtag"));
+        mg.addCategory(new MediaCategory(YouTubeNamespace.DEVELOPER_TAG_SCHEME, "anotherdevtag"));
+        MediaFileSource ms = new MediaFileSource(videoFileToUpload, "video/quicktime");
+        newEntry.setMediaSource(ms);
+        VideoEntry createdEntry = service.insert(new URL(Constant.YOUTUBE_UPLOAD_URL), newEntry);
+        Log.v("TAG", "VIDEO INSERTED ID : " + createdEntry.getId());*/
 
-            @Override
-            public void onClick(View v) {
-
-                Intent i = new Intent();
-                i.setAction("android.media.action.VIDEO_CAPTURE");
-                startActivityForResult(i, CAPTURE_RETURN);
-            }
-        });
-
-        btnSelectFromGallery = (Button) findViewById(R.id.btnSelectFromGallery);
-        btnSelectFromGallery.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_PICK);
-                intent.setType("video/*");
-
-                List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent,  PackageManager.MATCH_DEFAULT_ONLY);
-                if (list.size() <= 0) {
-                    Log.d(TAG, "no video picker intent on this hardware");
-                    return;
-                }
-
-                startActivityForResult(intent, GALLERY_RETURN);
-            }
-        });
-
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
-        progressBar.setVisibility(View.GONE);
-        btnSelectFromGallery.setEnabled(true);
-        btnCaptureVideo.setEnabled(true);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case CAPTURE_RETURN:
-            case GALLERY_RETURN:
-                if (resultCode == RESULT_OK) {
-
-                /*Intent intent = new Intent(this, SubmitActivity.class);
-                intent.setData(data.getData());
-                startActivityForResult(intent, SUBMIT_RETURN);*/
-
-                    progressBar.setVisibility(View.VISIBLE);
-                    btnSelectFromGallery.setEnabled(false);
-                    btnCaptureVideo.setEnabled(false);
-
-                    uploadYoutube(data.getData());
-                }
-                break;
-            case SUBMIT_RETURN:
-                if (resultCode == RESULT_OK) {
-                    Toast.makeText(MainActivity.this, "thank you!", Toast.LENGTH_LONG).show();
-                } else {
-                    // Toast.makeText(DetailsActivity.this, "submit failed or cancelled",
-                    // Toast.LENGTH_LONG).show();
-                }
-                break;
-        }
-    }
-
-    private void uploadYoutube(final Uri data) {
-
-        new AsyncTask<Void, Integer, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                YoutubeUploadRequest request = new YoutubeUploadRequest();
-                request.setUri(data);
-                //request.setCategory(category);
-                //request.setTags(tags);
-                request.setTitle("MPRJ Video Tite");
-                request.setDescription("MPRJ Video Test");
-
-                YoutubeUploader.upload(request, new YoutubeUploader.ProgressListner() {
-
-                    @Override
-                    public void onUploadProgressUpdate(int progress) {
-
-                        publishProgress(progress);
-                    }
-                }, MainActivity.this);
-                return null;
-            }
-
-            @Override
-            protected void onProgressUpdate(Integer... values) {
-                progressBar.setProgress(values[0]);
-
-                if(values[0] == 100){
-                    progressBar.setVisibility(View.GONE);
-                    btnSelectFromGallery.setEnabled(true);
-                    btnCaptureVideo.setEnabled(true);
-                }
-            };
-        }.execute();
-    }
 }

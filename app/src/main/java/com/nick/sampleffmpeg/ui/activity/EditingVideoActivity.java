@@ -2,7 +2,6 @@ package com.nick.sampleffmpeg.ui.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.media.ThumbnailUtils;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +27,9 @@ import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.OverlayBean;
+import com.nick.sampleffmpeg.bean.ProvinceBean;
 import com.nick.sampleffmpeg.bean.VideoOverlay;
+import com.nick.sampleffmpeg.sharedpreference.SPreferenceKey;
 import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 import com.nick.sampleffmpeg.ui.control.UITouchButton;
 import com.nick.sampleffmpeg.ui.view.ChildTextTimelineLayout;
@@ -39,8 +39,12 @@ import com.nick.sampleffmpeg.ui.view.TitleTimeLayout;
 import com.nick.sampleffmpeg.ui.view.WaveformView;
 import com.nick.sampleffmpeg.utils.LogFile;
 import com.nick.sampleffmpeg.utils.StringUtils;
-import com.nick.sampleffmpeg.utils.VideoUtils;
+import com.nick.sampleffmpeg.utils.TailDownloader;
+import com.nick.sampleffmpeg.utils.TopDownloader;
 import com.nick.sampleffmpeg.utils.audio.soundfile.SoundFile;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -140,10 +144,16 @@ public class EditingVideoActivity extends BaseActivity {
     private SharedPreferenceWriter sharedPreferenceWriter = null;
 
     private static String strJobTitle = "";
+    private ArrayList<ProvinceBean> options1Items = new ArrayList<ProvinceBean>();
 
     private static int videoLength = 0;
     private static int trimStart = 0;
     private static int trimEnd = 0;
+    public String topVideoUrl, tailVideoUrl;
+    public boolean isTopVideoExist;
+    public boolean isTailVideoExist;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,12 +182,15 @@ public class EditingVideoActivity extends BaseActivity {
             initializeThumbView();
             editJobTitle.setText(strJobTitle);
         }
+        downloadTopVideo();
+        downloadTailVideo();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
     }
+
     /**
      * show dialog which require input title information.
      */
@@ -195,7 +208,7 @@ public class EditingVideoActivity extends BaseActivity {
                 }
             }
         });
-        editTitle = (EditText)v.findViewById(R.id.edit_title_name);
+        editTitle = (EditText) v.findViewById(R.id.edit_title_name);
     }
 
     private void updateTimelineAfterTrim() {
@@ -204,6 +217,114 @@ public class EditingVideoActivity extends BaseActivity {
             setCurrentSeekTime(trimStart);
         }
     }
+
+
+    public void downloadTopVideo() {
+        try {
+            int pos = MainApplication.getInstance().getSelectedTemplePosition();
+            if (MainApplication.getInstance().getTemplateArray() != null && MainApplication.getInstance().getTemplateArray().length() > 0) {
+                JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
+                // for (int i = jsonArray.length() - 1; i >= 0; i--) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    options1Items.add(new ProvinceBean(i, jsonObject.optString("title"), jsonObject.optString("directory"), ""));
+                }
+            }
+            JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
+            String extenstion = jsonArray.getJSONObject(pos).optJSONObject("data").getJSONObject("brand-logo").getString("video_top");
+
+            if (extenstion != null && !extenstion.equalsIgnoreCase("")) {
+                isTopVideoExist = true;
+                findViewById(R.id.pb_Top).setVisibility(View.VISIBLE);
+                TopDownloader fileDownloader = new TopDownloader(EditingVideoActivity.this, getTemplateUrl((int) options1Items.get(pos).getId(), "top"), extenstion, options1Items.get(pos).getDirectoryId());
+                fileDownloader.startDownload(new TopVideoDownload() {
+                    @Override
+                    public void getTopVideoUrl(String url) {
+                        findViewById(R.id.pb_Top).setVisibility(View.GONE);
+                        topVideoUrl = url;
+
+                    }
+                });
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void downloadTailVideo() {
+        try {
+            int pos = MainApplication.getInstance().getSelectedTemplePosition();
+            if (MainApplication.getInstance().getTemplateArray() != null && MainApplication.getInstance().getTemplateArray().length() > 0) {
+                JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
+                // for (int i = jsonArray.length() - 1; i >= 0; i--) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    options1Items.add(new ProvinceBean(i, jsonObject.optString("title"), jsonObject.optString("directory"), ""));
+                }
+            }
+            JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
+            String extenstion = jsonArray.getJSONObject(pos).optJSONObject("data").getJSONObject("brand-logo").getString("video_tail");
+
+            if (extenstion != null && !extenstion.equalsIgnoreCase("")) {
+                isTailVideoExist = true;
+                findViewById(R.id.pb_Tail).setVisibility(View.VISIBLE);
+                TailDownloader fileDownloader = new TailDownloader(EditingVideoActivity.this, getTemplateUrl((int) options1Items.get(pos).getId(), "tail"), extenstion, options1Items.get(pos).getDirectoryId());
+                fileDownloader.startDownload(new TopVideoDownload() {
+                    @Override
+                    public void getTopVideoUrl(String url) {
+                        findViewById(R.id.pb_Tail).setVisibility(View.GONE);
+                        tailVideoUrl = url;
+
+                    }
+                });
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public interface TopVideoDownload {
+        public void getTopVideoUrl(String url);
+    }
+
+
+    private String getTemplateUrl(int postion, String topTail) {
+        StringBuilder builder = new StringBuilder();
+
+        try {
+            JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
+            builder.append("http://")
+                    .append(getServer(sharedPreferenceWriter.getString(SPreferenceKey.REGION)))
+                    .append("/company/")
+                    .append(sharedPreferenceWriter.getString(SPreferenceKey.COMPANY_DIRECTORY))
+                    .append("/" + jsonArray.getJSONObject(postion).optString("directory"))
+                    .append("/" + topTail + "." + jsonArray.getJSONObject(postion).optJSONObject("data").getJSONObject("brand-logo").getString("video_top"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return builder.toString();
+    }
+
+    public String getServer(String company_region) {
+        String toReturn = "syd.static.videomyjob.com";
+
+        //Should we ever change the default
+        if (company_region == "AU") {
+            toReturn = "syd.static.videomyjob.com";
+        } else if (company_region == "HN") {
+            toReturn = "hn.static.videomyjob.com";
+        }
+
+        return toReturn;
+    }
+
 
     private void initializeButtons() {
         UITouchButton.applyEffect(btnNext, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
@@ -292,6 +413,7 @@ public class EditingVideoActivity extends BaseActivity {
     private int lastXTrimLeft = 0;
     private int lastXTrimRight = 0;
     private int trimWidthOnTap = 0;
+
     private void setOnVideoTrimTouchListener() {
         final float trimBarWidth = trimImageViewWidth * getDisplayMetric().scaledDensity;
         btnTrimLeft.setOnTouchListener(new View.OnTouchListener() {
@@ -309,12 +431,12 @@ public class EditingVideoActivity extends BaseActivity {
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
                     if (Math.abs(lastXTrimLeft - X) > Constant.SP_PER_SECOND / 10) {
                         FrameLayout.LayoutParams lParams = (FrameLayout.LayoutParams) video_trim_left.getLayoutParams();
-                        lParams.width = (int)(trimWidthOnTap + (X - lastXTrimLeft));
+                        lParams.width = (int) (trimWidthOnTap + (X - lastXTrimLeft));
                         if (lParams.width < trimBarWidth) {
-                            lParams.width = (int)trimBarWidth;
+                            lParams.width = (int) trimBarWidth;
                         }
                         video_trim_left.setLayoutParams(lParams);
-                        trimStart = (int)((lParams.width - trimBarWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity  * 1000);
+                        trimStart = (int) ((lParams.width - trimBarWidth) / (float) Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity * 1000);
                         updateTimelineAfterTrim();
                     }
                 }
@@ -342,16 +464,16 @@ public class EditingVideoActivity extends BaseActivity {
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
                     if (Math.abs(lastXTrimRight - X) > Constant.SP_PER_SECOND / 10) {
                         FrameLayout.LayoutParams lParams = (FrameLayout.LayoutParams) video_trim_right.getLayoutParams();
-                        lParams.width = (int)(trimWidthOnTap + (lastXTrimRight - X));
+                        lParams.width = (int) (trimWidthOnTap + (lastXTrimRight - X));
                         if (lParams.width < trimBarWidth) {
-                            lParams.width = (int)trimBarWidth;
+                            lParams.width = (int) trimBarWidth;
                         }
                         Log.d("Width", Integer.toString(lParams.width) + " " + Integer.toString(X) + " " + Integer.toString(lastXTrimRight));
-                        int parentWidth = ((View)video_trim_right.getParent()).getWidth();
+                        int parentWidth = ((View) video_trim_right.getParent()).getWidth();
                         lParams.leftMargin = parentWidth - lParams.width;
                         video_trim_right.setLayoutParams(lParams);
 
-                        trimEnd = videoLength - (int)((lParams.width - trimBarWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity  * 1000);
+                        trimEnd = videoLength - (int) ((lParams.width - trimBarWidth) / (float) Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity * 1000);
                         updateTimelineAfterTrim();
                     }
                 }
@@ -363,6 +485,7 @@ public class EditingVideoActivity extends BaseActivity {
             }
         });
     }
+
     /**
      * drag video indicator on timeline view
      */
@@ -386,7 +509,7 @@ public class EditingVideoActivity extends BaseActivity {
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
                     float currentPosition = event.getX();
                     if (Math.abs(lastVideoIndicatorTapPosition - currentPosition) > Constant.SP_PER_SECOND / 10) {
-                        float time = (float)(X - _xDelta  + indicatorWidth / 2 - trimBarWidth) / (float)Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity* 1000.f;
+                        float time = (float) (X - _xDelta + indicatorWidth / 2 - trimBarWidth) / (float) Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity * 1000.f;
                         setCurrentSeekTime(time);
                         lastVideoIndicatorTapPosition = currentPosition;
                     }
@@ -417,23 +540,24 @@ public class EditingVideoActivity extends BaseActivity {
 
     /**
      * set current video 's seek time.
+     *
      * @param time
      */
     public void setCurrentSeekTime(float time) {
-        if (time >=trimStart && time <= trimEnd) {
+        if (time >= trimStart && time <= trimEnd) {
             final float trimBarWidth = trimImageViewWidth * getDisplayMetric().scaledDensity;
-            currentVideoSeekPosition = (int)time;
+            currentVideoSeekPosition = (int) time;
 
             if (!flagPlay) {
                 videoView.seekTo(currentVideoSeekPosition);
                 videoView.pause();
             }
             float width = (videoIndicatorWidth * getDisplayMetric().scaledDensity);
-            float marginLeft = (float)time / 1000.f * Constant.SP_PER_SECOND * (getDisplayMetric().scaledDensity) - width / 2 + trimBarWidth;
-            FrameLayout.LayoutParams param = new FrameLayout.LayoutParams((int)width, FrameLayout.LayoutParams.MATCH_PARENT);
-            param.setMargins((int)marginLeft, 0, 0, 0);
+            float marginLeft = (float) time / 1000.f * Constant.SP_PER_SECOND * (getDisplayMetric().scaledDensity) - width / 2 + trimBarWidth;
+            FrameLayout.LayoutParams param = new FrameLayout.LayoutParams((int) width, FrameLayout.LayoutParams.MATCH_PARENT);
+            param.setMargins((int) marginLeft, 0, 0, 0);
             video_indicator.setLayoutParams(param);
-            updateOverlayView((float)time / 1000.f);
+            updateOverlayView((float) time / 1000.f);
         }
     }
 
@@ -443,6 +567,7 @@ public class EditingVideoActivity extends BaseActivity {
     public void updateOverlayView(float time) {
         overlayView.setCurrentVideoTime(time);
     }
+
     /**
      * Play & Pause video in video view
      */
@@ -460,6 +585,7 @@ public class EditingVideoActivity extends BaseActivity {
             btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.btn_play));
         }
     }
+
     /**
      * initialize video view
      * set media file for video view, once it is initialized control layout will be shown below video view
@@ -532,27 +658,27 @@ public class EditingVideoActivity extends BaseActivity {
         int videoHeight = Constant.VIDEO_HEIGHT;
 
         ArrayList<ChildTextTimelineLayout> titleList = MainApplication.getTimelineTitlesInformation();
-         OverlayBean overlayBean = MainApplication.getInstance().getTemplate();
+        OverlayBean overlayBean = MainApplication.getInstance().getTemplate();
 
         //convert brand overlay into png
         if (overlayBean.brandLogo != null && overlayBean.brandLogo.backgroundImage.length() > 0) {
             OverlayBean.Overlay brandOverlay = overlayBean.brandLogo;
             String fileName = Constant.getOverlayDirectory() + "0.png";
             overlayView.convertOverlayToPNG("", brandOverlay, videoWidth, videoHeight, fileName);
-            int x = (int)(videoWidth * (brandOverlay.x / 100.f));
-            int y = (int)(videoHeight * (brandOverlay.y / 100.f));
+            int x = (int) (videoWidth * (brandOverlay.x / 100.f));
+            int y = (int) (videoHeight * (brandOverlay.y / 100.f));
             VideoOverlay info = new VideoOverlay(0, videoLength, x, y, fileName);
             videoOverlayInformation.add(info);
         }
 
         //convert caption overlay into image.
-        for (int i = 0; i < titleList.size(); i ++) {
+        for (int i = 0; i < titleList.size(); i++) {
             ChildTextTimelineLayout title = titleList.get(i);
-            String fileName =  Constant.getOverlayDirectory() + (i + 1) + ".png";
+            String fileName = Constant.getOverlayDirectory() + (i + 1) + ".png";
             overlayView.convertOverlayToPNG(title.getTitleText(), title.getCaptionOverlay(), videoWidth, videoHeight, fileName);
 
-            int x = (int)(videoWidth * (title.getCaptionOverlay().x / 100.f));
-            int y = (int)(videoHeight * (title.getCaptionOverlay().y / 100.f));
+            int x = (int) (videoWidth * (title.getCaptionOverlay().x / 100.f));
+            int y = (int) (videoHeight * (title.getCaptionOverlay().y / 100.f));
             VideoOverlay info = new VideoOverlay(title.getStartTime(), title.getEndTime(), x, y, fileName);
             videoOverlayInformation.add(info);
         }
@@ -564,6 +690,7 @@ public class EditingVideoActivity extends BaseActivity {
 
     /**
      * highlight video image in timeline area.
+     *
      * @param view
      */
     private void setTimelineVideo(View view) {
@@ -575,10 +702,12 @@ public class EditingVideoActivity extends BaseActivity {
         selectedVideoTimeline = view;
         view.setAlpha(0.5f);
     }
+
     /**
      * Intialize timeline , extract images from video on every 1 secs, analyze audio, and showing into the wavform view.
      */
     private boolean flagProgressDialogIsRunning = false;
+
     private class InitializeTimelineTask extends AsyncTask<Boolean, Boolean, Boolean> {
         @Override
         protected void onPreExecute() {
@@ -621,11 +750,11 @@ public class EditingVideoActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 final View thumbImageLayout = getLayoutInflater().inflate(R.layout.video_timeline_thumb_layout, null);
-                                ImageView imageView = (ImageView)thumbImageLayout.findViewById(R.id.img_thumb);
+                                ImageView imageView = (ImageView) thumbImageLayout.findViewById(R.id.img_thumb);
 
-                                if (tagObj == (int)videoLength / 1000 - Constant.TIMELINE_UNIT_SECOND) {
-                                    float offset = (float)videoLength /1000 - (float)tagObj;
-                                    int width = (int)(offset * 60 * getDisplayMetric().scaledDensity / Constant.TIMELINE_UNIT_SECOND);
+                                if (tagObj == (int) videoLength / 1000 - Constant.TIMELINE_UNIT_SECOND) {
+                                    float offset = (float) videoLength / 1000 - (float) tagObj;
+                                    int width = (int) (offset * 60 * getDisplayMetric().scaledDensity / Constant.TIMELINE_UNIT_SECOND);
                                     LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.MATCH_PARENT);
                                     imageView.setLayoutParams(param);
                                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -656,11 +785,12 @@ public class EditingVideoActivity extends BaseActivity {
         int sampleRate = 0;
         int samplePerFrame = 0;
         int frameCount = 0;
+
         private void initializeAudioTimeline() {
             try {
                 SoundFile soundFile = SoundFile.create(Constant.getConvertedAudio(), null);
                 frameGains = new int[soundFile.getNumFrames()];
-                for (int i = 0; i < frameGains.length; i ++) {
+                for (int i = 0; i < frameGains.length; i++) {
                     frameGains[i] = soundFile.getFrameGains()[i];
                 }
 
@@ -677,7 +807,7 @@ public class EditingVideoActivity extends BaseActivity {
                 });
 
                 soundFile = null;
-            }catch (Exception e) {
+            } catch (Exception e) {
 
             }
         }
@@ -724,20 +854,22 @@ public class EditingVideoActivity extends BaseActivity {
     }
 
     private static ArrayList<ChildTextTimelineLayout> cachedInfo = null;
+
     private void restoreTimelineLayout() {
         titleThumbsLayout.removeChildTitleLayouts();
         if (cachedInfo != null) {
-            for (int i = 0 ; i <cachedInfo.size(); i ++) {
+            for (int i = 0; i < cachedInfo.size(); i++) {
                 ChildTextTimelineLayout cachedItem = cachedInfo.get(i);
                 titleThumbsLayout.addNewTitleInformation(cachedItem.getTitleText(), cachedItem.getStartTime(), cachedItem.getEndTime(), cachedItem.getCaptionOverlay(), cachedItem.isRemovable());
             }
         }
         updateOverlayView(0);
     }
+
     /**
      *
      */
-    private void addDefaultOverlays () {
+    private void addDefaultOverlays() {
         //add default captions into timeline view (contact, name overlay)
 
         OverlayBean template = MainApplication.getInstance().getTemplate();
@@ -748,15 +880,17 @@ public class EditingVideoActivity extends BaseActivity {
 
         OverlayBean.Overlay contactOverlay = template.contact;
         if (contactOverlay != null) {
-            float lastSec = (float)videoLength / 1000;
+            float lastSec = (float) videoLength / 1000;
             titleThumbsLayout.addNewTitleInformation(contactOverlay.defaultText, lastSec - Constant.TIMELINE_UNIT_SECOND, lastSec, contactOverlay, false);
         }
         updateOverlayView(0);
     }
+
     /**
      * initialize Timeline view extract thumb image from video, add them into video timeline
      */
     private InitializeTimelineTask mTask = null;
+
     private void initializeTimeLineView() {
         videoThumbsLayout.removeAllViews();
         if (mTask != null) {

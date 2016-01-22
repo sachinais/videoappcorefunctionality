@@ -30,6 +30,7 @@ public class MainApplication extends Application{
     private JSONArray templateArray;
     private OverlayBean selectedOverlay = null;
     private int encodeingProgres=0;
+    private int selectedTempletePostion=0;
 
     private static ArrayList<ChildTextTimelineLayout>  timelineTitlesInformation = new ArrayList<>();
 
@@ -90,6 +91,16 @@ public class MainApplication extends Application{
 
     public  JSONArray getTemplateArray(){
         return templateArray;
+    }
+
+
+    public void setSelectedTemplePosition(int selectedTempletePostion){
+        this.selectedTempletePostion = selectedTempletePostion;
+    }
+
+    public int getSelectedTemplePosition(){
+
+        return selectedTempletePostion;
     }
 
     public void setTemplate(int index) {
