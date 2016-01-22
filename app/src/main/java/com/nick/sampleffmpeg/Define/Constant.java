@@ -93,11 +93,22 @@ public class Constant {
         return getApplicationDirectory() + "app.log";
     }
 
-    public synchronized static String getAssetTopVideo() {
-        return getApplicationDirectory() + "app_files" + File.separator + "top_tail.mp4";
+    public static String downloadedTopVideoUrl = "";
+    public static String downloadedTailVideoUrl = "";
+
+    public synchronized static String getDownloadTopVideo() {
+        return downloadedTopVideoUrl;
     }
-    public synchronized static String getAssetTailVideo() {
-        return getApplicationDirectory() + "app_files" + File.separator + "top_tail.mp4";
+    public synchronized static String getDownloadTailVideo() {
+        return downloadedTailVideoUrl;
+    }
+
+    public synchronized static void setDownloadTopVideo(String url) {
+        downloadedTopVideoUrl = url;
+    }
+
+    public synchronized static void setDownloadTailVideo(String url) {
+        downloadedTailVideoUrl = url;
     }
 
     public synchronized static String getTopVideo() {

@@ -173,14 +173,15 @@ public class EditingVideoActivity extends BaseActivity {
             flagTimelineInitialized = false;
             flagFromBackground = false;
             addTitle();
+
+            downloadTopVideo();
+            downloadTailVideo();
         } else {
             flagFromBackground = true;
             initializeVideoView();
             initializeThumbView();
             editJobTitle.setText(strJobTitle);
         }
-        downloadTopVideo();
-        downloadTailVideo();
     }
 
     @Override
@@ -241,7 +242,13 @@ public class EditingVideoActivity extends BaseActivity {
                     public void getTopVideoUrl(String url) {
                         findViewById(R.id.pb_Top).setVisibility(View.GONE);
                         topVideoUrl = url;
-
+                        Constant.setDownloadTopVideo(topVideoUrl);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                initializeThumbView();
+                            }
+                        });
                     }
                 });
             }
@@ -276,7 +283,13 @@ public class EditingVideoActivity extends BaseActivity {
                     public void getTopVideoUrl(String url) {
                         findViewById(R.id.pb_Tail).setVisibility(View.GONE);
                         tailVideoUrl = url;
-
+                        Constant.setDownloadTailVideo(tailVideoUrl);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                initializeThumbView();
+                            }
+                        });
                     }
                 });
             }
@@ -635,18 +648,26 @@ public class EditingVideoActivity extends BaseActivity {
      * Initialize thumb views on left side ,right side of app
      */
     private void initializeThumbView() {
-        Bitmap bmTailThumb;
-        bmTailThumb = ThumbnailUtils.createVideoThumbnail(Constant.getAssetTailVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
+        if (Constant.getDownloadTailVideo().length() > 0) {
+            Bitmap bmTailThumb;
+            bmTailThumb = ThumbnailUtils.createVideoThumbnail(Constant.getDownloadTailVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
+            if (bmTailThumb != null) {
+                imgThumbVideo3.setImageBitmap(bmTailThumb);
+            }
+        }
 
-        Bitmap bmTopThumb;
-        bmTopThumb = ThumbnailUtils.createVideoThumbnail(Constant.getAssetTopVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
+        if (Constant.getDownloadTopVideo().length() > 0) {
+            Bitmap bmTopThumb;
+            bmTopThumb = ThumbnailUtils.createVideoThumbnail(Constant.getDownloadTopVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
+            if (bmTopThumb != null) {
+                imgThumbVideo2.setImageBitmap(bmTopThumb);
+            }
+        }
 
         Bitmap bmThumb;
         bmThumb = ThumbnailUtils.createVideoThumbnail(Constant.getSourceVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
 
         imgThumbVideo1.setImageBitmap(bmThumb);
-        imgThumbVideo2.setImageBitmap(bmTopThumb);
-        imgThumbVideo3.setImageBitmap(bmTailThumb);
     }
 
     /**
@@ -904,9 +925,5 @@ public class EditingVideoActivity extends BaseActivity {
         }
         mTask = new InitializeTimelineTask();
         mTask.execute(true);
-    }
-
-    public int getCurrentSeekPosition() {
-        return currentVideoSeekPosition;
     }
 }
