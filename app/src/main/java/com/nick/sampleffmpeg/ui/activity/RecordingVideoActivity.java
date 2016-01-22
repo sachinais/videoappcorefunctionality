@@ -150,7 +150,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (recordingTime > 10.f) {
+                                    if (recordingTime > 60.f) {
                                         imgRecordingFrameBorderLayout.setImageDrawable(getResources().getDrawable(R.drawable.frame_recording_border_red));
                                     }
                                     if (imgStatusRecording.getVisibility() == View.VISIBLE) {
