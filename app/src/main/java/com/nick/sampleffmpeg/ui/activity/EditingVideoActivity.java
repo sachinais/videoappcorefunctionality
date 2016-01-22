@@ -146,9 +146,6 @@ public class EditingVideoActivity extends BaseActivity {
     private static String strJobTitle = "";
     private ArrayList<ProvinceBean> options1Items = new ArrayList<ProvinceBean>();
 
-    private static int videoLength = 0;
-    private static int trimStart = 0;
-    private static int trimEnd = 0;
     public String topVideoUrl, tailVideoUrl;
     public boolean isTopVideoExist;
     public boolean isTailVideoExist;
@@ -212,6 +209,8 @@ public class EditingVideoActivity extends BaseActivity {
     }
 
     private void updateTimelineAfterTrim() {
+        int trimStart = MainApplication.getInstance().getVideoStart();
+        int trimEnd = MainApplication.getInstance().getVideoEnd();
         titleThumbsLayout.setTrimLeftRight(trimStart, trimEnd);
         if (currentVideoSeekPosition < trimStart) {
             setCurrentSeekTime(trimStart);
@@ -333,8 +332,8 @@ public class EditingVideoActivity extends BaseActivity {
                     public void run() {
                         if (!flagPlay) {
                             currentVideoSeekPosition += Constant.TIMELINE_UNIT_SECOND * 1000;
-                            if (currentVideoSeekPosition >= videoLength) {
-                                currentVideoSeekPosition = videoLength;
+                            if (currentVideoSeekPosition >= MainApplication.getInstance().getVideoLength()) {
+                                currentVideoSeekPosition = MainApplication.getInstance().getVideoLength();
                             }
                             setCurrentSeekTime(currentVideoSeekPosition);
                         }
@@ -436,7 +435,8 @@ public class EditingVideoActivity extends BaseActivity {
                             lParams.width = (int) trimBarWidth;
                         }
                         video_trim_left.setLayoutParams(lParams);
-                        trimStart = (int) ((lParams.width - trimBarWidth) / (float) Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity * 1000);
+                        int trimStart = (int) ((lParams.width - trimBarWidth) / (float) Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity * 1000);
+                        MainApplication.getInstance().setVideoStart(trimStart);
                         updateTimelineAfterTrim();
                     }
                 }
@@ -473,7 +473,8 @@ public class EditingVideoActivity extends BaseActivity {
                         lParams.leftMargin = parentWidth - lParams.width;
                         video_trim_right.setLayoutParams(lParams);
 
-                        trimEnd = videoLength - (int) ((lParams.width - trimBarWidth) / (float) Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity * 1000);
+                        int trimEnd = MainApplication.getInstance().getVideoLength() - (int) ((lParams.width - trimBarWidth) / (float) Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity * 1000);
+                        MainApplication.getInstance().setVideoEnd(trimEnd);
                         updateTimelineAfterTrim();
                     }
                 }
@@ -544,6 +545,8 @@ public class EditingVideoActivity extends BaseActivity {
      * @param time
      */
     public void setCurrentSeekTime(float time) {
+        int trimStart = MainApplication.getInstance().getVideoStart();
+        int trimEnd = MainApplication.getInstance().getVideoEnd();
         if (time >= trimStart && time <= trimEnd) {
             final float trimBarWidth = trimImageViewWidth * getDisplayMetric().scaledDensity;
             currentVideoSeekPosition = (int) time;
@@ -598,14 +601,15 @@ public class EditingVideoActivity extends BaseActivity {
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                videoLength = videoView.getDuration();
+                int videoLength = videoView.getDuration();
+                MainApplication.getInstance().setVideoLength(videoLength);
                 videoView.seekTo(defaultVideoInitialTime);
                 txtVideoDuration.setText(getString(R.string.label_total_length) + StringUtils.getMinuteSecondString(videoLength / 1000, false));
                 videoControlLayout.setVisibility(View.VISIBLE);
 
                 if (!flagFromBackground && !flagTimelineInitialized) {
-                    trimStart = 0;
-                    trimEnd = videoLength;
+                    MainApplication.getInstance().setVideoStart(0);
+                    MainApplication.getInstance().setVideoEnd(videoLength);
                 }
 
                 if (!flagTimelineInitialized) {
@@ -613,7 +617,7 @@ public class EditingVideoActivity extends BaseActivity {
                 }
 
                 setCurrentSeekTime(0);
-                titleThumbsLayout.setTrimLeftRight(trimStart, trimEnd);
+                titleThumbsLayout.setTrimLeftRight(MainApplication.getInstance().getVideoStart(), MainApplication.getInstance().getVideoEnd());
             }
         });
 
@@ -667,7 +671,7 @@ public class EditingVideoActivity extends BaseActivity {
             overlayView.convertOverlayToPNG("", brandOverlay, videoWidth, videoHeight, fileName);
             int x = (int) (videoWidth * (brandOverlay.x / 100.f));
             int y = (int) (videoHeight * (brandOverlay.y / 100.f));
-            VideoOverlay info = new VideoOverlay(0, videoLength, x, y, fileName);
+            VideoOverlay info = new VideoOverlay(0, MainApplication.getInstance().getVideoLength(), x, y, fileName);
             videoOverlayInformation.add(info);
         }
 
@@ -737,6 +741,7 @@ public class EditingVideoActivity extends BaseActivity {
             }
 
             if (flagInitialize) {
+                final int videoLength = MainApplication.getInstance().getVideoLength();
                 int sec = videoLength / 1000;
                 for (int i = 0; i < sec; i += Constant.TIMELINE_UNIT_SECOND) {
                     if (isCancelled()) {
@@ -880,7 +885,7 @@ public class EditingVideoActivity extends BaseActivity {
 
         OverlayBean.Overlay contactOverlay = template.contact;
         if (contactOverlay != null) {
-            float lastSec = (float) videoLength / 1000;
+            float lastSec = (float) MainApplication.getInstance().getVideoLength() / 1000;
             titleThumbsLayout.addNewTitleInformation(contactOverlay.defaultText, lastSec - Constant.TIMELINE_UNIT_SECOND, lastSec, contactOverlay, false);
         }
         updateOverlayView(0);
