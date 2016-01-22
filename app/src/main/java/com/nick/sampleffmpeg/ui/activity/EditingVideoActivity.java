@@ -174,8 +174,10 @@ public class EditingVideoActivity extends BaseActivity {
             flagFromBackground = false;
             addTitle();
 
-            downloadTopVideo();
-            downloadTailVideo();
+
+//                    downloadTopVideo();
+//                    downloadTailVideo();
+
         } else {
             flagFromBackground = true;
             initializeVideoView();
