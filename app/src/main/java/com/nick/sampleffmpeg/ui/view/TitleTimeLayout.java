@@ -90,8 +90,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
     /**
      * add title into title timeline area
      */
-    private void addNewTitleInformation(String title, OverlayBean.Overlay overlay) {
-        int currentVideoSeekPosition = parentActivity.getCurrentSeekPosition();
+    private void addNewTitleInformation(String title, OverlayBean.Overlay overlay, int currentVideoSeekPosition) {
 //        boolean flagAlreadyHaveTitle = checkTitleAlreadyExistInCurrentTimeLine(currentVideoSeekPosition);
 //        if (flagAlreadyHaveTitle) {
 //            parentActivity.showAlert(R.string.str_alert_title_information, R.string.str_title_already_exist, parentActivity.getString(R.string.str_alert_okay));
@@ -231,7 +230,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
                                     }, parentActivity.getString(R.string.str_no));
                         }
                     } else {
-                        addNewTitleToTimeline();
+                        addNewTitleToTimeline((int)(seekVideoTime * 1000));
                     }
                 } else {
                     firstTouch = true;
@@ -300,7 +299,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
      */
     private static EditText editTitle = null;
 
-    private void addNewTitleToTimeline() {
+    private void addNewTitleToTimeline(final int time) {
 
         final OverlayBean template = MainApplication.getInstance().getTemplate();
         if (template.captions.size() == 0) {
@@ -315,7 +314,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
                             if (editTitle != null) {
                                 String strCaption = editTitle.getText().toString();
                                 if (strCaption.length() > 0) {
-                                    addNewTitleInformation(strCaption, overlay);
+                                    addNewTitleInformation(strCaption, overlay, time);
                                 }
                             }
                         }
