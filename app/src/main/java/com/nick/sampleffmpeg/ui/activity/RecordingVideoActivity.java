@@ -150,6 +150,9 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    if (recordingTime > 10.f) {
+                                        imgRecordingFrameBorderLayout.setImageDrawable(getResources().getDrawable(R.drawable.frame_recording_border_red));
+                                    }
                                     if (imgStatusRecording.getVisibility() == View.VISIBLE) {
                                         imgStatusRecording.setVisibility(View.GONE);
                                     } else {
@@ -347,6 +350,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     private void showRecordingLayout() {
         btnStopCapture.setVisibility(View.VISIBLE);
         imgRecordingFrameBorderLayout.setVisibility(View.VISIBLE);
+        imgRecordingFrameBorderLayout.setImageDrawable(getResources().getDrawable(R.drawable.frame_recording_border_green));
         btnRestartCapture.setVisibility(View.VISIBLE);
         imgStatusRecording.setVisibility(View.VISIBLE);
         txtRecordingTime.setVisibility(View.VISIBLE);

@@ -41,7 +41,7 @@
         android:id="@+id/img_recording_frame_border"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/frame_recording_border"
+        android:src="@drawable/frame_recording_border_green"
         android:scaleType="fitXY"
         android:alpha="1"
         android:visibility="gone"

@@ -78,7 +78,10 @@ public class VideoEncoding {
         String strEnd = Float.toString(MainApplication.getInstance().getVideoEnd() / 1000.f);
 
         progress = 0;
-        String commands = "-y -threads 5 -i src.mp4 -crf 22 -preset ultrafast -ar 44100 -c:a aac -strict experimental -ss " + strStart + " -t " + strEnd + " -s " + strVideoSize + " -r 25 -c:v libx264 dst.mp4";
+        //String commands = "-y -threads 5 -i src.mp4 -crf 22 -preset ultrafast -ar 44100 -c:a aac -strict experimental -ss " + strStart + " -t " + strEnd + " -s " + strVideoSize + " -r 25 -c:v libx264 dst.mp4";
+
+        String commands = "-y -threads 5 -i src.mp4 -c:a mp2 -ss " + strStart + " -t " + strEnd + " -s " + strVideoSize + " -r 25 -c:v mpeg2video -qscale:v 2 dst.mp4";
+
 
         String srcVideoFilePath = Constant.getSourceVideo();
         String dstVideoFilePath = Constant.getConvertedVideo();
@@ -114,7 +117,8 @@ public class VideoEncoding {
             progress += stepProgress;
         }
 
-        String commands = "-y -threads 5 -i src.mp4 -crf 22 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s " + strVideoSize + " -r 25 -c:v libx264 dst.mp4";
+        //String commands = "-y -threads 5 -i src.mp4 -crf 22 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s " + strVideoSize + " -r 25 -c:v libx264 dst.mp4";
+        String commands = "-y -threads 5 -i src.mp4 -c:a mp2 -b:a 192k -s " + strVideoSize + " -r 25 -c:v mpeg2video -qscale:v 2 dst.mp4";
         String srcVideoFilePath = "";
         String dstVideoFilePath = "";
         //progressDialog.show();
@@ -179,7 +183,8 @@ public class VideoEncoding {
                 command = command + "-i" + " " + Constant.getOverlayDirectory() + i + ".png ";
             }
 
-            command = command + "-c:a aac -strict experimental -threads 5 -crf 22 -preset ultrafast -r 25 -c:v libx264 -filter_complex";
+            //command = command + "-c:a aac -strict experimental -threads 5 -crf 22 -preset ultrafast -r 25 -c:v libx264 -filter_complex";
+            command = command + "-c:a mp2 -b:a 192k -threads 5 -r 25 -c:v mpeg2video -qscale:v 2 -filter_complex";
             VideoOverlay title = videoOverlayInformation.get(0);
 
             String strFilterComplex = "[0:v][1:v] overlay=" + Integer.toString(title.xPos) + ":" + Integer.toString(title.yPos) +
@@ -224,49 +229,69 @@ public class VideoEncoding {
      */
     private static void mergeEncodingVideoWithTopTailVideo() {
         progress += stepProgress;
-        final int videoLength = VideoUtils.getVideoLength(Constant.getTopVideo()) +
-                VideoUtils.getVideoLength(Constant.getEncodedVideo()) + VideoUtils.getVideoLength(Constant.getTailVideo());
+        int _videoLength = VideoUtils.getVideoLength(Constant.getEncodedVideo());
 
         //make ffmpeg command
 
-        if (Constant.getDownloadTopVideo().length() != 0 || Constant.getDownloadTailVideo().length() != 0) {
-            String command = "-y ";
+        String command = "-y ";
+        int fileCount = 1;
+        if (Constant.getDownloadTopVideo().length() != 0) {
             command = command + "-i" + " " + Constant.getTopVideo() +" ";
-            command = command + "-i" + " " + Constant.getEncodedVideo() +" ";
-            command = command + "-i" + " " + Constant.getTailVideo() +" ";
-
-            command = command + "-c:a aac -strict experimental -threads 5 -crf 22 -preset ultrafast -r 25 -c:v libx264 -map [v] -map [a] -filter_complex";
-
-            String strFilterComplex = "[0:0] [0:1] [1:0] [1:1] [2:0] [2:1] concat=n=3:v=1:a=1 [v] [a]";
-
-            String[] subCommands = command.split(" ");
-
-            String[] commands = new String[subCommands.length + 2];
-            for (int i = 0; i < subCommands.length; i ++) {
-                commands[i] = subCommands[i];
-            }
-            commands[subCommands.length] = strFilterComplex;
-            commands[subCommands.length + 1] = Constant.getMergedVideo();
-
-            callback.onProgress(progress);
-            FFMpegUtils.execFFmpegBinary(commands, new FFMpegUtils.Callback() {
-                @Override
-                public void onProgress(String msg) {
-                    int subProgress = getProgressStatus(msg, videoLength);
-                    if (subProgress != 0) {
-                        callback.onProgress(progress + subProgress);
-                    }
-                }
-
-                @Override
-                public void onFinish() {
-                    callback.onFinish();
-                }
-            });
-        } else {
-            callback.onProgress(progress + stepProgress);
-            callback.onFinish();
+            fileCount ++;
+            _videoLength += VideoUtils.getVideoLength(Constant.getTopVideo());
         }
+
+        command = command + "-i" + " " + Constant.getEncodedVideo() +" ";
+        if (Constant.getDownloadTailVideo().length() != 0) {
+            command = command + "-i" + " " + Constant.getTailVideo() +" ";
+            fileCount ++;
+            _videoLength += VideoUtils.getVideoLength(Constant.getTailVideo());
+        }
+
+        final int videoLength = _videoLength;
+        command = command + "-c:a aac -strict experimental -threads 5 -crf 22 -preset ultrafast -r 25 -c:v libx264";
+        String strFilterComplex = "";
+        if (fileCount == 2) {
+            strFilterComplex = " -map [v] -map [a] -filter_complex [0:0] [0:1] [1:0] [1:1] concat=n=2:v=1:a=1 [v] [a]";
+        }
+        if (fileCount == 3) {
+            strFilterComplex =  " -map [v] -map [a] -filter_complex [0:0] [0:1] [1:0] [1:1] [2:0] [2:1] concat=n=3:v=1:a=1 [v] [a]";
+        }
+
+
+        String[] subCommands = command.split(" ");
+        int len = subCommands.length + 1;
+
+        if (strFilterComplex.length() > 0) {
+            len = subCommands.length + 2;
+        }
+
+        String[] commands = new String[len];
+        for (int i = 0; i < subCommands.length; i ++) {
+            commands[i] = subCommands[i];
+        }
+
+        if (strFilterComplex.length() > 0) {
+            commands[subCommands.length] = strFilterComplex;
+        }
+
+        commands[len - 1] = Constant.getMergedVideo();
+        callback.onProgress(progress);
+        FFMpegUtils.execFFmpegBinary(commands, new FFMpegUtils.Callback() {
+            @Override
+            public void onProgress(String msg) {
+                int subProgress = getProgressStatus(msg, videoLength);
+                if (subProgress != 0) {
+                    callback.onProgress(progress + subProgress);
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                callback.onFinish();
+            }
+        });
+
 
     }
 }
