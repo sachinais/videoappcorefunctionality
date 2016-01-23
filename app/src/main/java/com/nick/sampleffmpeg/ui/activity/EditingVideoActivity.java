@@ -155,7 +155,7 @@ public class EditingVideoActivity extends BaseActivity {
     private static String strJobTitle = "";
     private ArrayList<ProvinceBean> options1Items = new ArrayList<ProvinceBean>();
 
-    public String topVideoUrl, tailVideoUrl, thumbNailUrl;
+        public String topVideoUrl, tailVideoUrl, thumbNailUrl;
     public boolean isTopVideoExist;
     public boolean isTailVideoExist, isThumNailExist;
 
@@ -186,9 +186,9 @@ public class EditingVideoActivity extends BaseActivity {
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    //downloadThumbNail();
-                    //downloadTopVideo();
-                    // downloadTailVideo();
+                    downloadThumbNail();
+                    downloadTopVideo();
+                     downloadTailVideo();
 
                 }
             });
