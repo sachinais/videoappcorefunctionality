@@ -150,7 +150,12 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
                 cancelEncodingandUploadingDilaod();
             }
         });
-
+        findViewById(R.id.ll_SlectPlatform).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(UploadingVideoScreen.this, SelectPlatfom.class));
+            }
+        });
         encodingVideo();
     }
 

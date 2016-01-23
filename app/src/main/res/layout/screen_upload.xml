@@ -272,6 +272,7 @@
                     android:background="#605d5d5d" />
 
                 <LinearLayout
+                    android:id="@+id/ll_SlectPlatform"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"

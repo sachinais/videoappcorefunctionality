@@ -58,4 +58,8 @@
     <string name="str_select">Select</string>
     <string name="str_stop_recording">Do you want stop recording?</string>
     <string name="check">&#xf00c;</string>
+    <string name="twitter">\@fourpi</string>
+
+
+
 </resources>
