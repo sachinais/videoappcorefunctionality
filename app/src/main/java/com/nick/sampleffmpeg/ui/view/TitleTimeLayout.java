@@ -247,7 +247,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         } else if (me.getAction() == MotionEvent.ACTION_MOVE) {
             float x = me.getX();
             if (Math.abs(x - lastDragX) > 5) {
-                if (flagDragging && (flagResizeLeft || flagResizeRight || flagMoving) && !checkConflictTitleArea(x)) {
+                if (flagDragging && (flagResizeLeft || flagResizeRight || flagMoving)) {
                     if (flagResizeLeft) {
                         selectedItem.setLayoutLeft(me.getX());
                     } else if (flagResizeRight) {

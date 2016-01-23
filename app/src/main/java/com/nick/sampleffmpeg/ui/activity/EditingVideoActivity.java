@@ -183,16 +183,16 @@ public class EditingVideoActivity extends BaseActivity {
             flagFromBackground = false;
             addTitle();
 
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    downloadThumbNail();
-                    downloadTopVideo();
-                     downloadTailVideo();
-
-                }
-            });
-            t.start();
+//            Thread t = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    downloadThumbNail();
+//                    downloadTopVideo();
+//                     downloadTailVideo();
+//
+//                }
+//            });
+//            t.start();
 
 
         } else {
@@ -474,6 +474,16 @@ public class EditingVideoActivity extends BaseActivity {
                        getSid();
                     }
                 });
+
+        videoThumbsLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                float seekVideoTime = ((float) event.getX() / (float) Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity);
+                setCurrentSeekTime(seekVideoTime * 1000.f);
+                v.onTouchEvent(event);
+                return true;
+            }
+        });
 
         scrollViewTimeline.setOnTouchListener(new View.OnTouchListener() {
             @Override
