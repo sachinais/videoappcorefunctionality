@@ -198,7 +198,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
             } else {
                 if (!jsonObject.isNull(AppConstants.MESSAGE)) {
-                    Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), "Invalid Email or Password", Toast.LENGTH_LONG).show();
 
                 }
             }

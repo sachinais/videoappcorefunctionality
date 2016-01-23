@@ -70,9 +70,10 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tv_SlectPlatform"
                     android:layout_width="wrap_content"
                     android:text="Select Platform"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textColor="@color/color_black"
                     android:layout_centerInParent="true"
                     android:layout_height="wrap_content" />
@@ -93,9 +94,10 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tv_CompanyAccount"
                     android:layout_width="wrap_content"
                     android:text="Compnay Account"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textColor="@color/color_black"
                     android:layout_centerInParent="true"
                     android:layout_height="wrap_content" />
@@ -126,12 +128,13 @@
                         android:layout_height="40dp"
                         android:src="@drawable/facebook_icon"/>
                     <TextView
+                        android:id="@+id/tv_compnyfacebook"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                             android:layout_marginLeft="24dp"
                         android:textColor="@color/color_black"
                         android:text="Four Pi App and Web"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
 
 
                         />
@@ -166,13 +169,14 @@
                         android:layout_height="40dp"
                         android:src="@drawable/linked_in_icon"/>
                     <TextView
+                        android:id="@+id/tv_compnyLinkedIn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginLeft="24dp"
                         android:textColor="@color/color_black"
                         android:text="Four Pi LinkedIn"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
 
 
                         />
@@ -204,13 +208,14 @@
                         android:layout_height="40dp"
                         android:src="@drawable/twitter_icon"/>
                     <TextView
+                        android:id="@+id/tv_compnyTwitter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginLeft="24dp"
                         android:textColor="@color/color_black"
                         android:text="@string/twitter"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
 
 
                         />
@@ -241,7 +246,6 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="6dp"
                 android:layout_gravity="center_horizontal"
-                android:id="@+id/socialShare"
                 android:visibility="gone"
                 android:background="#eeee"
                 >
@@ -284,9 +288,10 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tv_PersonalAccount"
                     android:layout_width="wrap_content"
                     android:text="Personal Accounts"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textColor="@color/color_black"
                     android:layout_centerInParent="true"
                     android:layout_height="wrap_content" />
@@ -312,12 +317,13 @@
                         android:layout_height="40dp"
                         android:src="@drawable/facebook_icon"/>
                     <TextView
+                        android:id="@+id/tv_PersonalFacebook"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="24dp"
                         android:textColor="@color/color_black"
                         android:text="Four Pi App and Web"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
 
 
                         />
@@ -351,13 +357,14 @@
                         android:layout_height="40dp"
                         android:src="@drawable/linked_in_icon"/>
                     <TextView
+                        android:id="@+id/tv_PersonalLinedIn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginLeft="24dp"
                         android:textColor="@color/color_black"
                         android:text="For Pi LinkedIn"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
 
 
                         />
@@ -389,13 +396,14 @@
                         android:layout_height="40dp"
                         android:src="@drawable/twitter_icon"/>
                     <TextView
+                        android:id="@+id/tv_PersonalTwitter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginLeft="24dp"
                         android:textColor="@color/color_black"
                         android:text="@string/twitter"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
 
 
                         />

@@ -182,13 +182,14 @@ public class EditingVideoActivity extends BaseActivity {
             flagTimelineInitialized = false;
             flagFromBackground = false;
             addTitle();
-
+            initializeVideoView();
+            initializeThumbView();
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    downloadThumbNail();
-                    downloadTopVideo();
-                     downloadTailVideo();
+                   // downloadThumbNail();
+                   // downloadTopVideo();
+                   //  downloadTailVideo();
 
                 }
             });
@@ -220,8 +221,7 @@ public class EditingVideoActivity extends BaseActivity {
                 if (editTitle != null) {
                     strJobTitle = editTitle.getText().toString();
                     editJobTitle.setText(strJobTitle);
-                    initializeVideoView();
-                    initializeThumbView();
+
                 }
             }
         });
@@ -941,6 +941,9 @@ public class EditingVideoActivity extends BaseActivity {
                 progressDialog.dismiss();
                 flagProgressDialogIsRunning = false;
                 mTask = null;
+                downloadThumbNail();
+                downloadTopVideo();
+                downloadTailVideo();
             } catch (Exception e) {
 
             }

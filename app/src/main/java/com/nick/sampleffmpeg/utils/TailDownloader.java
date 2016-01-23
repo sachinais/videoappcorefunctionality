@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Button;
 
+import com.nick.sampleffmpeg.ui.activity.DownloadService;
 import com.nick.sampleffmpeg.ui.activity.EditingVideoActivity;
 
 import java.io.BufferedInputStream;
