@@ -100,13 +100,14 @@
                     android:layout_alignLeft="@id/img_thumb_video1"
                     android:layout_alignRight="@id/img_thumb_video1"
                     android:layout_alignBottom="@id/img_thumb_video1">
-                    <ProgressBar
-                        android:id="@+id/pb_Thumb"
-                        android:layout_width="30dp"
-                        android:visibility="gone"
-                        android:layout_centerInParent="true"
-                        android:layout_height="30dp" />
+
                 </TextView>
+                <ProgressBar
+                    android:id="@+id/pb_Thumb"
+                    android:layout_width="30dp"
+                    android:visibility="gone"
+                    android:layout_centerInParent="true"
+                    android:layout_height="30dp" />
             </RelativeLayout>
 
 

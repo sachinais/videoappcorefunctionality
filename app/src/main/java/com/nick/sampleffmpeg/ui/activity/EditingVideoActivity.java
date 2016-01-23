@@ -452,7 +452,7 @@ public class EditingVideoActivity extends BaseActivity {
                         if (flagTopVideoDownloaded && flagTailVideoDownloaded) {
                             convertOverlaysPNG();
                         } else {
-                            showAlert(R.string.str_alert_title_information, "You have to wait until top/tail video is downloading");
+                            showAlert(R.string.str_alert_title_information, "You have to wait until top/tail video is downloading", "Ok");
                         }
 
                     }
@@ -461,8 +461,10 @@ public class EditingVideoActivity extends BaseActivity {
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(thumbNailUrl))); /** replace with your own uri */
-
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.parse(thumbNailUrl), "image/*");
+                        startActivity(intent);
                     }
                 });
         UITouchButton.applyEffect(imgThumbVideo2, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
