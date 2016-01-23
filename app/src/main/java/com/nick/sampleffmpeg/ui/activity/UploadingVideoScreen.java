@@ -232,7 +232,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
             public void onFinish() {
                 ((TextView)findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_light_sign_btn));
                 uri = Uri.fromFile(new File(Constant.getMergedVideo()));
-                //uploadVideo();
+                uploadVideo();
             }
         }, Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT);
     }
