@@ -109,7 +109,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
     private int countDownValue = -1000;
     private SharedPreferenceWriter sharedPreferenceWriter = null;
-
+    private  String RequestType = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -451,9 +451,8 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             @Override
             public void onClick(View v) {
                 optionDialog.dismiss();
-
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.APP_DOMAIN));
-                startActivity(browserIntent);
+                RequestType = "DashBoard";
+               getSid();
             }
         });
         ((Button) optionDialog.findViewById(R.id.btnAddUser)).setOnClickListener(new View.OnClickListener() {
@@ -461,8 +460,8 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             public void onClick(View v) {
                 optionDialog.dismiss();
 
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.APP_DOMAIN));
-                startActivity(browserIntent);
+                RequestType = "AddUser";
+                getSid();
             }
         });
 
@@ -471,8 +470,9 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             public void onClick(View v) {
                 optionDialog.dismiss();
 
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.APP_DOMAIN));
-                startActivity(browserIntent);
+                RequestType = "Tutorial";
+                getSid();
+
             }
         });
         ((Button) optionDialog.findViewById(R.id.btnCancel)).setOnClickListener(new View.OnClickListener() {
@@ -495,7 +495,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             public void onClick(View v) {
                 optionDialog.dismiss();
                 finish();
-                SharedPreferenceWriter.getInstance(RecordingVideoActivity.this).clearPreferenceValues();
+                SharedPreferenceWriter.getInstance().writeStringValue(SPreferenceKey.USERID, "");
                 startActivity(new Intent(RecordingVideoActivity.this, LoginActivity.class));
 
             }
@@ -505,6 +505,30 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
 
     }
+
+
+
+
+    public void getSid(){
+        try {
+            if (CheckNetworkConnection.isNetworkAvailable(RecordingVideoActivity.this)) {
+                List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
+                RequestBean requestBean = new RequestBean();
+                requestBean.setActivity(RecordingVideoActivity.this);
+                requestBean.setUrl("get_sid.php");
+                requestBean.setParams(paramePairs);
+                requestBean.setIsProgressBarEnable(true);
+                RequestHandler requestHandler = new RequestHandler(requestBean, requestSid);
+                requestHandler.execute(null, null, null);
+            } else {
+                CustomDialogs.showOkDialog(RecordingVideoActivity.this, "Please check network connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     private void showPicker() throws JSONException {
         if (MainApplication.getInstance().getTemplateArray() != null && MainApplication.getInstance().getTemplateArray().length() > 0) {
@@ -596,7 +620,40 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             e.printStackTrace();
         }
     }
+    private RequestListner requestSid = new RequestListner() {
 
+        @Override
+        public void getResponse(JSONObject jsonObject) {
+            try {
+                String sid="";
+                String url = "";
+                if (jsonObject != null) {
+                    if(!jsonObject.isNull("sid")){
+                     sid=   jsonObject.getString("sid");
+                    }
+
+                    if(RequestType.equalsIgnoreCase("DashBoard")){
+                        url = "https://live.videomyjob.com/api/app_login.php?user_id="+SharedPreferenceWriter.getInstance().getString(SPreferenceKey.USERID)+" & sid="+sid+" & "+"redirect=1";
+
+                    } else if(RequestType.equalsIgnoreCase("AddUser")){
+                        url = "https://live.videomyjob.com/api/app_login.php?user_id="+SharedPreferenceWriter.getInstance().getString(SPreferenceKey.USERID)+" & sid="+sid+" & "+"redirect=2";
+
+                    }else  if(RequestType.equalsIgnoreCase("Tutorial")){
+                        url = "https://live.videomyjob.com/api/app_login.php?user_id="+SharedPreferenceWriter.getInstance().getString(SPreferenceKey.USERID)+" & sid="+sid+" & "+"redirect=3";
+
+                    }
+
+                  //  https://live.videomyjob.com/api/app_login.php?user_id=5 & sid=95a65aadd8c905bcc2c0751d96f77aa0 & redirect=1
+
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(browserIntent);
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     private RequestListner requestListner = new RequestListner() {
 

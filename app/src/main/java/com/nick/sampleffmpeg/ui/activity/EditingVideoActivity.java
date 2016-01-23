@@ -29,6 +29,11 @@ import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.bean.ProvinceBean;
 import com.nick.sampleffmpeg.bean.VideoOverlay;
+import com.nick.sampleffmpeg.network.CheckNetworkConnection;
+import com.nick.sampleffmpeg.network.CustomDialogs;
+import com.nick.sampleffmpeg.network.RequestBean;
+import com.nick.sampleffmpeg.network.RequestHandler;
+import com.nick.sampleffmpeg.network.RequestListner;
 import com.nick.sampleffmpeg.sharedpreference.SPreferenceKey;
 import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 import com.nick.sampleffmpeg.ui.control.UITouchButton;
@@ -42,11 +47,15 @@ import com.nick.sampleffmpeg.utils.StringUtils;
 import com.nick.sampleffmpeg.utils.TailDownloader;
 import com.nick.sampleffmpeg.utils.TopDownloader;
 import com.nick.sampleffmpeg.utils.audio.soundfile.SoundFile;
+import com.nick.sampleffmpeg.utils.youtube.FileDownloader;
 
+import org.apache.http.NameValuePair;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -146,9 +155,9 @@ public class EditingVideoActivity extends BaseActivity {
     private static String strJobTitle = "";
     private ArrayList<ProvinceBean> options1Items = new ArrayList<ProvinceBean>();
 
-    public String topVideoUrl, tailVideoUrl;
+    public String topVideoUrl, tailVideoUrl, thumbNailUrl;
     public boolean isTopVideoExist;
-    public boolean isTailVideoExist;
+    public boolean isTailVideoExist, isThumNailExist;
 
 
     @Override
@@ -174,9 +183,17 @@ public class EditingVideoActivity extends BaseActivity {
             flagFromBackground = false;
             addTitle();
 
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //downloadThumbNail();
+                    //downloadTopVideo();
+                    // downloadTailVideo();
 
-//                    downloadTopVideo();
-//                    downloadTailVideo();
+                }
+            });
+            t.start();
+
 
         } else {
             flagFromBackground = true;
@@ -245,12 +262,12 @@ public class EditingVideoActivity extends BaseActivity {
                         findViewById(R.id.pb_Top).setVisibility(View.GONE);
                         topVideoUrl = url;
                         Constant.setDownloadTopVideo(topVideoUrl);
-                        runOnUiThread(new Runnable() {
+                       /* runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 initializeThumbView();
                             }
-                        });
+                        });*/
                     }
                 });
             }
@@ -261,6 +278,35 @@ public class EditingVideoActivity extends BaseActivity {
         }
     }
 
+
+    public void downloadThumbNail() {
+        try {
+            int pos = MainApplication.getInstance().getSelectedTemplePosition();
+            if (MainApplication.getInstance().getTemplateArray() != null && MainApplication.getInstance().getTemplateArray().length() > 0) {
+                JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    options1Items.add(new ProvinceBean(i, jsonObject.optString("title"), jsonObject.optString("directory"), ""));
+                }
+            }
+            JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
+
+            isThumNailExist = true;
+            FileDownloader fileDownloader = new FileDownloader(EditingVideoActivity.this, getThumbnailUrl((int) options1Items.get(pos).getId(), "tail"), options1Items.get(pos).getDirectoryId());
+            fileDownloader.startDownload(new TopVideoDownload() {
+                @Override
+                public void getTopVideoUrl(String url) {
+
+                    thumbNailUrl = url;
+                    // Constant.setDownloadTailVideo(tailVideoUrl);
+                }
+            });
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void downloadTailVideo() {
         try {
@@ -286,12 +332,12 @@ public class EditingVideoActivity extends BaseActivity {
                         findViewById(R.id.pb_Tail).setVisibility(View.GONE);
                         tailVideoUrl = url;
                         Constant.setDownloadTailVideo(tailVideoUrl);
-                        runOnUiThread(new Runnable() {
+                        /*runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 initializeThumbView();
                             }
-                        });
+                        });*/
                     }
                 });
             }
@@ -306,6 +352,26 @@ public class EditingVideoActivity extends BaseActivity {
         public void getTopVideoUrl(String url);
     }
 
+    private String getThumbnailUrl(int postion, String topTail) {
+        StringBuilder builder = new StringBuilder();
+        http:
+//syd.static.videomyjob.com/profile/6P9UFyOSl8_5_lg.jpg"
+
+        try {
+            JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
+            builder.append("http://")
+                    .append(getServer(sharedPreferenceWriter.getString(SPreferenceKey.REGION)))
+                    .append("/profile/")
+                    .append(sharedPreferenceWriter.getString(SPreferenceKey.PEPPER_ID))
+                    .append("_" + sharedPreferenceWriter.getString(SPreferenceKey.USERID))
+                    .append("_" + "lg.jpg");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return builder.toString();
+    }
 
     private String getTemplateUrl(int postion, String topTail) {
         StringBuilder builder = new StringBuilder();
@@ -405,7 +471,7 @@ public class EditingVideoActivity extends BaseActivity {
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        showTutorialPage();
+                       getSid();
                     }
                 });
 
@@ -542,10 +608,10 @@ public class EditingVideoActivity extends BaseActivity {
     /**
      * show tutorial page via webview
      */
-    private void showTutorialPage() {
+  /*  private void showTutorialPage() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://live.videomyjob.com"));
         startActivity(browserIntent);
-    }
+    }*/
 
     private Runnable updateTimeTask = new Runnable() {
         public void run() {
@@ -928,4 +994,49 @@ public class EditingVideoActivity extends BaseActivity {
         mTask = new InitializeTimelineTask();
         mTask.execute(true);
     }
+
+
+    public void getSid() {
+        try {
+            if (CheckNetworkConnection.isNetworkAvailable(EditingVideoActivity.this)) {
+                List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
+                RequestBean requestBean = new RequestBean();
+                requestBean.setActivity(EditingVideoActivity.this);
+                requestBean.setUrl("get_sid.php");
+                requestBean.setParams(paramePairs);
+                requestBean.setIsProgressBarEnable(true);
+                RequestHandler requestHandler = new RequestHandler(requestBean, requestSid);
+                requestHandler.execute(null, null, null);
+            } else {
+                CustomDialogs.showOkDialog(EditingVideoActivity.this, "Please check network connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private RequestListner requestSid = new RequestListner() {
+
+        @Override
+        public void getResponse(JSONObject jsonObject) {
+            try {
+                String sid = "";
+                String url = "";
+                if (jsonObject != null) {
+                    if (!jsonObject.isNull("sid")) {
+                        sid = jsonObject.getString("sid");
+                    }
+
+                    url = "https://live.videomyjob.com/api/app_login.php?user_id=" + SharedPreferenceWriter.getInstance().getString(SPreferenceKey.USERID) + " & sid=" + sid + " & " + "redirect=3";
+
+
+                   Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(browserIntent);
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 }

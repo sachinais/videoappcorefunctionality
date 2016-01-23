@@ -30,29 +30,23 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoginActivity extends Activity implements View.OnClickListener{
+public class LoginActivity extends Activity implements View.OnClickListener {
     private boolean isChecked;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         findViewById(R.id.tvSignInBtn).setOnClickListener(this);
-        CheckBox checkBox = (CheckBox)findViewById(R.id.checkBox);
-      //  checkBox.setChecked( MainApplication.getInstance().getEditor().getBoolean(SPreferenceKey.IS_REMEMBER_PSSWORD,false));
+        CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox);
+        checkBox.setChecked(SharedPreferenceWriter.getInstance().getBoolean(SPreferenceKey.IS_REMEMBER_PSSWORD));
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean value) {
-                MainApplication.getInstance().getEditor().edit().putBoolean(SPreferenceKey.IS_REMEMBER_PSSWORD, value).commit();
-                if(value){
-                    isChecked = value;
-                    setValueToEditText();
-                }else {
-                    isChecked = false;
-                    resetEditText();
-                }
+                SharedPreferenceWriter.getInstance().writeBooleanValue(SPreferenceKey.IS_REMEMBER_PSSWORD, value);
             }
         });
-       findViewById(R.id.tvCreateAccount).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.tvCreateAccount).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -60,21 +54,21 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 startActivity(browserIntent);
             }
         });
+
+        if (SharedPreferenceWriter.getInstance().getBoolean(SPreferenceKey.IS_REMEMBER_PSSWORD)) {
+            String username = SharedPreferenceWriter.getInstance().getString(SPreferenceKey.LAST_USER_NAME);
+            String pass = SharedPreferenceWriter.getInstance().getString(SPreferenceKey.LAST_PASSWORD);
+
+            ((EditText) findViewById(R.id.etEmail)).setText(username);
+            ((EditText) findViewById(R.id.etPassword)).setText(pass);
+
+        }
     }
 
-    private void resetEditText(){
-        ((EditText)findViewById(R.id.etEmail)).setText("");
-        ((EditText)findViewById(R.id.etPassword)).setText("");
 
-    }
 
-    private void setValueToEditText(){
-        ((EditText)findViewById(R.id.etEmail)).setText(MainApplication.getInstance().getEditor().getString(SPreferenceKey.LAST_USER_NAME,""));
-        ((EditText)findViewById(R.id.etPassword)).setText(MainApplication.getInstance().getEditor().getString(SPreferenceKey.LAST_PASSWORD,""));
 
-    }
-
-    private void saveValueToPref(){
+    private void saveValueToPref() {
         MainApplication.getInstance().getEditor().edit().putString(SPreferenceKey.LAST_USER_NAME, ((EditText) findViewById(R.id.etEmail)).getText().toString()).commit();
         MainApplication.getInstance().getEditor().edit().putString(SPreferenceKey.LAST_PASSWORD, ((EditText) findViewById(R.id.etPassword)).getText().toString()).commit();
 
@@ -82,30 +76,31 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.tvSignInBtn:
-                if(isValidData()){
+                if (isValidData()) {
                     sendRequest();
                 }
                 break;
         }
     }
 
-    private boolean isValidData(){
-        String a = ((EditText)findViewById(R.id.etEmail)).getText().toString().trim();
-        String b = ((EditText)findViewById(R.id.etPassword)).getText().toString().trim();
-        if(TextUtils.isEmpty(a)){
-            ((EditText)findViewById(R.id.etEmail)).setError("Please enter your email");
-        }else if(!isEmailValid(a)){
-            ((EditText)findViewById(R.id.etEmail)).setError("Please enter a valid email");
-        }else if(a.length() <8){
-            ((EditText)findViewById(R.id.etPassword)).setError("Password must be minimum 8 char");
-        }else {
+    private boolean isValidData() {
+        String a = ((EditText) findViewById(R.id.etEmail)).getText().toString().trim();
+        String b = ((EditText) findViewById(R.id.etPassword)).getText().toString().trim();
+        if (TextUtils.isEmpty(a)) {
+            ((EditText) findViewById(R.id.etEmail)).setError("Please enter your email");
+        } else if (!isEmailValid(a)) {
+            ((EditText) findViewById(R.id.etEmail)).setError("Please enter a valid email");
+        } else if (a.length() < 8) {
+            ((EditText) findViewById(R.id.etPassword)).setError("Password must be minimum 8 char");
+        } else {
             return true;
         }
 
         return false;
     }
+
     /**
      * @param email
      * @return tue if email is valid and false if not
@@ -114,15 +109,15 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    private void sendRequest(){
-        try{
-            if(CheckNetworkConnection.isNetworkAvailable(LoginActivity.this)){
+    private void sendRequest() {
+        try {
+            if (CheckNetworkConnection.isNetworkAvailable(LoginActivity.this)) {
                 saveValueToPref();
                 List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
-                paramePairs.add(new BasicNameValuePair("email",((EditText)findViewById(R.id.etEmail)).getText().toString().trim()));
-                paramePairs.add(new BasicNameValuePair("password",((EditText)findViewById(R.id.etPassword)).getText().toString().trim()));
-             //   paramePairs.add(new BasicNameValuePair("login_resource",String.valueOf(AppConstants.DEVICE_TYPE_ANDROID)));
-             //   paramePairs.add(new BasicNameValuePair("device_key", GCMRegistrar.getRegistrationId(LoginActivity.this)));
+                paramePairs.add(new BasicNameValuePair("email", ((EditText) findViewById(R.id.etEmail)).getText().toString().trim()));
+                paramePairs.add(new BasicNameValuePair("password", ((EditText) findViewById(R.id.etPassword)).getText().toString().trim()));
+                //   paramePairs.add(new BasicNameValuePair("login_resource",String.valueOf(AppConstants.DEVICE_TYPE_ANDROID)));
+                //   paramePairs.add(new BasicNameValuePair("device_key", GCMRegistrar.getRegistrationId(LoginActivity.this)));
                 RequestBean requestBean = new RequestBean();
                 requestBean.setActivity(LoginActivity.this);
                 requestBean.setUrl("signin.php");
@@ -130,68 +125,80 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 requestBean.setIsProgressBarEnable(true);
                 RequestHandler requestHandler = new RequestHandler(requestBean, requestListner);
                 requestHandler.execute(null, null, null);
-            }else {
+            } else {
                 CustomDialogs.showOkDialog(LoginActivity.this, "Please check network connection");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
 
     }
+
     private RequestListner requestListner = new RequestListner() {
 
         @Override
         public void getResponse(JSONObject jsonObject) {
-            try{
-                if(jsonObject != null){
+            try {
+                if (jsonObject != null) {
                     parseJsonData(jsonObject);
                 }
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     };
 
-    private void parseJsonData(JSONObject jsonObject) throws JSONException{
-        if(!jsonObject.isNull(AppConstants.SUCCESS)){
-            if(jsonObject.getBoolean(AppConstants.SUCCESS)){
-                if(!jsonObject.isNull("user_id")){
-                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.USERID,jsonObject.getString("user_id"));
+    private void parseJsonData(JSONObject jsonObject) throws JSONException {
+        if (!jsonObject.isNull(AppConstants.SUCCESS)) {
+            if (jsonObject.getBoolean(AppConstants.SUCCESS)) {
+                if (!jsonObject.isNull("user_id")) {
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.USERID, jsonObject.getString("user_id"));
                 }
-                if(!jsonObject.isNull("email")){
-                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.EMAIL,jsonObject.getString("email"));
+                if (!jsonObject.isNull("email")) {
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.EMAIL, jsonObject.getString("email"));
                 }
-                if(!jsonObject.isNull("firstname")){
-                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.FIRST_NAME,jsonObject.getString("firstname"));
+                if (!jsonObject.isNull("pepper")) {
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.PEPPER_ID, jsonObject.getString("pepper"));
                 }
-                if(!jsonObject.isNull("lastname")){
-                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.LAST_NAME,jsonObject.getString("lastname"));
+                if (!jsonObject.isNull("firstname")) {
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.FIRST_NAME, jsonObject.getString("firstname"));
                 }
-                if(!jsonObject.isNull("region")){
-                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.REGION,jsonObject.getString("region"));
+                if (!jsonObject.isNull("lastname")) {
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.LAST_NAME, jsonObject.getString("lastname"));
                 }
-                if(!jsonObject.isNull("company_directory")){
-                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.COMPANY_DIRECTORY,jsonObject.getString("company_directory"));
+                if (!jsonObject.isNull("region")) {
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.REGION, jsonObject.getString("region"));
+                }
+                if (!jsonObject.isNull("company_directory")) {
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.COMPANY_DIRECTORY, jsonObject.getString("company_directory"));
                 }
 
-                if(!jsonObject.isNull("title")){
-                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.TITLE,jsonObject.getString("title"));
+                if (!jsonObject.isNull("title")) {
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.TITLE, jsonObject.getString("title"));
                 }
-                if(!jsonObject.isNull("contact")){
+                if (!jsonObject.isNull("contact")) {
                     SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.CONTACT, jsonObject.getString("contact"));
                 }
+                if (SharedPreferenceWriter.getInstance().getBoolean(SPreferenceKey.IS_REMEMBER_PSSWORD)) {
 
-                if(!jsonObject.isNull("templates")){
-                    MainApplication.getInstance().setTemplateArray(jsonObject.getJSONArray("templates"));
-                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.TEMPLATE_ARRAY,jsonObject.toString());
+                    SharedPreferenceWriter.getInstance().writeStringValue(SPreferenceKey.LAST_USER_NAME, jsonObject.getString("email"));
+                    SharedPreferenceWriter.getInstance().writeStringValue(SPreferenceKey.LAST_PASSWORD, ((EditText) findViewById(R.id.etPassword)).getText().toString());
+
+                } else {
+                    SharedPreferenceWriter.getInstance().writeStringValue(SPreferenceKey.LAST_USER_NAME, "");
+                    SharedPreferenceWriter.getInstance().writeStringValue(SPreferenceKey.LAST_PASSWORD, "");
                 }
-                startActivity(new Intent(LoginActivity.this,RecordingVideoActivity.class));
+                if (!jsonObject.isNull("templates")) {
+                    MainApplication.getInstance().setTemplateArray(jsonObject.getJSONArray("templates"));
+                    SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.TEMPLATE_ARRAY, jsonObject.toString());
+                }
+                startActivity(new Intent(LoginActivity.this, RecordingVideoActivity.class));
                 LoginActivity.this.finish();
 
-            }else {
-                if(!jsonObject.isNull(AppConstants.MESSAGE)){
-                    Toast.makeText(getBaseContext(),"Error",Toast.LENGTH_LONG).show();
+            } else {
+                if (!jsonObject.isNull(AppConstants.MESSAGE)) {
+                    Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
 
                 }
             }

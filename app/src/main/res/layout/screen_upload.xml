@@ -214,7 +214,6 @@
                 android:paddingLeft="8dp"
                 android:singleLine="true"
                 android:text="Title"
-                android:enabled="false"
                 android:textColor="@color/color_greyish"
                 android:textSize="14sp" />
 

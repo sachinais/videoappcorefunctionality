@@ -20,6 +20,7 @@ public class SPreferenceKey {
 	public  static final String IS_REMEMBER_PSSWORD = "IS_REMEMBER_PSSWORD";
 	public static final String TEMPLATE_ARRAY ="TEMPLATE_ARRAY";
 
+	public static final String PEPPER_ID ="PEPPER_ID";
 
 
 

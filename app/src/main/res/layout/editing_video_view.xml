@@ -141,6 +141,7 @@
                 <ProgressBar
                     android:id="@+id/pb_Top"
                     android:layout_width="30dp"
+                    android:visibility="gone"
                     android:layout_centerInParent="true"
                     android:layout_height="30dp" />
 
@@ -183,6 +184,7 @@
                 <ProgressBar
                     android:id="@+id/pb_Tail"
                     android:layout_width="30dp"
+                    android:visibility="gone"
                     android:layout_centerInParent="true"
                     android:layout_height="30dp" />
             </RelativeLayout>
