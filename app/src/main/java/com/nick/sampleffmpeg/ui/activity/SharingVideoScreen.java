@@ -28,32 +28,32 @@ public class SharingVideoScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_share_upload);
-        try{
-            if(getIntent() != null){
-                String  videoTitle = getIntent().getExtras().getString("parameter1");
+        try {
+            if (getIntent() != null) {
+                String videoTitle = getIntent().getExtras().getString("parameter1");
                 //   Toast.makeText(getBaseContext(),text,Toast.LENGTH_LONG).show();
-                ((TextView)findViewById(R.id.tvVideTitle)).setText(videoTitle);
+                ((TextView) findViewById(R.id.tvVideTitle)).setText(videoTitle);
                 Log.d("", videoTitle);
             }
             IntentFilter intentfilter = new IntentFilter();
             intentfilter.addAction(ACTION_PROGRESS_UPDATE);
             intentfilter.addAction(ACTION_UPLOAD_COMPLETED);
             registerReceiver(receiver, intentfilter);
-            mVideoView = (StretchVideoView)findViewById(R.id.videoview);
+            mVideoView = (StretchVideoView) findViewById(R.id.videoview);
             findViewById(R.id.tvVideoUrlBtn).setOnClickListener(onClickListener);
             findViewById(R.id.tvEmbedCodeBtn).setOnClickListener(onClickListener);
 
-            ((ProgressBar)findViewById(R.id.progress_encoding_bar)).setProgress(MainApplication.getInstance().getEncodeingProgres());
-            ((ProgressBar)findViewById(R.id.pbarUploadVideo)).setProgress(MainApplication.getInstance().getUploadingProgress());
-            ((TextView)findViewById(R.id.tvUploaPercent)).setText(MainApplication.getInstance().getUploadingProgress() + "%");
-            ((TextView)findViewById(R.id.progress_encoding_text)).setText(MainApplication.getInstance().getEncodeingProgres() + "%");
-            ((TextView)findViewById(R.id.tvVideoUrl)).setText(MainApplication.getInstance().getYoutubeUrl());
+            ((ProgressBar) findViewById(R.id.progress_encoding_bar)).setProgress(MainApplication.getInstance().getEncodeingProgres());
+            ((ProgressBar) findViewById(R.id.pbarUploadVideo)).setProgress(MainApplication.getInstance().getUploadingProgress());
+            ((TextView) findViewById(R.id.tvUploaPercent)).setText(MainApplication.getInstance().getUploadingProgress() + "%");
+            ((TextView) findViewById(R.id.progress_encoding_text)).setText(MainApplication.getInstance().getEncodeingProgres() + "%");
+            ((TextView) findViewById(R.id.tvVideoUrl)).setText(MainApplication.getInstance().getYoutubeUrl());
 
             //  ((TextView)findViewById(R.id.tvEnocdeVideo)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
-            ((TextView)findViewById(R.id.progress_encoding_text)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+            ((TextView) findViewById(R.id.progress_encoding_text)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
             // ((TextView)findViewById(R.id.tvUploadVideo)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
-            ((TextView)findViewById(R.id.tvUploaPercent)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
-            if(MainApplication.getInstance().getUploadingProgress() == 100){
+            ((TextView) findViewById(R.id.tvUploaPercent)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+            if (MainApplication.getInstance().getUploadingProgress() == 100) {
                 findViewById(R.id.llProgress).setVisibility(View.GONE);
                 findViewById(R.id.llUploadComple).setVisibility(View.VISIBLE);
 
@@ -65,10 +65,32 @@ public class SharingVideoScreen extends Activity {
                 }
             });
             getBundleData();
-        }catch (Exception e){
+
+            registerReceiver(receiverToutubeLink, new IntentFilter("YouTube_Link"));
+
+            String id = MainApplication.getInstance().getYoutubeData().getId();
+            if(id!=null && !id.equalsIgnoreCase("")){
+                String url = "https://www.youtube.com/watch?v=" + id;
+                ((TextView) findViewById(R.id.tvVideoUrl)).setText(url);
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
+    BroadcastReceiver receiverToutubeLink = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String id = MainApplication.getInstance().getYoutubeData().getId();
+
+            String url = "https://www.youtube.com/watch?v=" + id;
+
+            ((TextView) findViewById(R.id.tvVideoUrl)).setText(url);
+        }
+    };
+
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -77,8 +99,8 @@ public class SharingVideoScreen extends Activity {
         }
     };
 
-    private void getBundleData(){
-        if(getIntent() !=null){
+    private void getBundleData() {
+        if (getIntent() != null) {
             String uriPath = getIntent().getExtras().getString("uripath");
             Uri uri = Uri.parse(uriPath);
             mVideoView.setVideoURI(uri);
@@ -92,14 +114,14 @@ public class SharingVideoScreen extends Activity {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction() == ACTION_PROGRESS_UPDATE){
-                ((ProgressBar)findViewById(R.id.pbarUploadVideo)).setProgress(intent.getExtras().getInt("progress"));
-                ((TextView)findViewById(R.id.tvUploaPercent)).setText(intent.getExtras().getInt("progress") + "%");
-            }else if(intent.getAction() == ACTION_PROGRESS_UPDATE){
-                ((TextView)findViewById(R.id.tvVideoUrl)).setText(intent.getExtras().getString("url"));
+            if (intent.getAction() == ACTION_PROGRESS_UPDATE) {
+                ((ProgressBar) findViewById(R.id.pbarUploadVideo)).setProgress(intent.getExtras().getInt("progress"));
+                ((TextView) findViewById(R.id.tvUploaPercent)).setText(intent.getExtras().getInt("progress") + "%");
+            } else if (intent.getAction() == ACTION_PROGRESS_UPDATE) {
+                ((TextView) findViewById(R.id.tvVideoUrl)).setText(intent.getExtras().getString("url"));
 
             }
-            if(intent.getExtras().getInt("progress") == 100){
+            if (intent.getExtras().getInt("progress") == 100) {
                 findViewById(R.id.llProgress).setVisibility(View.GONE);
                 findViewById(R.id.llUploadComple).setVisibility(View.VISIBLE);
 
@@ -110,26 +132,26 @@ public class SharingVideoScreen extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(receiver !=null){
+        if (receiver != null) {
             unregisterReceiver(receiver);
         }
     }
 
-    private void toogleButton(View view){
-        if(view.getId() == R.id.tvVideoUrlBtn){
-            ((TextView)findViewById(R.id.tvVideoUrlBtn)).setBackgroundColor(getResources().getColor(R.color.color_sky_blue));
-            ((TextView)findViewById(R.id.tvVideoUrlBtn)).setTextColor(getResources().getColor(R.color.color_white));
+    private void toogleButton(View view) {
+        if (view.getId() == R.id.tvVideoUrlBtn) {
+            ((TextView) findViewById(R.id.tvVideoUrlBtn)).setBackgroundColor(getResources().getColor(R.color.color_sky_blue));
+            ((TextView) findViewById(R.id.tvVideoUrlBtn)).setTextColor(getResources().getColor(R.color.color_white));
 
-            ((TextView)findViewById(R.id.tvEmbedCodeBtn)).setBackgroundColor(Color.parseColor("#00000000"));
-            ((TextView)findViewById(R.id.tvEmbedCodeBtn)).setTextColor(getResources().getColor(R.color.color_greyish));
-            ((TextView)findViewById(R.id.tvVideoUrl)).setText(MainApplication.getInstance().getYoutubeUrl());
-        }else if(view.getId() == R.id.tvEmbedCodeBtn){
-            ((TextView)findViewById(R.id.tvEmbedCodeBtn)).setBackgroundColor(getResources().getColor(R.color.color_sky_blue));
-            ((TextView)findViewById(R.id.tvEmbedCodeBtn)).setTextColor(getResources().getColor(R.color.color_white));
+            ((TextView) findViewById(R.id.tvEmbedCodeBtn)).setBackgroundColor(Color.parseColor("#00000000"));
+            ((TextView) findViewById(R.id.tvEmbedCodeBtn)).setTextColor(getResources().getColor(R.color.color_greyish));
+            ((TextView) findViewById(R.id.tvVideoUrl)).setText(MainApplication.getInstance().getYoutubeUrl());
+        } else if (view.getId() == R.id.tvEmbedCodeBtn) {
+            ((TextView) findViewById(R.id.tvEmbedCodeBtn)).setBackgroundColor(getResources().getColor(R.color.color_sky_blue));
+            ((TextView) findViewById(R.id.tvEmbedCodeBtn)).setTextColor(getResources().getColor(R.color.color_white));
 
-            ((TextView)findViewById(R.id.tvVideoUrlBtn)).setBackgroundColor(Color.parseColor("#00000000"));
-            ((TextView)findViewById(R.id.tvVideoUrlBtn)).setTextColor(getResources().getColor(R.color.color_greyish));
-            ((TextView)findViewById(R.id.tvVideoUrl)).setText("");
+            ((TextView) findViewById(R.id.tvVideoUrlBtn)).setBackgroundColor(Color.parseColor("#00000000"));
+            ((TextView) findViewById(R.id.tvVideoUrlBtn)).setTextColor(getResources().getColor(R.color.color_greyish));
+            ((TextView) findViewById(R.id.tvVideoUrl)).setText("");
 
         }
     }
