@@ -40,7 +40,7 @@
     <color name="color_black">#000000</color>
     <color name="color_greyish">#5d5d5d</color>
     <color name="color_sky_blue">#027BFC</color>
-
+    <color name="color_pressed_light_grey">#508D8D8F</color>
     <color name="color_light_grey">#8D8D8F</color>
     <color name="color_blue_sky">#30B5B4</color>
     <color name="color_light_nav">#7E7E7E</color>

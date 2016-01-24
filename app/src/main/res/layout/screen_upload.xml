@@ -248,6 +248,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:checked="true"
+                        android:enabled="false"
+                        android:clickable="false"
                         android:textOff="OFF"
                         android:textOn="ON" />
 
@@ -356,6 +358,7 @@
             </LinearLayout>
 
             <EditText
+                android:id="@+id/et_Description"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:layout_gravity="top"
@@ -378,8 +381,8 @@
                 android:textColor="@color/color_black"
                 android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/tvVideTitle"
+            <EditText
+                android:id="@+id/et_VideTag"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_gravity="top"

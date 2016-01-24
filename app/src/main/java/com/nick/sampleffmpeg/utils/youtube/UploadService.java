@@ -23,9 +23,14 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.google.api.client.auth.oauth2.BearerToken;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.http.BasicAuthentication;
+import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
@@ -41,6 +46,7 @@ import com.nick.sampleffmpeg.ui.activity.UploadingVideoScreen;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * @author Ibrahim Ulukaya <ulukaya@google.com>
@@ -61,7 +67,7 @@ public class UploadService extends IntentService {
     /**
      * how long to wait before re-trying the upload
      */
-    private static final int UPLOAD_REATTEMPT_DELAY_SEC = 60;
+    private static final int UPLOAD_REATTEMPT_DELAY_SEC = 10;
     /**
      * max number of retry attempts
      */
@@ -73,7 +79,7 @@ public class UploadService extends IntentService {
     private static long mStartTime;
     final HttpTransport transport = AndroidHttp.newCompatibleTransport();
     final JsonFactory jsonFactory = new GsonFactory();
-  //  GoogleAccountCredential credential;
+    //  GoogleAccountCredential credential;
     /**
      * tracks the number of upload attempts
      */
@@ -108,7 +114,7 @@ public class UploadService extends IntentService {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction() == UploadingVideoScreen.ACTION_CANCEL_UPLOAD){
+            if (intent.getAction() == UploadingVideoScreen.ACTION_CANCEL_UPLOAD) {
                 stopSelf();
             }
         }
@@ -118,11 +124,11 @@ public class UploadService extends IntentService {
     public void onDestroy() {
         super.onDestroy();
 
-        if(receiver != null){
+        if (receiver != null) {
             unregisterReceiver(receiver);
         }
 
-        Log.d("Destroy","Destroy");
+        Log.d("Destroy", "Destroy");
     }
 
     @Override
@@ -132,10 +138,31 @@ public class UploadService extends IntentService {
         youtubeDataBean.setVideoTitle(intent.getStringExtra(LoginScreen.VIDEO_TITLE));
         youtubeDataBean.setVideoType(intent.getStringExtra(LoginScreen.VIDEO_TYPE));
 
+
+
+
+ /*       TokenResponse tokenResponse = new TokenResponse();
+        tokenResponse.setRefreshToken(intent.getStringExtra(UploadingVideoScreen.ACCESS_TOKEN));*/
+
+     /*   GoogleCredential credential =  createCredentialWithRefreshToken(com.nick.sampleffmpeg.ui.activity.Auth.HTTP_TRANSPORT, com.nick.sampleffmpeg.ui.activity.Auth.JSON_FACTORY
+                , tokenResponse);
+        */
+
+
+        /*GoogleCredential credential = new GoogleCredential.Builder()
+                .setTransport(com.nick.sampleffmpeg.ui.activity.Auth.HTTP_TRANSPORT).setJsonFactory(com.nick.sampleffmpeg.ui.activity.Auth.JSON_FACTORY)
+                .setClientSecrets(Constant.CLIENT_ID, Constant.CLIENT_SECRATE).build();
+        credential.setAccessToken(intent.getStringExtra(UploadingVideoScreen.ACCESS_TOKEN));
+        credential.setRefreshToken(intent.getStringExtra(UploadingVideoScreen.REFREST_TOKEN));*/
+
+
         GoogleCredential credential = new GoogleCredential.Builder()
                 .setTransport(com.nick.sampleffmpeg.ui.activity.Auth.HTTP_TRANSPORT).setJsonFactory(com.nick.sampleffmpeg.ui.activity.Auth.JSON_FACTORY)
-                .setClientSecrets(Constant.CLIENT_ID,Constant.CLIENT_SECRATE).build();
+                .setClientSecrets("815107145608-2hc3kfand4bomob5thte673amk17k4c2.apps.googleusercontent.com","46ZZiJ5z01zj7Lgoz9f35Fd0").build();
         credential.setAccessToken(intent.getStringExtra(UploadingVideoScreen.ACCESS_TOKEN));
+
+
+
 
         String appName = getResources().getString(R.string.app_name);
         final YouTube youtube =
@@ -146,17 +173,27 @@ public class UploadService extends IntentService {
         try {
 
 
-
-            tryUploadAndShowSelectableNotification(fileUri, youtube,youtubeDataBean);
+            tryUploadAndShowSelectableNotification(fileUri, youtube, youtubeDataBean);
         } catch (InterruptedException e) {
             // ignore
         }
     }
 
+    public static Credential createCredentialWithRefreshToken(
+            HttpTransport transport, JsonFactory jsonFactory, TokenResponse tokenResponse) {
+        return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).setTransport(
+                transport)
+                .setJsonFactory(jsonFactory)
+                .setClientAuthentication(new BasicAuthentication(Constant.CLIENT_ID, Constant.CLIENT_SECRATE))
+                .build()
+                .setFromTokenResponse(tokenResponse);
+    }
+
+
     private void tryUploadAndShowSelectableNotification(final Uri fileUri, final YouTube youtube, final YoutubeDataBean youtubeDataBean) throws InterruptedException {
         while (true) {
             Log.i(TAG, String.format("Uploading [%s] to YouTube", fileUri.toString()));
-            String videoId = tryUpload(fileUri, youtube,youtubeDataBean);
+            String videoId = tryUpload(fileUri, youtube, youtubeDataBean);
             if (videoId != null) {
                 Log.i(TAG, String.format("Uploaded video with ID: %s", videoId));
                 tryShowSelectableNotification(videoId, youtube);
@@ -212,7 +249,7 @@ public class UploadService extends IntentService {
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();*/
 
-            videoId = ResumableUpload.upload(youtube, fileInputStream, fileSize, getApplicationContext(),youtubeDataBean);
+            videoId = ResumableUpload.upload(youtube, fileInputStream, fileSize, getApplicationContext(), youtubeDataBean);
 
 
         } catch (FileNotFoundException e) {

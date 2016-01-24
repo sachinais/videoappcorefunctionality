@@ -37,7 +37,7 @@
             android:layout_weight="1">
 
             <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
                 android:scaleType="fitCenter"
@@ -96,7 +96,7 @@
                 <TextView
                     android:id="@+id/tv_CompanyAccount"
                     android:layout_width="wrap_content"
-                    android:text="Compnay Account"
+                    android:text="Company Account"
                     android:textSize="18sp"
                     android:textColor="@color/color_black"
                     android:layout_centerInParent="true"
@@ -133,16 +133,18 @@
                         android:layout_height="wrap_content"
                             android:layout_marginLeft="24dp"
                         android:textColor="@color/color_black"
-                        android:text="Four Pi App and Web"
+                        android:text="Facebook"
                         android:textSize="16sp"
 
 
                         />
                     <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switchCompanyFacebook"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="20dp"
+                        android:editable="false"
                         android:gravity="right"
                         android:checked="true"
                         android:textOff="OFF"
@@ -175,16 +177,18 @@
                         android:layout_weight="1"
                         android:layout_marginLeft="24dp"
                         android:textColor="@color/color_black"
-                        android:text="Four Pi LinkedIn"
+                        android:text="Linked In"
                         android:textSize="16sp"
 
 
                         />
                     <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switchCompanyTwitter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="20dp"
+                        android:editable="false"
                         android:checked="true"
                         android:textOff="OFF"
                         android:textOn="ON" />
@@ -214,17 +218,19 @@
                         android:layout_weight="1"
                         android:layout_marginLeft="24dp"
                         android:textColor="@color/color_black"
-                        android:text="@string/twitter"
+                        android:text="Twitter"
                         android:textSize="16sp"
 
 
                         />
                     <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switchCompanyLinedin"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="20dp"
                         android:checked="true"
+                        android:editable="false"
                         android:textOff="OFF"
                         android:textOn="ON" />
 
@@ -322,17 +328,19 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="24dp"
                         android:textColor="@color/color_black"
-                        android:text="Four Pi App and Web"
+                        android:text="Facebook"
                         android:textSize="16sp"
 
 
                         />
                     <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switchPersonalFacebook"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="20dp"
                         android:gravity="right"
+                        android:editable="false"
                         android:checked="true"
                         android:textOff="OFF"
                         android:textOn="ON" />
@@ -363,17 +371,19 @@
                         android:layout_weight="1"
                         android:layout_marginLeft="24dp"
                         android:textColor="@color/color_black"
-                        android:text="For Pi LinkedIn"
+                        android:text="Linked In"
                         android:textSize="16sp"
 
 
                         />
                     <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switchPersonalTwitter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="20dp"
                         android:checked="true"
+                        android:editable="false"
                         android:textOff="OFF"
                         android:textOn="ON" />
 
@@ -402,17 +412,19 @@
                         android:layout_weight="1"
                         android:layout_marginLeft="24dp"
                         android:textColor="@color/color_black"
-                        android:text="@string/twitter"
+                        android:text="Twitter"
                         android:textSize="16sp"
 
 
                         />
                     <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switchPersonalLinedin"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="20dp"
                         android:checked="true"
+                        android:editable="false"
                         android:textOff="OFF"
                         android:textOn="ON" />
 

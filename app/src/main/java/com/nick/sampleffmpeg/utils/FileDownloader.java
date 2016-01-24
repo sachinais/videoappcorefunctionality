@@ -89,6 +89,9 @@ public class FileDownloader {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                if (runnable != null) {
+                    runnable.run();
+                }
             }
             return null;
 

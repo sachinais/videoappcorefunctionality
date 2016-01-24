@@ -48,8 +48,10 @@ import com.nick.sampleffmpeg.utils.AppConstants;
 import com.nick.sampleffmpeg.utils.FontTypeface;
 import com.nick.sampleffmpeg.utils.VideoUtils;
 import com.nick.sampleffmpeg.utils.youtube.UploadService;
+import com.nick.sampleffmpeg.utils.youtube.util.Upload;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -76,6 +78,11 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
     private static final int REQUEST_AUTHORIZATION = 3;
     private UploadBroadcastReceiver broadcastReceiver;
     public static final String VIDEO_TITLE = "VIDEO_TITLE";
+    public static final String VIDEO_TAGS = "VIDEO_TAGS";
+    public static final String VIDEO_DESCRIPTION = "VIDEO_DESCRIPTION";
+
+
+
     public static final String VIDEO_TYPE = "VIDEO_TYPE";
     public static String ACTION_PROGRESS_UPDATE = "ACTION_PROGRESS_UPDATE";
     public static String ACTION_CANCEL_UPLOAD = "ACTION_CANCEL_UPLOAD";
@@ -94,9 +101,12 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_upload);
         if(getIntent() != null){
-             videoTitle = getIntent().getExtras().getString("parameter1");
-         //   Toast.makeText(getBaseContext(),text,Toast.LENGTH_LONG).show();
-            ((EditText)findViewById(R.id.etVideTitle)).setText(videoTitle);
+            videoTitle = getIntent().getExtras().getString("parameter1");
+            //   Toast.makeText(getBaseContext(),text,Toast.LENGTH_LONG).show();
+            if(videoTitle!=null) {
+                ((EditText) findViewById(R.id.etVideTitle)).setText(videoTitle);
+                ((EditText) findViewById(R.id.etVideTitle)).setSelection(videoTitle.length());
+            }
             Log.d("",videoTitle);
         }
         ((TextView)findViewById(R.id.btnNext)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_SEMIBOLD));
@@ -132,18 +142,25 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
             @Override
             public void onClick(View v) {
                 // signInWithGplus();
-                if (uri != null) {
+                if (isScreenDataValidate()  ) {
                     Intent intent = new Intent(UploadingVideoScreen.this, SharingVideoScreen.class);
                     intent.putExtra("uripath", uri.toString());
                     intent.putExtra("encoding_progress", encodingProgress);
                     intent.putExtra("uploading_progress", uploadingProgress);
                     intent.putExtra("video_link", videoLink);
                     intent.putExtra("parameter1", videoTitle);
+                    intent.putExtra("Description", ((EditText)findViewById(R.id.et_Description)).getText());
                     startActivity(intent);
+                    finish();
                 }
 
             }
         });
+
+
+
+
+
         SwitchCompat switchCompat = (SwitchCompat)findViewById(R.id.switch_compat);
         switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -171,6 +188,56 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
         encodingVideo();
     }
 
+
+
+    public boolean isScreenDataValidate(){
+
+        if(((EditText)findViewById(R.id.et_Description)).getText().length()>0){
+            if(uri!=null ){
+
+                if(videoLink!=null){
+
+                   return true;
+                }else{
+                    showAlertDialog("Please wait, uploading in progress");
+                }
+
+            }else{
+                showAlertDialog("Please wait, encoding in progress");
+            }
+        }else{
+            showAlertDialog("Please enter description");
+        }
+
+        return  false;
+    }
+
+
+    private void showAlertDialog(String message) {
+        try {
+
+
+            optionDialog = new Dialog(UploadingVideoScreen.this);
+            optionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            optionDialog.setContentView(R.layout.alert_dialog);
+
+            ((TextView) optionDialog.findViewById(R.id.textView2)).setText(message);
+            ((TextView) optionDialog.findViewById(R.id.buttonYes)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    optionDialog.dismiss();
+                    //finish();
+
+                }
+            });
+            optionDialog.show();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void setFonts() {
         ((TextView)findViewById(R.id.btnNext)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_SEMIBOLD));
         ((TextView)findViewById(R.id.tvEnocdeVideo)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
@@ -179,13 +246,17 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
         ((TextView)findViewById(R.id.tvUploaPercent)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
 
         ((TextView)findViewById(R.id.textView4)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
-        ((TextView)findViewById(R.id.etVideTitle)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
         ((TextView)findViewById(R.id.tvOneDescription)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
         ((TextView)findViewById(R.id.tvSelectPlateForm)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
-        ((TextView)findViewById(R.id.tvJobTags)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
-        ((TextView)findViewById(R.id.tvVideTitle)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((EditText)findViewById(R.id.et_VideTag)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        //((TextView)findViewById(R.id.tvVideTitle)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((EditText)findViewById(R.id.et_Description)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+        ((EditText)findViewById(R.id.etVideTitle)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+
+
 
     }
+
 
 
 
@@ -193,7 +264,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
         try {
 
 
-              optionDialog = new Dialog(UploadingVideoScreen.this);
+            optionDialog = new Dialog(UploadingVideoScreen.this);
             optionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             optionDialog.setContentView(R.layout.encoding_uplaoding_cancel_dialog);
             ((TextView) optionDialog.findViewById(R.id.buttonNo)).setOnClickListener(new View.OnClickListener() {
@@ -242,7 +313,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
 
             @Override
             public void onFinish() {
-                ((TextView) findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_light_sign_btn));
+
                 uri = Uri.fromFile(new File(Constant.getMergedVideo()));
 
                 geyCredentials();
@@ -258,7 +329,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
                 requestBean.setActivity(UploadingVideoScreen.this);
                 requestBean.setUrl("load_credentials.php");
                 requestBean.setParams(paramePairs);
-                requestBean.setIsProgressBarEnable(true);
+                requestBean.setIsProgressBarEnable(false);
                 RequestHandler requestHandler = new RequestHandler(requestBean, requestCredentials);
                 requestHandler.execute(null, null, null);
             } else {
@@ -279,11 +350,11 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
                 if (jsonObject != null) {
                     if(!jsonObject.isNull("yt_credentials")){
                         if(!jsonObject.getJSONObject("yt_credentials").isNull("access_token")){
-                            access_token=   jsonObject.getString("access_token");
+                            access_token=   jsonObject.getJSONObject("yt_credentials").getString("access_token");
 
                         }
                         if(!jsonObject.getJSONObject("yt_credentials").isNull("refresh_token")){
-                            refresh_token=   jsonObject.getString("refresh_token");
+                            refresh_token=   jsonObject.getJSONObject("yt_credentials").getString("refresh_token");
 
                         }
 
@@ -309,13 +380,15 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
             uploadIntent.putExtra(VIDEO_TYPE, getVideType());
             uploadIntent.putExtra(ACCESS_TOKEN, accessToken);
             uploadIntent.putExtra(REFREST_TOKEN, refreshTocken);
+
+           // uploadIntent.putExtra(VIDEO_DESCRIPTION, "");
+
             uploadIntent.putExtra(VIDEO_TITLE,((EditText)findViewById(R.id.etVideTitle)).getText().toString().trim());
+            uploadIntent.putExtra(VIDEO_TAGS,((EditText)findViewById(R.id.et_VideTag)).getText().toString().trim());
 
             startService(uploadIntent);
-            Toast.makeText(this, R.string.youtube_upload_started,
-                    Toast.LENGTH_LONG).show();
-            // Go back to ImportVideoActivty after upload
-            //      finish();
+
+
         }
     }
 
@@ -603,10 +676,59 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
                 if(intent.getExtras().getInt("progress") == 100){
                     findViewById(R.id.llProgressEncode).setVisibility(View.GONE);
                     findViewById(R.id.llUploadComple).setVisibility(View.VISIBLE);
-
+                    //videoLink = intent.getExtras().getString("url");
+                    //Toast.makeText(UploadingVideoScreen.this, "Video uploaded successfully", Toast.LENGTH_LONG).show();
+                    //updateYoutubeKeyOnServer(videoLink);
                 }
-            }else if(intent.getAction() == ACTION_PROGRESS_UPDATE){
+            }else if(intent.getAction() == ACTION_UPLOAD_COMPLETED){
+                ((TextView) findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_sign_btn));
                 videoLink = intent.getExtras().getString("url");
+                Toast.makeText(UploadingVideoScreen.this, "Video uploaded successfully", Toast.LENGTH_LONG).show();
+                updateYoutubeKeyOnServer(videoLink);
+            }
+        }
+    };
+    public void updateYoutubeKeyOnServer(String videoLink){
+        try {
+
+
+            if (CheckNetworkConnection.isNetworkAvailable(UploadingVideoScreen.this)) {
+                List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
+                paramePairs.add(new BasicNameValuePair("youtube_id", videoLink));
+                paramePairs.add(new BasicNameValuePair("template_id", MainApplication.getInstance().getTemplate().strDirectoryID));
+                paramePairs.add(new BasicNameValuePair("title",((EditText)findViewById(R.id.etVideTitle)).getText().toString()));
+                RequestBean requestBean = new RequestBean();
+                requestBean.setActivity(UploadingVideoScreen.this);
+                requestBean.setUrl("video_uploaded.php");
+                requestBean.setParams(paramePairs);
+                requestBean.setIsProgressBarEnable(false);
+                RequestHandler requestHandler = new RequestHandler(requestBean, listenerupdateKeyOnServer);
+                requestHandler.execute(null, null, null);
+            } else {
+                CustomDialogs.showOkDialog(UploadingVideoScreen.this, "Please check network connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private RequestListner listenerupdateKeyOnServer = new RequestListner() {
+
+        @Override
+        public void getResponse(JSONObject jsonObject) {
+            try {
+                String message =null;
+                String access_token="", refresh_token="";
+                String url = "";
+                if (jsonObject != null) {
+                    if(!jsonObject.isNull("message")){
+
+                         message = jsonObject.getString("message");
+                        showAlertDialog(message);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
     };
