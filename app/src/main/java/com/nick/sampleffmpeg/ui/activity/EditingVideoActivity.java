@@ -452,7 +452,8 @@ public class EditingVideoActivity extends BaseActivity {
                         if (flagTopVideoDownloaded && flagTailVideoDownloaded) {
                             convertOverlaysPNG();
                         } else {
-                            showAlert(R.string.str_alert_title_information, "You have to wait until top/tail video is downloading", "Ok");
+                            convertOverlaysPNG();
+                          //  showAlert(R.string.str_alert_title_information, "You have to wait until top/tail video is downloading", "Ok");
                         }
 
                     }
@@ -983,9 +984,9 @@ public class EditingVideoActivity extends BaseActivity {
                 flagProgressDialogIsRunning = false;
                 mTask = null;
                 flagTailVideoDownloaded = flagTopVideoDownloaded = true;
-                downloadThumbNail();
-                downloadTopVideo();
-                downloadTailVideo();
+             //   downloadThumbNail();
+              //  downloadTopVideo();
+               // downloadTailVideo();
             } catch (Exception e) {
 
             }

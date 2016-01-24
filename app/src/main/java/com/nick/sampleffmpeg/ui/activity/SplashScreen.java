@@ -17,14 +17,13 @@ public class SplashScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-      //  ((TextView)findViewById(R.id.tvComplete)).setTypeface(FontTypeface.getTypeface(SplashScreen.this, AppConstants.FONT_SUFI_SEMIBOLD));
+        //  ((TextView)findViewById(R.id.tvComplete)).setTypeface(FontTypeface.getTypeface(SplashScreen.this, AppConstants.FONT_SUFI_SEMIBOLD));
 
-      handler.postDelayed(new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-            // startActivity(new Intent(SplashScreen.this,RecordingVideoActivity.class));
+                // startActivity(new Intent(SplashScreen.this,RecordingVideoActivity.class));
                 if(!TextUtils.isEmpty(SharedPreferenceWriter.getInstance(SplashScreen.this).getString(SPreferenceKey.USERID))){
-                    //startActivity(new Intent(SplashScreen.this,LoginActivity.class));
                     startActivity(new Intent(SplashScreen.this,LoginActivity.class));
                     SplashScreen.this.finish();
                 }else {

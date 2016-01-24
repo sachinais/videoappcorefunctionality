@@ -31,7 +31,7 @@ public class MainApplication extends Application{
     private OverlayBean selectedOverlay = null;
     private int encodeingProgres=0;
     private int selectedTempletePostion=0;
-
+    private  com.google.api.services.youtube.model.Video youtubeData;
     public static class VideoInformation {
         public int videoLength = 0;
         public int trimStart = 0;
@@ -158,5 +158,14 @@ public class MainApplication extends Application{
 
     public void setVideoEnd(int end) {
         videoInformation.trimEnd = end;
+    }
+
+    public void setYoutubeData(com.google.api.services.youtube.model.Video  youtubeData) {
+        this.youtubeData = youtubeData;
+    }
+
+    public com.google.api.services.youtube.model.Video getYoutubeData() {
+
+        return  youtubeData;
     }
 }

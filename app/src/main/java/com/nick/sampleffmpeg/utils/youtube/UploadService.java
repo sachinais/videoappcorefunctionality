@@ -24,6 +24,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -31,6 +32,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.youtube.YouTube;
 import com.google.common.collect.Lists;
+import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.YoutubeDataBean;
 import com.nick.sampleffmpeg.ui.activity.LoginScreen;
@@ -71,7 +73,7 @@ public class UploadService extends IntentService {
     private static long mStartTime;
     final HttpTransport transport = AndroidHttp.newCompatibleTransport();
     final JsonFactory jsonFactory = new GsonFactory();
-    GoogleAccountCredential credential;
+  //  GoogleAccountCredential credential;
     /**
      * tracks the number of upload attempts
      */
@@ -126,14 +128,14 @@ public class UploadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Uri fileUri = intent.getData();
-        String chosenAccountName = intent.getStringExtra(LoginScreen.ACCOUNT_KEY);
         YoutubeDataBean youtubeDataBean = new YoutubeDataBean();
         youtubeDataBean.setVideoTitle(intent.getStringExtra(LoginScreen.VIDEO_TITLE));
         youtubeDataBean.setVideoType(intent.getStringExtra(LoginScreen.VIDEO_TYPE));
-        credential =
-                GoogleAccountCredential.usingOAuth2(getApplicationContext(), Lists.newArrayList(Auth.SCOPES));
-        credential.setSelectedAccountName(chosenAccountName);
-        credential.setBackOff(new ExponentialBackOff());
+
+        GoogleCredential credential = new GoogleCredential.Builder()
+                .setTransport(com.nick.sampleffmpeg.ui.activity.Auth.HTTP_TRANSPORT).setJsonFactory(com.nick.sampleffmpeg.ui.activity.Auth.JSON_FACTORY)
+                .setClientSecrets(Constant.CLIENT_ID,Constant.CLIENT_SECRATE).build();
+        credential.setAccessToken(intent.getStringExtra(UploadingVideoScreen.ACCESS_TOKEN));
 
         String appName = getResources().getString(R.string.app_name);
         final YouTube youtube =
@@ -142,6 +144,9 @@ public class UploadService extends IntentService {
 
 
         try {
+
+
+
             tryUploadAndShowSelectableNotification(fileUri, youtube,youtubeDataBean);
         } catch (InterruptedException e) {
             // ignore

@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -36,12 +37,25 @@ import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.encoding.VideoEncoding;
+import com.nick.sampleffmpeg.network.CheckNetworkConnection;
+import com.nick.sampleffmpeg.network.CustomDialogs;
+import com.nick.sampleffmpeg.network.RequestBean;
+import com.nick.sampleffmpeg.network.RequestHandler;
+import com.nick.sampleffmpeg.network.RequestListner;
+import com.nick.sampleffmpeg.sharedpreference.SPreferenceKey;
+import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 import com.nick.sampleffmpeg.utils.AppConstants;
 import com.nick.sampleffmpeg.utils.FontTypeface;
 import com.nick.sampleffmpeg.utils.VideoUtils;
 import com.nick.sampleffmpeg.utils.youtube.UploadService;
 
+import org.apache.http.NameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UploadingVideoScreen extends AppCompatActivity implements  GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener{
     private static final int CHOOSE_LOGIN_TYPE_ID = 1;
@@ -70,6 +84,10 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
     private static String videoLink;
     private static String videoTitle;
     private Dialog optionDialog;
+
+    public static String ACCESS_TOKEN ="ACCESS_TOKEN";
+    public static String REFREST_TOKEN ="REFREST_TOKEN";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,14 +118,8 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
 
             }
         });
-        findViewById(R.id.tvUploadVideo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // signInWithGplus();
-                uploadVideo();
 
-            }
-        });
+
         findViewById(R.id.tvEnocdeVideo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,9 +148,9 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
         switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     findViewById(R.id.socialShare).setVisibility(View.GONE);
-                }else {
+                } else {
                     findViewById(R.id.socialShare).setVisibility(View.VISIBLE);
                 }
             }
@@ -224,39 +236,79 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
             public void onProgress(int progress) {
                 encodingProgress = progress;
                 MainApplication.getInstance().setEncodeingProgres(progress);
-                        ((ProgressBar) findViewById(R.id.progress_encoding_bar)).setProgress(progress);
-                ((TextView)findViewById(R.id.progress_encoding_text)).setText(progress + "%");
+                ((ProgressBar) findViewById(R.id.progress_encoding_bar)).setProgress(progress);
+                ((TextView) findViewById(R.id.progress_encoding_text)).setText(progress + "%");
             }
 
             @Override
             public void onFinish() {
-                ((TextView)findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_light_sign_btn));
+                ((TextView) findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_light_sign_btn));
                 uri = Uri.fromFile(new File(Constant.getMergedVideo()));
-                uploadVideo();
+
+                geyCredentials();
             }
         }, Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT);
     }
-    public void uploadVideo() {
-        if (mChosenAccountName == null) {
-            signInWithGplus();
-            Toast.makeText(UploadingVideoScreen.this, "Please Login First", Toast.LENGTH_LONG).show();
-            return;
-        }else if(uri == null){
-            Toast.makeText(UploadingVideoScreen.this, "Please select a video", Toast.LENGTH_LONG).show();
-            return;
-        }else if(((EditText)findViewById(R.id.etVideTitle)).getText().toString().trim().isEmpty()){
-            Toast.makeText(UploadingVideoScreen.this, "Please give title", Toast.LENGTH_LONG).show();
-            return;
+
+    public void geyCredentials(){
+        try {
+            if (CheckNetworkConnection.isNetworkAvailable(UploadingVideoScreen.this)) {
+                List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
+                RequestBean requestBean = new RequestBean();
+                requestBean.setActivity(UploadingVideoScreen.this);
+                requestBean.setUrl("load_credentials.php");
+                requestBean.setParams(paramePairs);
+                requestBean.setIsProgressBarEnable(true);
+                RequestHandler requestHandler = new RequestHandler(requestBean, requestCredentials);
+                requestHandler.execute(null, null, null);
+            } else {
+                CustomDialogs.showOkDialog(UploadingVideoScreen.this, "Please check network connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    private RequestListner requestCredentials = new RequestListner() {
+
+        @Override
+        public void getResponse(JSONObject jsonObject) {
+            try {
+                String access_token="", refresh_token="";
+                String url = "";
+                if (jsonObject != null) {
+                    if(!jsonObject.isNull("yt_credentials")){
+                        if(!jsonObject.getJSONObject("yt_credentials").isNull("access_token")){
+                            access_token=   jsonObject.getString("access_token");
+
+                        }
+                        if(!jsonObject.getJSONObject("yt_credentials").isNull("refresh_token")){
+                            refresh_token=   jsonObject.getString("refresh_token");
+
+                        }
+
+                    }
+                }
+                uploadVideo(access_token,refresh_token);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
 
-        // if a video is picked or recorded.
+
+
+    public void uploadVideo(String accessToken , String refreshTocken) {
+
         if (uri != null) {
             Intent uploadIntent = new Intent(this, UploadService.class);
-            // uploadIntent.setData(Uri.parse("content://media/external/video/media/111470"));
+            //uploadIntent.setData(Uri.parse("content://media/external/video/media/111470"));
             uploadIntent.setData(uri);
             uploadIntent.putExtra(UploadingVideoScreen.ACCOUNT_KEY, mChosenAccountName);
             uploadIntent.putExtra(VIDEO_TYPE, getVideType());
+            uploadIntent.putExtra(ACCESS_TOKEN, accessToken);
+            uploadIntent.putExtra(REFREST_TOKEN, refreshTocken);
             uploadIntent.putExtra(VIDEO_TITLE,((EditText)findViewById(R.id.etVideTitle)).getText().toString().trim());
 
             startService(uploadIntent);
@@ -268,6 +320,22 @@ public class UploadingVideoScreen extends AppCompatActivity implements  GoogleAp
     }
 
 
+    public File getVideoFile() {
+
+        File sdcard = Environment.getExternalStorageDirectory();
+
+        File file = new File(sdcard,"TopVideo.mp4");
+
+        if(file.exists()){
+            System.out.println();
+
+        }else{
+            System.out.println();
+
+        }
+        return file;
+
+    }
 
 
     private void googlePlusLogin(){

@@ -18,6 +18,12 @@ public class Constant {
     public final static String      APP_NAME = "VideoEditorApp";
     public static String strTemporaryFolderName = Long.toString(System.currentTimeMillis());
 
+    public static String CLIENT_ID = "815107145608-2hc3kfand4bomob5thte673amk17k4c2.apps.googleusercontent.com";
+    public static String CLIENT_SECRATE = "46ZZiJ5z01zj7Lgoz9f35Fd0";
+
+
+
+
     public static void updateTimeUnit(int time) {
         TIMELINE_UNIT_SECOND = time;
         SP_PER_SECOND = 60 / TIMELINE_UNIT_SECOND;
