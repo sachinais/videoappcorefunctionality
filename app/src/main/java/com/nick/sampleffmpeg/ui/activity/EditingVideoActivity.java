@@ -30,6 +30,7 @@ import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.bean.ProvinceBean;
 import com.nick.sampleffmpeg.bean.VideoOverlay;
+import com.nick.sampleffmpeg.encoding.VideoEncoding;
 import com.nick.sampleffmpeg.network.CheckNetworkConnection;
 import com.nick.sampleffmpeg.network.CustomDialogs;
 import com.nick.sampleffmpeg.network.RequestBean;
@@ -253,12 +254,17 @@ public class EditingVideoActivity extends BaseActivity {
                 TopDownloader fileDownloader = new TopDownloader(EditingVideoActivity.this, getTemplateUrl((int) options1Items.get(pos).getId(), "top"), extenstion, options1Items.get(pos).getDirectoryId());
                 fileDownloader.startDownload(new TopVideoDownload() {
                     @Override
-                    public void getTopVideoUrl(String url) {
-                        flagTopVideoDownloaded = true;
-                        findViewById(R.id.pb_Top).setVisibility(View.GONE);
-                        topVideoUrl = url;
-                        Constant.setDownloadTopVideo(topVideoUrl);
-                        initializeThumbView();
+                    public void getTopVideoUrl(final String url) {
+                        Constant.setDownloadTopVideo(url);
+                        VideoEncoding.convertTopTailVideoToUniqueFormat(true, new Runnable() {
+                            @Override
+                            public void run() {
+                                flagTopVideoDownloaded = true;
+                                findViewById(R.id.pb_Top).setVisibility(View.GONE);
+                                topVideoUrl = url;
+                                initializeThumbView();
+                            }
+                        });
                     }
                 });
             }
@@ -318,12 +324,17 @@ public class EditingVideoActivity extends BaseActivity {
                 TailDownloader fileDownloader = new TailDownloader(EditingVideoActivity.this, getTemplateUrl((int) options1Items.get(pos).getId(), "tail"), extenstion, options1Items.get(pos).getDirectoryId());
                 fileDownloader.startDownload(new TopVideoDownload() {
                     @Override
-                    public void getTopVideoUrl(String url) {
-                        flagTailVideoDownloaded = true;
-                        findViewById(R.id.pb_Tail).setVisibility(View.GONE);
-                        tailVideoUrl = url;
-                        Constant.setDownloadTailVideo(tailVideoUrl);
-                        initializeThumbView();
+                    public void getTopVideoUrl(final String url) {
+                        Constant.setDownloadTailVideo(url);
+                        VideoEncoding.convertTopTailVideoToUniqueFormat(false, new Runnable() {
+                            @Override
+                            public void run() {
+                                flagTailVideoDownloaded = true;
+                                findViewById(R.id.pb_Tail).setVisibility(View.GONE);
+                                tailVideoUrl = url;
+                                initializeThumbView();
+                            }
+                        });
                     }
                 });
             }
@@ -452,8 +463,7 @@ public class EditingVideoActivity extends BaseActivity {
                         if (flagTopVideoDownloaded && flagTailVideoDownloaded) {
                             convertOverlaysPNG();
                         } else {
-                            convertOverlaysPNG();
-                          //  showAlert(R.string.str_alert_title_information, "You have to wait until top/tail video is downloading", "Ok");
+                            showAlert(R.string.str_alert_title_information, "You have to wait until top/tail video is downloading", "Ok");
                         }
 
                     }
@@ -984,9 +994,9 @@ public class EditingVideoActivity extends BaseActivity {
                 flagProgressDialogIsRunning = false;
                 mTask = null;
                 flagTailVideoDownloaded = flagTopVideoDownloaded = true;
-             //   downloadThumbNail();
-              //  downloadTopVideo();
-               // downloadTailVideo();
+                downloadThumbNail();
+                downloadTopVideo();
+                downloadTailVideo();
             } catch (Exception e) {
 
             }

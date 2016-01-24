@@ -70,7 +70,7 @@ public class TailDownloader {
 
                 OutputStream output = new FileOutputStream(outPutFile);
 
-                byte data[] = new byte[1024];
+                byte data[] = new byte[1024 * 10];
 
                 long total = 0;
 

@@ -43,8 +43,8 @@ public class VideoEncoding {
         strVideoSize = Integer.toString(width) + "x" + Integer.toString(height);
 
         //skip convert recorded video if size is same...
-        progress = -20;
-        stepProgress = 20;
+        progress = -33;
+        stepProgress = 33;
         trimVideo();
     }
 
@@ -101,7 +101,7 @@ public class VideoEncoding {
 
             @Override
             public void onFinish() {
-                convertTopTailVideoToUniqueFormat(true);
+                startEncodingVideo();
             }
         });
     }
@@ -109,7 +109,7 @@ public class VideoEncoding {
     /**
      * Convert recording video into unique video format
      */
-    private static void convertTopTailVideoToUniqueFormat(final boolean flagTop) {
+    public static void convertTopTailVideoToUniqueFormat(final boolean flagTop, final Runnable successCallback) {
 
         if (flagTop) {
             progress += stepProgress;
@@ -137,33 +137,27 @@ public class VideoEncoding {
 
             String[] command = commands.split(" ");
 
-            callback.onProgress(progress);
+//            callback.onProgress(progress);
             FFMpegUtils.execFFmpegBinary(command, new FFMpegUtils.Callback() {
                 @Override
                 public void onProgress(String msg) {
-                    int subProgress = getProgressStatus(msg, videoLength);
-                    if (subProgress != 0) {
-                        callback.onProgress(progress + subProgress);
-                    }
+//                    int subProgress = getProgressStatus(msg, videoLength);
+//                    if (subProgress != 0) {
+//                        callback.onProgress(progress + subProgress);
+//                    }
                 }
 
                 @Override
                 public void onFinish() {
-                    if (flagTop) {
-                        convertTopTailVideoToUniqueFormat(false);
-                    } else {
-                        startEncodingVideo();
-                    }
+                    successCallback.run();
+//                    if (flagTop) {
+//                        convertTopTailVideoToUniqueFormat(false);
+//                    } else {
+//                        startEncodingVideo();
+//                    }
                 }
             });
-        } else {
-            if (flagTop) {
-                convertTopTailVideoToUniqueFormat(false);
-            } else {
-                startEncodingVideo();
-            }
         }
-
     }
 
     /**
@@ -291,6 +285,7 @@ public class VideoEncoding {
 
             @Override
             public void onFinish() {
+                callback.onProgress(100);
                 callback.onFinish();
             }
         });
