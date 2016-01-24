@@ -251,14 +251,17 @@ public class VideoEncoding {
         final int videoLength = _videoLength;
         command = command + "-c:a aac -strict experimental -threads 5 -crf 22 -preset ultrafast -r 25 -c:v libx264";
         String strFilterComplex = "";
+        String strMapComplex = "";
         if (fileCount == 2) {
-            strFilterComplex = " -map [v] -map [a] -filter_complex [0:0] [0:1] [1:0] [1:1] concat=n=2:v=1:a=1 [v] [a]";
+            strMapComplex = " -map [v] -map [a] -filter_complex";
+            strFilterComplex = "[0:0] [0:1] [1:0] [1:1] concat=n=2:v=1:a=1 [v] [a]";
         }
         if (fileCount == 3) {
-            strFilterComplex =  " -map [v] -map [a] -filter_complex [0:0] [0:1] [1:0] [1:1] [2:0] [2:1] concat=n=3:v=1:a=1 [v] [a]";
+            strMapComplex = " -map [v] -map [a] -filter_complex";
+            strFilterComplex =  "[0:0] [0:1] [1:0] [1:1] [2:0] [2:1] concat=n=3:v=1:a=1 [v] [a]";
         }
 
-
+        command = command + strMapComplex;
         String[] subCommands = command.split(" ");
         int len = subCommands.length + 1;
 
