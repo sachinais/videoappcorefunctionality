@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.bean.VideoOverlay;
+import com.nick.sampleffmpeg.dataobject.SelectPlatFromDataObject;
 import com.nick.sampleffmpeg.ui.view.ChildTextTimelineLayout;
 import com.nick.sampleffmpeg.utils.LogFile;
 
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 
 import java.net.CookieStore;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Vindhya Pratap on 1/7/2016.
@@ -37,6 +39,7 @@ public class MainApplication extends Application{
         public int trimStart = 0;
         public int trimEnd = 0;
     }
+    public  List<SelectPlatFromDataObject> selectPlatFromDataObjectList;
 
     private VideoInformation videoInformation = new VideoInformation();
 
@@ -168,4 +171,15 @@ public class MainApplication extends Application{
 
         return  youtubeData;
     }
+
+
+    public void setDiffrentAccountDataValue( List<SelectPlatFromDataObject> selectPlatFromDataObjectList ){
+
+        this.selectPlatFromDataObjectList =selectPlatFromDataObjectList;
+    }
+
+    public List<SelectPlatFromDataObject> getDiffrentPlatformDataValue(){
+        return  selectPlatFromDataObjectList;
+    }
+
 }

@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.network.CheckNetworkConnection;
@@ -41,27 +42,26 @@ public class SharingVideoScreen extends Activity {
     private StretchVideoView mVideoView;
     private  String description;
     private Dialog optionDialog;
+    private String videoTitle="";
+
+
+    private String personal_facebook_message;
+    private String personal_Twitter_message;
+    private String personal_LinkedIn_message;
+
+    private String company_facebook_message;
+    private String company_Twitter_message;
+    private String company_LinkedIn_message;
+
+    private String youTube_Message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_share_upload);
         try {
-            findViewById(R.id.tv_ShareUrl).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    shareVideo(MainApplication.getInstance().getYoutubeUrl());
-                }
-            });
-            if (getIntent() != null) {
-                String videoTitle = getIntent().getExtras().getString("parameter1");
-                //   Toast.makeText(getBaseContext(),text,Toast.LENGTH_LONG).show();
-                ((TextView) findViewById(R.id.tvVideTitle)).setText(videoTitle);
-                Log.d("", videoTitle);
 
-
-                description= getIntent().getExtras().getString("Description");
-            }
+            getBundleData();
             IntentFilter intentfilter = new IntentFilter();
             intentfilter.addAction(ACTION_PROGRESS_UPDATE);
             intentfilter.addAction(ACTION_UPLOAD_COMPLETED);
@@ -69,6 +69,7 @@ public class SharingVideoScreen extends Activity {
             mVideoView = (StretchVideoView) findViewById(R.id.videoview);
             findViewById(R.id.tvVideoUrlBtn).setOnClickListener(onClickListener);
             findViewById(R.id.tvEmbedCodeBtn).setOnClickListener(onClickListener);
+            ((TextView) findViewById(R.id.tvVideTitle)).setText(videoTitle);
 
             ((ProgressBar) findViewById(R.id.progress_encoding_bar)).setProgress(MainApplication.getInstance().getEncodeingProgres());
             ((ProgressBar) findViewById(R.id.pbarUploadVideo)).setProgress(MainApplication.getInstance().getUploadingProgress());
@@ -77,7 +78,6 @@ public class SharingVideoScreen extends Activity {
             ((TextView) findViewById(R.id.tvVideoUrl)).setText(MainApplication.getInstance().getYoutubeUrl());
 
             ((TextView) findViewById(R.id.progress_encoding_text)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
-            // ((TextView)findViewById(R.id.tvUploadVideo)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
             ((TextView) findViewById(R.id.tvUploaPercent)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
             if (MainApplication.getInstance().getUploadingProgress() == 100) {
                 findViewById(R.id.llProgress).setVisibility(View.GONE);
@@ -90,7 +90,7 @@ public class SharingVideoScreen extends Activity {
                     finish();
                 }
             });
-            getBundleData();
+
 
             registerReceiver(receiverToutubeLink, new IntentFilter("YouTube_Link"));
 
@@ -100,12 +100,50 @@ public class SharingVideoScreen extends Activity {
                 ((TextView) findViewById(R.id.tvVideoUrl)).setText(url);
             }
 
+            findViewById(R.id.ll_Post).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    shareVideo(MainApplication.getInstance().getYoutubeUrl());
+                }
+            });
+            findViewById(R.id.ll_Share).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, MainApplication.getInstance().getYoutubeUrl());
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
+                }
+            });
+
+
+            findViewById(R.id.ll_Share).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String uriPath = getIntent().getExtras().getString("uripath");
+                    if(uriPath!=null && uriPath.length()>0 ){
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriPath));
+                        intent.setDataAndType(Uri.parse(Constant.getDownloadTopVideo()), "video/mp4");
+                        startActivity(intent);
+                    }
+
+                }
+            });
 
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
+
+
+
+
+
 
     public void shareVideo(String videoLink){
         try {
@@ -216,8 +254,26 @@ public class SharingVideoScreen extends Activity {
             mVideoView.requestFocus();
             mVideoView.start();
 
+            videoTitle = getIntent().getExtras().getString("Title");
+            description= getIntent().getExtras().getString("Description");
+
+
+            personal_facebook_message = getIntent().getExtras().getString("PersonalFacebookDescription");
+            personal_Twitter_message = getIntent().getExtras().getString("PersonalTwitterDescription");
+            personal_LinkedIn_message = getIntent().getExtras().getString("PersonalLinkedInDescription");
+
+            company_facebook_message= getIntent().getExtras().getString("CompanyFacebookDescription");
+            company_Twitter_message = getIntent().getExtras().getString("CompanyTwitterDescription");
+            company_LinkedIn_message = getIntent().getExtras().getString("CompanyLinkedInDescription");
+
+
+            youTube_Message = getIntent().getExtras().getString("YouTubeDescription");
+
+
 
         }
+
+
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {

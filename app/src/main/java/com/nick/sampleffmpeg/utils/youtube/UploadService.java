@@ -137,6 +137,8 @@ public class UploadService extends IntentService {
         YoutubeDataBean youtubeDataBean = new YoutubeDataBean();
         youtubeDataBean.setVideoTitle(intent.getStringExtra(LoginScreen.VIDEO_TITLE));
         youtubeDataBean.setVideoType(intent.getStringExtra(LoginScreen.VIDEO_TYPE));
+        youtubeDataBean.setVideoTags(intent.getStringExtra(UploadingVideoScreen.VIDEO_TAGS));
+        youtubeDataBean.setVideoDescription(intent.getStringExtra(UploadingVideoScreen.VIDEO_DESCRIPTION));
 
 
 

@@ -49,7 +49,7 @@
             android:screenOrientation="landscape"/>
 
         <activity
-            android:name=".ui.activity.LoginActivity"
+            android:name=".ui.activity.UploadingVideoScreen"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
@@ -57,7 +57,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
-            android:name=".ui.activity.UploadingVideoScreen"
+            android:name=".ui.activity.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity

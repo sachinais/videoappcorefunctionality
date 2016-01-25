@@ -20,12 +20,11 @@
                 android:id="@+id/btnCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="45dp"
-                android:gravity="center"
                 android:layout_marginLeft="10dp"
+                android:gravity="center"
                 android:text="Cancel"
-                android:textSize="18sp"
                 android:textColor="@color/color_sign_btn"
-                />
+                android:textSize="18sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -60,11 +59,13 @@
         </LinearLayout>
 
     </RelativeLayout>
+
     <View
         android:layout_width="match_parent"
-        android:background="@color/color_light_grey"
         android:layout_height="1dp"
-        android:alpha=".3"/>
+        android:alpha=".3"
+        android:background="@color/color_light_grey" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -72,22 +73,23 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
-                android:visibility="visible"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="visible">
+
                 <LinearLayout
                     android:id="@+id/llProgressEncode"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
                     android:layout_gravity="center_vertical"
                     android:layout_marginTop="8dp"
+                    android:orientation="vertical"
                     android:visibility="visible">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
@@ -162,45 +164,49 @@
                             android:textSize="16sp" />
                     </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/llUploadComple"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="left|center_vertical"
                     android:background="#103CDDD7"
+                    android:gravity="left|center_vertical"
+                    android:orientation="horizontal"
                     android:visibility="gone">
+
                     <ImageView
                         android:id="@+id/tvTick"
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        android:src="@drawable/checkmark"
+                        android:layout_marginLeft="16dp"
                         android:layout_marginRight="8dp"
-                        android:layout_marginLeft="16dp"/>
+                        android:src="@drawable/checkmark" />
 
                     <TextView
                         android:id="@+id/tvComplete"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Upload complete"
-                        android:textSize="22sp"
-                        android:textColor="@color/color_sign_btn"/>
+                        android:textColor="@color/color_sign_btn"
+                        android:textSize="22sp" />
                 </LinearLayout>
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
-                android:background="@color/color_light_grey"
                 android:layout_height="1dp"
-                android:alpha=".3"/>
+                android:alpha=".3"
+                android:background="@color/color_light_grey" />
+
             <TextView
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
                 android:text="Job Title"
                 android:textColor="@color/color_black"
-                android:textSize="14sp"
-                android:layout_marginTop="8dp"/>
+                android:textSize="14sp" />
 
             <EditText
                 android:id="@+id/etVideTitle"
@@ -248,8 +254,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:checked="true"
-                        android:enabled="false"
-                        android:clickable="false"
                         android:textOff="OFF"
                         android:textOn="ON" />
 
@@ -257,10 +261,10 @@
                         android:id="@+id/tvOneDescription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginLeft="24dp"
-                        android:textColor="@color/color_black"
+                        android:layout_weight="1"
                         android:text="One Description\nFor All Platform"
+                        android:textColor="@color/color_black"
                         android:textSize="10sp"
 
 
@@ -280,31 +284,30 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingTop="8dp"
                     android:paddingBottom="8dp"
                     android:paddingLeft="16dp"
-                    >
+                    android:paddingTop="8dp">
+
                     <ImageView
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:src="@drawable/mlti_share"/>
+                        android:src="@drawable/mlti_share" />
+
                     <TextView
                         android:id="@+id/tvSelectPlateForm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="12dp"
+                        android:gravity="center"
                         android:text="Select\nPlatforms"
                         android:textColor="@color/color_black"
-                        android:gravity="center"
-                        android:textSize="10sp"
-                        />
+                        android:textSize="10sp" />
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_right_arraow"
                         android:layout_marginLeft="6dp"
-                        />
+                        android:src="@drawable/ic_right_arraow" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -313,54 +316,258 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#605d5d5d" />
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginLeft="16dp"
 
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="6dp"
-                android:layout_gravity="center_horizontal"
+            <RelativeLayout
                 android:id="@+id/socialShare"
-                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
                 android:background="#eeee"
-                >
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/youtube"
-                    />
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/twitter"
-                    />
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/linkedin"
-                    />
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/fb"
-                    />
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/fb"
-                    />
-            </LinearLayout>
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/ll_DiffrentAccount"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/border_blue"
+                    android:visibility="visible">
+
+                    <RelativeLayout
+                        android:id="@+id/rl_youtube"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="1dp"
+                        android:layout_weight="1"
+                        android:background="@color/color_blue">
+
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/youtube_icon" />
+
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/color_blue"></View>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_CompnayFacebook"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="1dp"
+                        android:layout_weight="1"
+
+                        android:background="@color/color_white">
+
+                        <ImageView
+                            android:id="@+id/iv_CompnayFacebook"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/facebook_icon" />
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/color_blue"></View>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_CompnayLinkedin"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="1dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/iv_CompanyLinkedIn"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/linekedin_icon" />
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/color_blue"></View>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_CompnayTwitter"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="1dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/iv_CompanyTwitter"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/twitter_icon" />
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/color_blue"></View>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_PerosnlFacebook"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="1dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/iv_PersonalFacebook"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/facebook_icon" />
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/color_blue"></View>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_PerosnlLinkedIn"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="1dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/iv_PersonalLinkedIn"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/linekedin_icon" />
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/color_blue"></View>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_PersonalTwitter"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="1dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/iv_PersonalTwitter"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/twitter_icon" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/ll_DiffrentAccount1"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_below="@+id/ll_DiffrentAccount"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:visibility="visible">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2.9"
+                        android:layout_marginRight="5dp"
+                        android:background="@color/color_black">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"></View>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="1dp"
+                        android:layout_weight="2.1"
+                        android:background="@color/color_black">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"></View>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_below="@+id/ll_DiffrentAccount"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="6dp"
+                    android:visibility="visible">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:gravity="center"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5sp"
+                            android:background="#eeee"
+                            android:text="Compnay"
+
+                            android:textSize="8sp" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:gravity="center"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5sp"
+                            android:background="#eeee"
+                            android:text="Personal"
+                            android:textSize="8sp" />
+                </RelativeLayout>
+                </LinearLayout>
+            </RelativeLayout>
 
             <EditText
                 android:id="@+id/et_Description"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="130dp"
                 android:layout_gravity="top"
                 android:background="#eeee"
                 android:gravity="left|top"
@@ -368,8 +575,7 @@
                 android:paddingLeft="8dp"
                 android:paddingTop="10dp"
                 android:textColor="@android:color/black"
-                android:textSize="12sp"
-                />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tvJobTags"
@@ -385,11 +591,11 @@
                 android:id="@+id/et_VideTag"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:layout_gravity="top"
-                android:layout_marginTop="8dp"
                 android:background="@drawable/bg_white_fill_roundrect"
-                android:gravity="center_vertical"
+                android:gravity="center|left"
                 android:paddingLeft="8dp"
+
+                android:textSize="14sp"
                 android:text="VideoMyJob, Job, Ad"
                 android:textColor="@color/color_black" />
 
@@ -452,18 +658,18 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
                     android:layout_weight="1"
                     android:text="Publicly Searchable"
-                    android:layout_marginLeft="8dp"
                     android:textColor="#5d5d5d"
                     android:textSize="8sp" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
                     android:layout_weight="1"
                     android:text="Invite Access Only"
-                    android:layout_marginLeft="8dp"
 
                     android:textColor="#5d5d5d"
                     android:textSize="8sp" />
@@ -471,10 +677,10 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
                     android:layout_weight="1"
                     android:text="Link Only - Not Searchable"
                     android:textColor="#5d5d5d"
-                    android:layout_marginLeft="8dp"
 
                     android:textSize="8sp" />
             </LinearLayout>

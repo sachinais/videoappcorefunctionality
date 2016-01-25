@@ -1,6 +1,7 @@
 package com.nick.sampleffmpeg.ui.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
@@ -8,15 +9,20 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nick.sampleffmpeg.R;
+import com.nick.sampleffmpeg.utils.AppConstants;
+import com.nick.sampleffmpeg.utils.FontTypeface;
 import com.nick.sampleffmpeg.utils.VideoUtils;
 
 
@@ -35,6 +41,7 @@ public class ImportVideoActivty extends BaseActivity {
     private Uri _contentUri;
     String filename;
     int flag = 0;
+    private Dialog optionDialog;
     String[] projection = {
             MediaStore.Files.FileColumns._ID,
             MediaStore.Files.FileColumns.DATA,
@@ -53,9 +60,7 @@ public class ImportVideoActivty extends BaseActivity {
         super.onCreate(savedInstanceState);
         _context = getApplicationContext();
         setContentView(R.layout.activity_import_video);
-        //set GridView for gallery
         _gallery = (GridView) findViewById(R.id.gridView);
-        //set default as external/sdcard uri
         _contentUri = MEDIA_EXTERNAL_CONTENT_URI;
         initVideosId();
         setGalleryAdapter();
@@ -85,7 +90,7 @@ public class ImportVideoActivty extends BaseActivity {
             filename = _cursor.getString(_columnIndex);
 
             if (VideoUtils.getVideoLength(filename) < 5) {
-                showAlert(R.string.str_alert_short_video_title, "Be sure you have select video file at least 5 seconds of footage", "OK");
+                showAlertDialog("Be sure you have select video file at least 5 seconds of footage");
                 return;
             }
             ImportVideoActivty.this.finish();
@@ -95,6 +100,38 @@ public class ImportVideoActivty extends BaseActivity {
             showToast(filename);
       }
     };
+
+
+
+    private void showAlertDialog(String message) {
+        try {
+
+
+            optionDialog = new Dialog(ImportVideoActivty.this);
+            optionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            optionDialog.setContentView(R.layout.alert_chooce_video);
+
+            ((TextView) optionDialog.findViewById(R.id.textView1)).setText("Oopss, We can't let you do this");
+            ((TextView) optionDialog.findViewById(R.id.textView2)).setText(message);
+
+           // ((TextView)optionDialog.findViewById(R.id.textView1)).setTypeface(FontTypeface.getTypeface(ImportVideoActivty.this, AppConstants.FONT_SUFI_REGULAR));
+        //    ((TextView)optionDialog.findViewById(R.id.textView2)).setTypeface(FontTypeface.getTypeface(ImportVideoActivty.this, AppConstants.FONT_SUFI_REGULAR));
+
+            ((TextView) optionDialog.findViewById(R.id.buttonYes)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    optionDialog.dismiss();
+
+                }
+            });
+            optionDialog.show();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     @SuppressWarnings("deprecation")
@@ -140,12 +177,14 @@ public class ImportVideoActivty extends BaseActivity {
     }
     protected void showToast(String msg)
     {
-        Toast.makeText(_context, msg, Toast.LENGTH_LONG).show();
+       // Toast.makeText(_context, msg, Toast.LENGTH_LONG).show();
     }
 
     //
     private class VideoGalleryAdapter extends BaseAdapter
-    {
+    {        LayoutInflater inflator;
+        private ViewHolder viewHolder;
+
         public VideoGalleryAdapter(Context c)
         {
             _context = c;
@@ -164,7 +203,22 @@ public class ImportVideoActivty extends BaseActivity {
         }
         public View getView(int position, View convertView, ViewGroup parent)
         {
-            ImageView imgVw= new ImageView(_context);;
+
+
+            if (convertView == null) {
+                inflator = (LayoutInflater) ImportVideoActivty.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflator.inflate(R.layout.import_video_imagevide, null);
+                viewHolder = new ViewHolder(convertView);
+                convertView.setTag(viewHolder);
+            } else {
+
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+
+            viewHolder.iv_ImportVideo.setImageBitmap(getImage(_videosId[position]));
+            //imgVw.setLayoutParams(new GridView.LayoutParams(200,200));
+         //  imgVw.setPadding(8, 8, 8, 8);
+            /*ImageView imgVw= new ImageView(_context);;
             try
             {
                 if(convertView!=null)
@@ -172,14 +226,14 @@ public class ImportVideoActivty extends BaseActivity {
                     imgVw= (ImageView) convertView;
                 }
                 imgVw.setImageBitmap(getImage(_videosId[position]));
-                imgVw.setLayoutParams(new GridView.LayoutParams(300,300));
+                imgVw.setLayoutParams(new GridView.LayoutParams(200,200));
                 imgVw.setPadding(8, 8, 8, 8);
             }
             catch(Exception ex)
             {
                 System.out.println("ImportVideoActivty:getView()-135: ex " + ex.getClass() +", "+ ex.getMessage());
-            }
-            return imgVw;
+            }*/
+            return convertView;
         }
 
         // Create the thumbnail on the fly
@@ -191,6 +245,15 @@ public class ImportVideoActivty extends BaseActivity {
         }
 
     }
+    static class ViewHolder {
+        private ImageView iv_ImportVideo;
 
+        ViewHolder(View view) {
+
+            iv_ImportVideo = (ImageView) view.findViewById(R.id.iv_ImportVideo);
+
+
+        }
+    }
 
 }

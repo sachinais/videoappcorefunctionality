@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -85,12 +86,12 @@ public class ResumableUpload {
     static final String REQUEST_AUTHORIZATION_INTENT = "com.google.example.yt.RequestAuth";
 
     public static String upload(YouTube youtube, final InputStream fileInputStream,
-                                final long fileSize, final Context context,  final YoutubeDataBean youtubeDataBean) {
+                                final long fileSize, final Context context, final YoutubeDataBean youtubeDataBean) {
         final NotificationManager notifyManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        progress=new ProgressDialog(context);
-        progress.setMessage("Downloading Music");
+        progress = new ProgressDialog(context);
+        progress.setMessage("");
         progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progress.setIndeterminate(true);
 /*
@@ -132,15 +133,25 @@ public class ResumableUpload {
             //  snippet.setTitle("Chaman Test" + cal.getTime());
             snippet.setTitle(youtubeDataBean.getVideoTitle());
 
-            snippet.setDescription("Video uploaded via YouTube Data API V3 using the Java library "
-                    + "on " + cal.getTime());
+            if (youtubeDataBean.getVideoDescription().length() > 0)
+                snippet.setDescription(youtubeDataBean.getVideoDescription());
+            else
+                snippet.setDescription("Video My Job");
 
             // Set your keywords.
-            snippet.setTags(Arrays.asList(Constants.DEFAULT_KEYWORD, Upload.generateKeywordFromPlaylistId(Constants.UPLOAD_PLAYLIST)));
 
-            // Set completed snippet to the video object.
-            videoObjectDefiningMetadata.setSnippet(snippet);
+            String [] tagsArray= youtubeDataBean.getVideoTags().split(",");
 
+            List<String> tags = new ArrayList<>();
+
+            for(int i=0; i<tagsArray.length; i++){
+
+                tags.add(tagsArray[i]);
+            }
+
+            snippet.setTags(tags);
+
+           videoObjectDefiningMetadata.setSnippet(snippet);
             InputStreamContent mediaContent =
                     new InputStreamContent(VIDEO_FILE_FORMAT, new BufferedInputStream(fileInputStream));
             mediaContent.setLength(fileSize);
@@ -162,7 +173,7 @@ public class ResumableUpload {
        * in data chunks.
        */
             uploader.setDirectUploadEnabled(false);
-            final   Intent intent = new Intent(UploadingVideoScreen.ACTION_PROGRESS_UPDATE);
+            final Intent intent = new Intent(UploadingVideoScreen.ACTION_PROGRESS_UPDATE);
 
             MediaHttpUploaderProgressListener progressListener = new MediaHttpUploaderProgressListener() {
                 public void progressChanged(MediaHttpUploader uploader) throws IOException {
@@ -173,10 +184,10 @@ public class ResumableUpload {
                                     (int) uploader.getNumBytesUploaded(), false);
 //                            progress.setMax((int) fileSize);
 //                            progress.show();
-                            Log.d(TAG, "File Size-"+(int)fileSize);
-                            Log.d(TAG, "Uploaded Size-"+ (int) (uploader.getProgress() * 100));
+                            Log.d(TAG, "File Size-" + (int) fileSize);
+                            Log.d(TAG, "Uploaded Size-" + (int) (uploader.getProgress() * 100));
                             MainApplication.getInstance().setUploadingProgress((int) (uploader.getProgress() * 100));
-                            intent.putExtra("progress",  (int) (uploader.getProgress() * 100));
+                            intent.putExtra("progress", (int) (uploader.getProgress() * 100));
                             context.sendBroadcast(intent);
                             notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());
                             break;
@@ -188,7 +199,7 @@ public class ResumableUpload {
                             context.sendBroadcast(intent);
                             notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());
                             Log.d(TAG, "File Size-" + (int) fileSize);
-                            Log.d(TAG, "Uploaded Size-" +  (int) (uploader.getProgress() * 100));
+                            Log.d(TAG, "Uploaded Size-" + (int) (uploader.getProgress() * 100));
                             break;
                         case MEDIA_IN_PROGRESS:
                             builder
@@ -200,21 +211,21 @@ public class ResumableUpload {
                             intent.putExtra("progress", (int) (uploader.getProgress() * 100));
                             context.sendBroadcast(intent);
                             Log.d(TAG, "File Size-" + (int) fileSize);
-                            Log.d(TAG, "Uploaded Size-" +  (int) (uploader.getProgress() * 100));
+                            Log.d(TAG, "Uploaded Size-" + (int) (uploader.getProgress() * 100));
                             MainApplication.getInstance().setUploadingProgress((int) (uploader.getProgress() * 100));
 
                             break;
                         case MEDIA_COMPLETE:
                             builder.setContentTitle(context.getString(R.string.yt_upload_completed))
                                     .setContentText(context.getString(R.string.upload_completed))
-                                    // Removes the progress bar
+                                            // Removes the progress bar
                                     .setProgress(0, 0, false);
                             notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());
                             MainApplication.getInstance().setUploadingProgress((int) (uploader.getProgress() * 100));
-                            intent.putExtra("progress",  (int) (uploader.getProgress() * 100));
+                            intent.putExtra("progress", (int) (uploader.getProgress() * 100));
                             context.sendBroadcast(intent);
                             Log.d(TAG, "File Size-" + (int) fileSize);
-                            Log.d(TAG, "Uploaded Size-" +  (int) (uploader.getProgress() * 100));
+                            Log.d(TAG, "Uploaded Size-" + (int) (uploader.getProgress() * 100));
                         case NOT_STARTED:
                             Log.d(this.getClass().getSimpleName(), context.getString(R.string.upload_not_started));
                             break;
@@ -229,7 +240,7 @@ public class ResumableUpload {
             Log.d(TAG, "Video upload completed");
             videoId = returnedVideo.getId();
             Intent intent1 = new Intent(UploadingVideoScreen.ACTION_UPLOAD_COMPLETED);
-            intent1.putExtra("url","https://www.youtube.com/watch?v="+videoId);
+            intent1.putExtra("url", "https://www.youtube.com/watch?v=" + videoId);
             context.sendBroadcast(intent1);
             MainApplication.getInstance().setYoutubeUrl("https://www.youtube.com/watch?v=" + videoId);
             Log.d(TAG, String.format("videoId = [%s]", videoId));

@@ -22,6 +22,24 @@ public class YoutubeDataBean {
 
     private String videoType = "";
     private String videoTitle = "";
+    private String videoTags = "";
+    private String videoDescriotion = "";
 
+
+    public String getVideoTags() {
+        return videoTags;
+    }
+
+    public void setVideoTags(String videoTags) {
+        this.videoTags = videoTags;
+    }
+
+    public String getVideoDescription() {
+        return videoDescriotion;
+    }
+
+    public void setVideoDescription(String videoDescriotion) {
+        this.videoDescriotion = videoDescriotion;
+    }
 
 }
