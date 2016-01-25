@@ -40,8 +40,8 @@ public class VideoEncoding {
         strVideoSize = Integer.toString(width) + "x" + Integer.toString(height);
 
         //skip convert recorded video if size is same...
-        progress = -50;
-        stepProgress = 50;
+        progress = -48;
+        stepProgress = 48;
         startEncodingVideo();
     }
 
@@ -165,6 +165,7 @@ public class VideoEncoding {
 
                 @Override
                 public void onFinish() {
+                    callback.onProgress(48);
                     mergeEncodingVideoWithTopTailVideo();
                 }
             });
@@ -178,7 +179,7 @@ public class VideoEncoding {
      */
     private static void mergeEncodingVideoWithTopTailVideo() {
         progress += stepProgress;
-        int _videoLength = VideoUtils.getVideoLength(Constant.getEncodedVideo());
+        final int videoLength = (MainApplication.getInstance().getVideoEnd() - MainApplication.getInstance().getVideoStart()) / 1000;
 
         //make ffmpeg command
 
@@ -187,17 +188,14 @@ public class VideoEncoding {
         if (Constant.getDownloadTopVideo().length() != 0) {
             command = command + "-i" + " " + Constant.getTopVideo() +" ";
             fileCount ++;
-            _videoLength += VideoUtils.getVideoLength(Constant.getTopVideo());
         }
 
         command = command + "-i" + " " + Constant.getEncodedVideo() +" ";
         if (Constant.getDownloadTailVideo().length() != 0) {
             command = command + "-i" + " " + Constant.getTailVideo() +" ";
             fileCount ++;
-            _videoLength += VideoUtils.getVideoLength(Constant.getTailVideo());
         }
 
-        final int videoLength = _videoLength;
         command = command + "-c:a aac -strict experimental -threads 5 -crf 22 -preset ultrafast -r 25 -c:v libx264";
         String strFilterComplex = "";
         String strMapComplex = "";
