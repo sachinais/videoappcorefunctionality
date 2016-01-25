@@ -99,4 +99,12 @@ public class FFMpegUtils {
         } catch (FFmpegCommandAlreadyRunningException e) {
         }
     }
+
+    public static void killProcesses() {
+        try {
+            ffMpeg.killRunningProcesses();
+        } catch (Exception e) {
+
+        }
+    }
 }

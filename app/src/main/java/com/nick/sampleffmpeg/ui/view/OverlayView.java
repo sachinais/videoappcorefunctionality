@@ -133,7 +133,8 @@ public class OverlayView extends View {
             int width = backgroundBitmap.getWidth();
             int height = backgroundBitmap.getHeight();
 
-            int margin = (int) ((overlay.marginLeft / 100) * width) ;
+            int marginLeft = (int) ((overlay.marginLeft / 100) * width) ;
+            int marginTop = (int)((overlay.marginTop / 100) * height);
             int fontSize = (int) (((double)overlay.fontSize / 100.0) * height) ;
             Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(image);
@@ -146,7 +147,7 @@ public class OverlayView extends View {
 
             canvas.save();
 
-            canvas.translate(margin, (height - mTextLayout.getHeight()) / 2);
+            canvas.translate(marginLeft, marginTop);
             mTextLayout.draw(canvas);
             canvas.restore();
 

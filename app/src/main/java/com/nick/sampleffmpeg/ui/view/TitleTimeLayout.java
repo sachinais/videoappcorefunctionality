@@ -269,28 +269,15 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
     }
     private void showSelectCaptionDialog(final SelectCaptionCallback callback) {
         captionPreviewAdapter = new CaptionPreviewAdapter(parentActivity);
-        View v = parentActivity.showViewContentDialog(R.layout.select_caption_dialog, parentActivity.getString(R.string.str_select), new Runnable() {
-            @Override
-            public void run() {
-                int index = captionPreviewAdapter.getSelectedItem();
-                OverlayBean.Overlay overlay = MainApplication.getInstance().getTemplate().captions.get(index);
-                callback.onCaptionThemeSelected(overlay);
-            }
-        }, parentActivity.getString(R.string.str_cancel));
+        View v = parentActivity.showViewContentDialog(R.layout.select_caption_dialog, parentActivity.getString(R.string.str_cancel));
         captionGridView = (GridView)v.findViewById(R.id.gridView);
         captionGridView.setAdapter(captionPreviewAdapter);
         captionGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                final OverlayBean overlayBean = MainApplication.getInstance().getTemplate();
-
-                for (int i = 0; i < parent.getChildCount(); i ++) {
-                    View view = parent.getChildAt(i);
-                    view.findViewById(R.id.selected).setVisibility(GONE);
-                }
-                View view = parent.getChildAt(position);
-                view.findViewById(R.id.selected).setVisibility(VISIBLE);
-                captionPreviewAdapter.setSelectedItem(position);
+                parentActivity.closeCurrentDialog();
+                OverlayBean.Overlay overlay = MainApplication.getInstance().getTemplate().captions.get(position);
+                callback.onCaptionThemeSelected(overlay);
             }
         });
     }
@@ -379,9 +366,9 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
 
         this.trimStart = trimStart / 1000.f;
         this.trimEnd = (trimEnd) / 1000.f;
-        for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
-            ChildTextTimelineLayout caption = timelineTitlesInformation.get(i);
-            updateCaptionLayoutForTrimView(caption, true);
-        }
+//        for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
+//            ChildTextTimelineLayout caption = timelineTitlesInformation.get(i);
+//            updateCaptionLayoutForTrimView(caption, true);
+//        }
     }
 }

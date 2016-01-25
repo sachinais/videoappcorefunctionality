@@ -79,12 +79,9 @@ public class CaptionPreviewAdapter extends BaseAdapter {
             overlayView.setImageBitmap(myBitmap);
             overlayView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
-        ((TextView)ret.findViewById(R.id.textView)).setTextColor(overlay.color);
+        ((TextView)ret.findViewById(R.id.txt_caption)).setText("Caption " + Integer.toString(position + 1));
 
-        if (selectedItem == -1 && position == 0) {
-            ret.findViewById(R.id.selected).setVisibility(View.VISIBLE);
-            selectedItem = 0;
-        }
+
         return ret;
     }
 }

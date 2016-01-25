@@ -22,7 +22,6 @@ public class VideoEncoding {
         public abstract void onFinish();
     }
 
-    private static boolean flagProcessRunning = false;
     private static Callback callback = null;
     private static int stepProgress = 20;
     private static int progress = 0;
@@ -70,7 +69,6 @@ public class VideoEncoding {
      * Convert recording video into unique video format
      */
     public static void convertTopTailVideoToUniqueFormat(int videoWidth, int videoHeight, final boolean flagTop, final Runnable successCallback) {
-        flagProcessRunning = true;
         if (flagTop) {
             progress += stepProgress;
         } else {
@@ -107,7 +105,6 @@ public class VideoEncoding {
                 @Override
                 public void onFinish() {
                     successCallback.run();
-                    flagProcessRunning = false;
                 }
             });
         }

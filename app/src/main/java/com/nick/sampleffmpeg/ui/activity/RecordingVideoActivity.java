@@ -401,7 +401,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         String[] command = commands.split(" ");
         progressDialog.show();
         progressDialog.setMessage(getString(R.string.str_extract_audio));
-
+        FFMpegUtils.killProcesses();
         FFMpegUtils.execFFmpegBinary(command, new FFMpegUtils.Callback() {
             @Override
             public void onProgress(String msg) {
@@ -546,7 +546,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         options1Items.add(new ProvinceBean(0, "Rose Gold", "2", "3"));
         options1Items.add(new ProvinceBean(1, "Space Gray", "2", "3"));
         options1Items.add(new ProvinceBean(3, "Silver", "3", ""));*/
-        pvOptions = new OptionsPickerView(this);
+        pvOptions = new OptionsPickerView(this, getDisplayMetric().scaledDensity);
         pvOptions.setPicker(options1Items);
         pvOptions.setTitle("Select a Template");
         pvOptions.setCyclic(false, true, true);
@@ -578,7 +578,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             showAlert(R.string.str_alert_title_information, "Template is still loading.", "OK");
             return;
         }
-
+//
 //        MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
 //        overlayview.updateOverlay();
 
@@ -730,5 +730,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         return toReturn;
     }
 
-
+    @Override
+    public void onBackPressed() {
+    }
 }

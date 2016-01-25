@@ -21,8 +21,14 @@ public class Constant {
     public static String CLIENT_ID = "815107145608-2hc3kfand4bomob5thte673amk17k4c2.apps.googleusercontent.com";
     public static String CLIENT_SECRATE = "46ZZiJ5z01zj7Lgoz9f35Fd0";
 
+    private static float scaleDensity = 0.f;
+    public static float getScaleDensity() {
+        return  scaleDensity;
+    }
 
-
+    public static void setScaleDensity(float scaleDensity) {
+        Constant.scaleDensity = scaleDensity;
+    }
 
     public static void updateTimeUnit(int time) {
         TIMELINE_UNIT_SECOND = time;

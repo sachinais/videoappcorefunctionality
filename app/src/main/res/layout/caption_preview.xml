@@ -3,7 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:layout_weight="0.5">
+    </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0sp"
@@ -14,37 +18,24 @@
             android:layout_height="match_parent"
             android:layout_margin="5sp"
             android:scaleType="fitXY" />
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Sample Caption"/>
-
-
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:layout_weight="0.5">
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_height="0sp"
         android:layout_weight="1">
-        <RelativeLayout
-            android:id="@+id/selected"
-            android:visibility="gone"
+        <TextView
+            android:id="@+id/txt_caption"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#333"></View>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:textColor="#FFF"
-                android:gravity="center"
-                android:text="Selected"/>
-        </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="Caption"/>
 
     </RelativeLayout>
 

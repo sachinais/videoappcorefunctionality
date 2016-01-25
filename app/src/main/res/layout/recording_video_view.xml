@@ -158,13 +158,13 @@
 
     <RelativeLayout
         android:id="@+id/rl_Menu"
-        android:layout_width="90dp"
+        android:layout_width="90sp"
         android:layout_marginBottom="50sp"
         android:layout_marginRight="30sp"
         android:layout_alignParentBottom="true"
         android:background="@drawable/border_white"
         android:layout_alignParentRight="true"
-        android:layout_height="50dp">
+        android:layout_height="50sp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_centerInParent="true"

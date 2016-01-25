@@ -49,6 +49,7 @@ import com.nick.sampleffmpeg.utils.StringUtils;
 import com.nick.sampleffmpeg.utils.TailDownloader;
 import com.nick.sampleffmpeg.utils.TopDownloader;
 import com.nick.sampleffmpeg.utils.audio.soundfile.SoundFile;
+import com.nick.sampleffmpeg.utils.ffmpeg.FFMpegUtils;
 import com.nick.sampleffmpeg.utils.youtube.FileDownloader;
 
 import org.apache.http.NameValuePair;
@@ -224,7 +225,7 @@ public class EditingVideoActivity extends BaseActivity {
     private void updateTimelineAfterTrim() {
         int trimStart = MainApplication.getInstance().getVideoStart();
         int trimEnd = MainApplication.getInstance().getVideoEnd();
-        titleThumbsLayout.setTrimLeftRight(trimStart, trimEnd);
+        //titleThumbsLayout.setTrimLeftRight(trimStart, trimEnd);
         if (currentVideoSeekPosition < trimStart) {
             setCurrentSeekTime(trimStart);
         }
@@ -232,24 +233,31 @@ public class EditingVideoActivity extends BaseActivity {
 
     private void convertTopVideoVideoFormat() {
         if (flagTopVideoDownloaded && flagTailVideoDownloaded) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, true, new Runnable() {
-                        @Override
-                        public void run() {
-                            VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, false, new Runnable() {
+            if (mTask != null) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mTask != null) {
+                            VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, true, new Runnable() {
                                 @Override
                                 public void run() {
-                                    findViewById(R.id.pb_Tail).setVisibility(View.GONE);
-                                    findViewById(R.id.pb_Top).setVisibility(View.GONE);
-                                    initializeThumbView();
+                                    VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, false, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            findViewById(R.id.pb_Tail).setVisibility(View.GONE);
+                                            findViewById(R.id.pb_Top).setVisibility(View.GONE);
+                                            initializeThumbView();
+
+                                            mTask = null;
+                                        }
+                                    });
                                 }
                             });
                         }
-                    });
-                }
-            });
+                    }
+                });
+            }
+
         }
     }
 
@@ -463,7 +471,13 @@ public class EditingVideoActivity extends BaseActivity {
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
+                        FFMpegUtils.killProcesses();
+                        if (mTask != null) {
+                            mTask.cancel(true);
+                            mTask = null;
+                        }
                         EditingVideoActivity.this.finish();
+                        startActivity(new Intent(EditingVideoActivity.this, RecordingVideoActivity.class));
                     }
                 });
 
@@ -702,6 +716,14 @@ public class EditingVideoActivity extends BaseActivity {
             param.setMargins((int) marginLeft, 0, 0, 0);
             video_indicator.setLayoutParams(param);
             updateOverlayView((float) time / 1000.f);
+        } else {
+            if (time >= trimEnd) {
+                if (flagPlay) {
+                    videoView.pause();
+                    videoView.seekTo(trimStart);
+                    onPlay();
+                }
+            }
         }
     }
 
@@ -758,7 +780,7 @@ public class EditingVideoActivity extends BaseActivity {
                 }
 
                 setCurrentSeekTime(0);
-                titleThumbsLayout.setTrimLeftRight(MainApplication.getInstance().getVideoStart(), MainApplication.getInstance().getVideoEnd());
+                titleThumbsLayout.setTrimLeftRight(0, videoLength);
             }
         });
 
@@ -1007,7 +1029,6 @@ public class EditingVideoActivity extends BaseActivity {
             try {
                 progressDialog.dismiss();
                 flagProgressDialogIsRunning = false;
-                mTask = null;
                 flagTailVideoDownloaded = flagTopVideoDownloaded = true;
                 downloadThumbNail();
 

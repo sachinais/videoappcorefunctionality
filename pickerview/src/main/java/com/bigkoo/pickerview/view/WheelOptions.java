@@ -18,6 +18,7 @@ public class WheelOptions<T> {
 	private ArrayList<ArrayList<T>> mOptions2Items;
 	private ArrayList<ArrayList<ArrayList<T>>> mOptions3Items;
 
+	private float scaleDensity = 0.f;
     private boolean linkage = false;
     private OnItemSelectedListener wheelListener_option1;
     private OnItemSelectedListener wheelListener_option2;
@@ -30,8 +31,9 @@ public class WheelOptions<T> {
 		this.view = view;
 	}
 
-	public WheelOptions(View view) {
+	public WheelOptions(View view, float scaleDensity) {
 		super();
+		this.scaleDensity = scaleDensity;
 		this.view = view;
 		setView(view);
 	}
@@ -74,7 +76,7 @@ public class WheelOptions<T> {
 					.get(0)));// 设置显示数据
 		wv_option3.setCurrentItem(wv_option3.getCurrentItem());// 初始化时显示的数据
 
-		int textSize = 25;
+		int textSize = (int)(5 * scaleDensity);
 
 		wv_option1.setTextSize(textSize);
 		wv_option2.setTextSize(textSize);

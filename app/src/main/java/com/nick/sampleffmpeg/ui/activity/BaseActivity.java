@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.utils.ffmpeg.FFMpegUtils;
 
 /**
@@ -26,6 +27,7 @@ public class BaseActivity extends Activity {
     public void setContentView (int layoutResID) {
         mDisplayMetrics = getResources().getDisplayMetrics();
         mDisplayMetrics.scaledDensity = mDisplayMetrics.heightPixels / 400.0f;
+        Constant.setScaleDensity(mDisplayMetrics.scaledDensity);
         super.setContentView(layoutResID);
 
         progressDialog = new ProgressDialog(this);
@@ -88,6 +90,7 @@ public class BaseActivity extends Activity {
                                     runnablePositive.run();
                                 }
                                 dialog.dismiss();
+                                currentAlertDialog = null;
                             }
                         });
             }
@@ -109,13 +112,25 @@ public class BaseActivity extends Activity {
                                     runnableNegative.run();
                                 }
                                 dialog.dismiss();
+                                currentAlertDialog = null;
                             }
                         });
             }
 
         }
     }
+    protected AlertDialog currentAlertDialog = null;
 
+    public AlertDialog getCurrentAlertDialog() {
+        return currentAlertDialog;
+    }
+
+    public void closeCurrentDialog() {
+        if (currentAlertDialog != null) {
+            currentAlertDialog.dismiss();
+            currentAlertDialog = null;
+        }
+    }
     /**
      * show dialog from layout on activity
      * @param resID resource id
@@ -135,9 +150,9 @@ public class BaseActivity extends Activity {
         //Init dialog buttons and event
         initDialogButtons(alertDialogBuilder, parameters);
         // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
+        currentAlertDialog = alertDialogBuilder.create();
         // show it
-        alertDialog.show();
+        currentAlertDialog.show();
 
         return view;
     }
