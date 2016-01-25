@@ -22,11 +22,10 @@ public class VideoEncoding {
         public abstract void onFinish();
     }
 
+    private static boolean flagProcessRunning = false;
     private static Callback callback = null;
     private static int stepProgress = 20;
     private static int progress = 0;
-    private static int outputVideoWidth = 1280;
-    private static int outputVideoHeight = 720;
     private static String strVideoSize = "";
 
     /**
@@ -38,14 +37,12 @@ public class VideoEncoding {
     public static void startVideoEncoding(Callback callback, int width, int height) {
         progress = 0;
         VideoEncoding.callback = callback;
-        outputVideoWidth = width;
-        outputVideoHeight = height;
         strVideoSize = Integer.toString(width) + "x" + Integer.toString(height);
 
         //skip convert recorded video if size is same...
-        progress = -33;
-        stepProgress = 33;
-        trimVideo();
+        progress = -50;
+        stepProgress = 50;
+        startEncodingVideo();
     }
 
     private static int getProgressStatus(String str, int videoLength) {
@@ -69,54 +66,19 @@ public class VideoEncoding {
             return 0;
         }
     }
-
-    /**
-     * trim source video
-     */
-    private static void trimVideo() {
-        String strStart = Float.toString(MainApplication.getInstance().getVideoStart() / 1000.f);
-        String strEnd = Float.toString(MainApplication.getInstance().getVideoEnd() / 1000.f);
-
-        progress = 0;
-        //String commands = "-y -threads 5 -i src.mp4 -crf 22 -preset ultrafast -ar 44100 -c:a aac -strict experimental -ss " + strStart + " -t " + strEnd + " -s " + strVideoSize + " -r 25 -c:v libx264 dst.mp4";
-
-        String commands = "-y -threads 5 -i src.mp4 -c:a mp2 -ss " + strStart + " -t " + strEnd + " -s " + strVideoSize + " -r 25 -c:v mpeg2video -qscale:v 2 dst.mp4";
-
-
-        String srcVideoFilePath = Constant.getSourceVideo();
-        String dstVideoFilePath = Constant.getConvertedVideo();
-
-        final int videoLength = VideoUtils.getVideoLength(srcVideoFilePath);
-
-        commands = commands.replace("src.mp4", srcVideoFilePath);
-        commands = commands.replace("dst.mp4", dstVideoFilePath);
-
-        String[] command = commands.split(" ");
-
-        FFMpegUtils.execFFmpegBinary(command, new FFMpegUtils.Callback() {
-            @Override
-            public void onProgress(String msg) {
-                callback.onProgress(getProgressStatus(msg, videoLength) + progress);
-            }
-
-            @Override
-            public void onFinish() {
-                startEncodingVideo();
-            }
-        });
-    }
-
     /**
      * Convert recording video into unique video format
      */
-    public static void convertTopTailVideoToUniqueFormat(final boolean flagTop, final Runnable successCallback) {
-
+    public static void convertTopTailVideoToUniqueFormat(int videoWidth, int videoHeight, final boolean flagTop, final Runnable successCallback) {
+        flagProcessRunning = true;
         if (flagTop) {
             progress += stepProgress;
         } else {
             progress += stepProgress;
         }
 
+
+        strVideoSize = Integer.toString(videoWidth) + "x" + Integer.toString(videoHeight);
         //String commands = "-y -threads 5 -i src.mp4 -crf 22 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s " + strVideoSize + " -r 25 -c:v libx264 dst.mp4";
         String commands = "-y -threads 5 -i src.mp4 -c:a mp2 -b:a 192k -s " + strVideoSize + " -r 25 -c:v mpeg2video -qscale:v 2 dst.mp4";
         String srcVideoFilePath = "";
@@ -137,24 +99,15 @@ public class VideoEncoding {
 
             String[] command = commands.split(" ");
 
-//            callback.onProgress(progress);
             FFMpegUtils.execFFmpegBinary(command, new FFMpegUtils.Callback() {
                 @Override
                 public void onProgress(String msg) {
-//                    int subProgress = getProgressStatus(msg, videoLength);
-//                    if (subProgress != 0) {
-//                        callback.onProgress(progress + subProgress);
-//                    }
                 }
 
                 @Override
                 public void onFinish() {
                     successCallback.run();
-//                    if (flagTop) {
-//                        convertTopTailVideoToUniqueFormat(false);
-//                    } else {
-//                        startEncodingVideo();
-//                    }
+                    flagProcessRunning = false;
                 }
             });
         }
@@ -166,19 +119,21 @@ public class VideoEncoding {
     private static void startEncodingVideo() {
         progress += stepProgress;
 
+        String strStart = Float.toString(MainApplication.getInstance().getVideoStart() / 1000.f);
+        String strEnd = Float.toString(MainApplication.getInstance().getVideoEnd() / 1000.f);
         ArrayList<VideoOverlay> videoOverlayInformation = MainApplication.getInstance().getVideoOverlayInformation();
-        final int videoLength = VideoUtils.getVideoLength(Constant.getConvertedVideo());
+        final int videoLength = (MainApplication.getInstance().getVideoEnd() - MainApplication.getInstance().getVideoStart()) / 1000;
         if (videoOverlayInformation.size() > 0) {
             //make ffmpeg command
-            String command = "-y ";
-            command = command + "-i" + " " + Constant.getConvertedVideo() +" ";
+            String command = "-y -threads 5 ";
+            command = command + "-i" + " " + Constant.getSourceVideo() +" ";
 
             for (int i = 0; i < videoOverlayInformation.size(); i ++) {
                 command = command + "-i" + " " + Constant.getOverlayDirectory() + i + ".png ";
             }
 
             //command = command + "-c:a aac -strict experimental -threads 5 -crf 22 -preset ultrafast -r 25 -c:v libx264 -filter_complex";
-            command = command + "-c:a mp2 -b:a 192k -threads 5 -r 25 -c:v mpeg2video -qscale:v 2 -filter_complex";
+            command = command + "-c:a mp2 -ss " + strStart + " -t " + strEnd + " -s " + strVideoSize + " -r 25 -c:v mpeg2video -qscale:v 2 -filter_complex";
             VideoOverlay title = videoOverlayInformation.get(0);
 
             String strFilterComplex = "[0:v][1:v] overlay=" + Integer.toString(title.xPos) + ":" + Integer.toString(title.yPos) +

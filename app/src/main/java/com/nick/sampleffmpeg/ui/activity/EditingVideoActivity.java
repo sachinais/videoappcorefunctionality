@@ -30,6 +30,7 @@ import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.bean.ProvinceBean;
 import com.nick.sampleffmpeg.bean.VideoOverlay;
+import com.nick.sampleffmpeg.encoding.VideoEncoding;
 import com.nick.sampleffmpeg.network.CheckNetworkConnection;
 import com.nick.sampleffmpeg.network.CustomDialogs;
 import com.nick.sampleffmpeg.network.RequestBean;
@@ -157,10 +158,7 @@ public class EditingVideoActivity extends BaseActivity {
     private static String strJobTitle = "";
     private ArrayList<ProvinceBean> options1Items = new ArrayList<ProvinceBean>();
 
-    private String topVideoUrl = "";
-    private String tailVideoUrl = "";
     private String thumbNailUrl = "";
-    public boolean isTopVideoExist;
 
     private boolean flagTopVideoDownloaded = true;
     private boolean flagTailVideoDownloaded = true;
@@ -232,8 +230,30 @@ public class EditingVideoActivity extends BaseActivity {
         }
     }
 
+    private void convertTopVideoVideoFormat() {
+        if (flagTopVideoDownloaded && flagTailVideoDownloaded) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, true, new Runnable() {
+                        @Override
+                        public void run() {
+                            VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, false, new Runnable() {
+                                @Override
+                                public void run() {
+                                    findViewById(R.id.pb_Tail).setVisibility(View.GONE);
+                                    findViewById(R.id.pb_Top).setVisibility(View.GONE);
+                                    initializeThumbView();
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    }
 
-    public void downloadTopVideo() {
+    private String getTopTailVideoExtension(boolean flagTop) {
         try {
             int pos = MainApplication.getInstance().getSelectedTemplePosition();
             if (MainApplication.getInstance().getTemplateArray() != null && MainApplication.getInstance().getTemplateArray().length() > 0) {
@@ -245,21 +265,32 @@ public class EditingVideoActivity extends BaseActivity {
                 }
             }
             JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
-            String extenstion = jsonArray.getJSONObject(pos).optJSONObject("data").getJSONObject("brand-logo").getString("video_top");
+            if (flagTop) {
+                return jsonArray.getJSONObject(pos).optJSONObject("data").getJSONObject("brand-logo").getString("video_top");
+            } else {
+                return jsonArray.getJSONObject(pos).optJSONObject("data").getJSONObject("brand-logo").getString("video_tail");
+            }
+
+        }catch (Exception e) {
+
+        }
+        return  "";
+    }
+    public void downloadTopVideo() {
+
+        try {
+            int pos = MainApplication.getInstance().getSelectedTemplePosition();
+            String extenstion = getTopTailVideoExtension(true);
 
             if (extenstion != null && !extenstion.equalsIgnoreCase("")) {
-                isTopVideoExist = true;
-                flagTopVideoDownloaded = false;
                 findViewById(R.id.pb_Top).setVisibility(View.VISIBLE);
                 TopDownloader fileDownloader = new TopDownloader(EditingVideoActivity.this, getTemplateUrl((int) options1Items.get(pos).getId(), "top"), extenstion, options1Items.get(pos).getDirectoryId());
                 fileDownloader.startDownload(new TopVideoDownload() {
                     @Override
-                    public void getTopVideoUrl(String url) {
+                    public void getTopVideoUrl(final String url) {
+                        Constant.setDownloadTopVideo(url);
                         flagTopVideoDownloaded = true;
-                        findViewById(R.id.pb_Top).setVisibility(View.GONE);
-                        topVideoUrl = url;
-                        Constant.setDownloadTopVideo(topVideoUrl);
-                        initializeThumbView();
+                        convertTopVideoVideoFormat();
                     }
                 });
             }
@@ -303,28 +334,18 @@ public class EditingVideoActivity extends BaseActivity {
     public void downloadTailVideo() {
         try {
             int pos = MainApplication.getInstance().getSelectedTemplePosition();
-            if (MainApplication.getInstance().getTemplateArray() != null && MainApplication.getInstance().getTemplateArray().length() > 0) {
-                JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
-                // for (int i = jsonArray.length() - 1; i >= 0; i--) {
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    options1Items.add(new ProvinceBean(i, jsonObject.optString("title"), jsonObject.optString("directory"), ""));
-                }
-            }
-            JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
-            String extenstion = jsonArray.getJSONObject(pos).optJSONObject("data").getJSONObject("brand-logo").getString("video_tail");
+            String extenstion = getTopTailVideoExtension(false);
+
             if (extenstion != null && !extenstion.equalsIgnoreCase("")) {
                 findViewById(R.id.pb_Tail).setVisibility(View.VISIBLE);
                 flagTailVideoDownloaded = false;
                 TailDownloader fileDownloader = new TailDownloader(EditingVideoActivity.this, getTemplateUrl((int) options1Items.get(pos).getId(), "tail"), extenstion, options1Items.get(pos).getDirectoryId());
                 fileDownloader.startDownload(new TopVideoDownload() {
                     @Override
-                    public void getTopVideoUrl(String url) {
+                    public void getTopVideoUrl(final String url) {
                         flagTailVideoDownloaded = true;
-                        findViewById(R.id.pb_Tail).setVisibility(View.GONE);
-                        tailVideoUrl = url;
-                        Constant.setDownloadTailVideo(tailVideoUrl);
-                        initializeThumbView();
+                        Constant.setDownloadTailVideo(url);
+                        convertTopVideoVideoFormat();
                     }
                 });
             }
@@ -793,8 +814,6 @@ public class EditingVideoActivity extends BaseActivity {
         ArrayList<VideoOverlay> videoOverlayInformation = MainApplication.getInstance().getVideoOverlayInformation();
         videoOverlayInformation.clear();
 
-//        int videoWidth = VideoUtils.getVideoWidth(Constant.getSourceVideo());
-//        int videoHeight = VideoUtils.getVideoHeight(Constant.getSourceVideo());
         int videoWidth = Constant.VIDEO_WIDTH;
         int videoHeight = Constant.VIDEO_HEIGHT;
 
@@ -991,6 +1010,16 @@ public class EditingVideoActivity extends BaseActivity {
                 mTask = null;
                 flagTailVideoDownloaded = flagTopVideoDownloaded = true;
                 downloadThumbNail();
+
+                String extenstion = getTopTailVideoExtension(true);
+                if (extenstion != null && !extenstion.equalsIgnoreCase("")) {
+                    flagTopVideoDownloaded = false;
+                }
+
+                extenstion = getTopTailVideoExtension(false);
+                if (extenstion != null && !extenstion.equalsIgnoreCase("")) {
+                    flagTailVideoDownloaded = false;
+                }
                 downloadTopVideo();
                 downloadTailVideo();
             } catch (Exception e) {
