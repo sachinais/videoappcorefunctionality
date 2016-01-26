@@ -13,4 +13,6 @@ public class AppConstants {
     public static final String FONT_SUFI_SEMIBOLD = "SF-UI-Display-Semibold.otf";
     public static final String FONT_AWESOME = "FontAwesome.otf";
 
+    public static final String FONT_OPEN_SANS = "OpenSans-Regular.ttf";
+    public static final String FONT_SANS_SERIF = "DroidSerif.ttf";
 }

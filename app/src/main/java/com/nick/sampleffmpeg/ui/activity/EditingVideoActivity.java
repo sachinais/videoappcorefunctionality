@@ -241,16 +241,18 @@ public class EditingVideoActivity extends BaseActivity {
                             VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, true, new Runnable() {
                                 @Override
                                 public void run() {
-                                    VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, false, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            findViewById(R.id.pb_Tail).setVisibility(View.GONE);
-                                            findViewById(R.id.pb_Top).setVisibility(View.GONE);
-                                            initializeThumbView();
+                                    if (mTask != null) {
+                                        VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, false, new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                findViewById(R.id.pb_Tail).setVisibility(View.GONE);
+                                                findViewById(R.id.pb_Top).setVisibility(View.GONE);
+                                                initializeThumbView();
 
-                                            mTask = null;
-                                        }
-                                    });
+                                                mTask = null;
+                                            }
+                                        });
+                                    }
                                 }
                             });
                         }

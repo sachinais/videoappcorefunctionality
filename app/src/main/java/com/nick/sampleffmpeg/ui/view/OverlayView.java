@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Typeface;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -20,7 +21,9 @@ import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.OverlayBean;
+import com.nick.sampleffmpeg.utils.AppConstants;
 import com.nick.sampleffmpeg.utils.FileUtils;
+import com.nick.sampleffmpeg.utils.FontTypeface;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -142,6 +145,12 @@ public class OverlayView extends View {
             TextPaint mTextPaint = new TextPaint();
             mTextPaint.setColor(overlay.color);
             mTextPaint.setTextSize(fontSize);
+
+            if (overlay.fontName.length() > 0) {
+                Typeface typeFace = FontTypeface.getTypeface(appContext, overlay.fontName);
+                mTextPaint.setTypeface(typeFace);
+            }
+
             mTextPaint.setAntiAlias(true);
             StaticLayout mTextLayout = new StaticLayout(title, mTextPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
 

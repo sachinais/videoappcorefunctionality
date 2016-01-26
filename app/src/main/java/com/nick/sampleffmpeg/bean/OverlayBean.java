@@ -11,6 +11,7 @@ import android.util.Size;
 import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.sharedpreference.SPreferenceKey;
 import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
+import com.nick.sampleffmpeg.utils.AppConstants;
 import com.nick.sampleffmpeg.utils.FileUtils;
 import com.nick.sampleffmpeg.utils.svgandroid.SVG;
 import com.nick.sampleffmpeg.utils.svgandroid.SVGParser;
@@ -92,6 +93,17 @@ public class OverlayBean {
         return sb.toString();
     }
 
+    private String getFontFileName(String fontName) {
+        if (fontName.contains("OpenSans")) {
+            return AppConstants.FONT_OPEN_SANS;
+        }
+
+        if (fontName.contains("sans-serif")) {
+            return AppConstants.FONT_SANS_SERIF;
+        }
+
+        return  "";
+    }
     /**
      * @param obj overlay json object
      * @ret overlay object
@@ -112,7 +124,8 @@ public class OverlayBean {
         }
 
         if (!obj.isNull("font")) {
-            overlay.fontName = obj.getString("font");
+            String fontName = obj.getString("font");
+            overlay.fontName = getFontFileName(fontName);
         }
 
         if (!obj.isNull("x")) {
