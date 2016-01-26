@@ -12,6 +12,7 @@ public class SelectPlatFromDataObject {
     public  String _name;
     public  String _character_limit;
 
+    public  boolean _platformEnabled;
 
 
 

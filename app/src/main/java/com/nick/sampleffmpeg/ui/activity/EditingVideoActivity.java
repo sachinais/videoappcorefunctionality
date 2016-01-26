@@ -1,6 +1,9 @@
 package com.nick.sampleffmpeg.ui.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
@@ -172,7 +175,7 @@ public class EditingVideoActivity extends BaseActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+        registerReceiver(finishActivity, new IntentFilter("Finish_Activity"));
         setContentView(R.layout.editing_video_view);
         ButterKnife.inject(this);
 
@@ -1143,4 +1146,16 @@ public class EditingVideoActivity extends BaseActivity {
             }
         }
     };
+
+
+    BroadcastReceiver finishActivity = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            finish();
+
+        }
+    };
+
+
 }

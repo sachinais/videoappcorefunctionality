@@ -38,6 +38,7 @@
     <color name="color_blue">#00BFFF</color>
     <color name="color_white">#FFFFFF</color>
     <color name="color_black">#000000</color>
+    <color name="light_color_black">#80000000</color>
     <color name="color_greyish">#5d5d5d</color>
     <color name="color_sky_blue">#027BFC</color>
     <color name="color_pressed_light_grey">#508D8D8F</color>
@@ -48,6 +49,7 @@
     <color name="color_sign_btn">#3CDDD7</color>
     <color name="color_light_sign_btn">#603CDDD7</color>
     <color name="light_grey">#408D8D8F</color>
+    <color name="color_red">#FF0000</color>
 
 
 
