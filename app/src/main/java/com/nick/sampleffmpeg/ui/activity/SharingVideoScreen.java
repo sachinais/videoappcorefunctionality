@@ -24,6 +24,8 @@ import com.nick.sampleffmpeg.network.CustomDialogs;
 import com.nick.sampleffmpeg.network.RequestBean;
 import com.nick.sampleffmpeg.network.RequestHandler;
 import com.nick.sampleffmpeg.network.RequestListner;
+import com.nick.sampleffmpeg.sharedpreference.SPreferenceKey;
+import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 import com.nick.sampleffmpeg.ui.view.StretchVideoView;
 import com.nick.sampleffmpeg.utils.AppConstants;
 import com.nick.sampleffmpeg.utils.FontTypeface;
@@ -40,18 +42,18 @@ public class SharingVideoScreen extends Activity {
     public static String ACTION_PROGRESS_UPDATE = "ACTION_PROGRESS_UPDATE";
     public static String ACTION_UPLOAD_COMPLETED = "ACTION_UPLOAD_COMPLETED";
     private StretchVideoView mVideoView;
-    private  String description;
+    private String description;
     private Dialog optionDialog;
-    private String videoTitle="";
+    private String videoTitle = "";
 
 
-    private String personal_facebook_message;
-    private String personal_Twitter_message;
-    private String personal_LinkedIn_message;
+    private String personal_facebook_message = "";
+    private String personal_Twitter_message = "";
+    private String personal_LinkedIn_message = "";
 
-    private String company_facebook_message;
-    private String company_Twitter_message;
-    private String company_LinkedIn_message;
+    private String company_facebook_message = "";
+    private String company_Twitter_message = "";
+    private String company_LinkedIn_message = "";
 
     private String youTube_Message;
 
@@ -61,7 +63,7 @@ public class SharingVideoScreen extends Activity {
         setContentView(R.layout.screen_share_upload);
         try {
 
-            getBundleData();
+
             IntentFilter intentfilter = new IntentFilter();
             intentfilter.addAction(ACTION_PROGRESS_UPDATE);
             intentfilter.addAction(ACTION_UPLOAD_COMPLETED);
@@ -69,7 +71,6 @@ public class SharingVideoScreen extends Activity {
             mVideoView = (StretchVideoView) findViewById(R.id.videoview);
             findViewById(R.id.tvVideoUrlBtn).setOnClickListener(onClickListener);
             findViewById(R.id.tvEmbedCodeBtn).setOnClickListener(onClickListener);
-            ((TextView) findViewById(R.id.tvVideTitle)).setText(videoTitle);
 
             ((ProgressBar) findViewById(R.id.progress_encoding_bar)).setProgress(MainApplication.getInstance().getEncodeingProgres());
             ((ProgressBar) findViewById(R.id.pbarUploadVideo)).setProgress(MainApplication.getInstance().getUploadingProgress());
@@ -94,11 +95,11 @@ public class SharingVideoScreen extends Activity {
 
             registerReceiver(receiverToutubeLink, new IntentFilter("YouTube_Link"));
 
-            String id = MainApplication.getInstance().getYoutubeData().getId();
-            if(id!=null && !id.equalsIgnoreCase("")){
-                String url = "https://www.youtube.com/watch?v=" + id;
-                ((TextView) findViewById(R.id.tvVideoUrl)).setText(url);
-            }
+                /*String id = MainApplication.getInstance().getYoutubeData().getId();
+                if (id != null && !id.equalsIgnoreCase("")) {
+                    String url = "https://www.youtube.com/watch?v=" + id;
+                    ((TextView) findViewById(R.id.tvVideoUrl)).setText(url);
+                }*/
 
             findViewById(R.id.ll_Post).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -110,20 +111,22 @@ public class SharingVideoScreen extends Activity {
                 @Override
                 public void onClick(View v) {
 
-                    Intent sendIntent = new Intent();
-                    sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, MainApplication.getInstance().getYoutubeUrl());
-                    sendIntent.setType("text/plain");
-                    startActivity(sendIntent);
+
+                    Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                    sharingIntent.setType("text/plain");
+                    String shareBody = ((TextView) findViewById(R.id.tvVideoUrl)).getText().toString();
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "VideoMyJob");
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                    startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 }
             });
 
 
-            findViewById(R.id.ll_Share).setOnClickListener(new View.OnClickListener() {
+            findViewById(R.id.videoview).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String uriPath = getIntent().getExtras().getString("uripath");
-                    if(uriPath!=null && uriPath.length()>0 ){
+                    if (uriPath != null && uriPath.length() > 0) {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriPath));
                         intent.setDataAndType(Uri.parse(Constant.getDownloadTopVideo()), "video/mp4");
                         startActivity(intent);
@@ -132,6 +135,89 @@ public class SharingVideoScreen extends Activity {
                 }
             });
 
+            findViewById(R.id.ll_OpenDashboard).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openDashboard();
+                }
+            });
+
+            findViewById(R.id.ll_RecordVideo).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sendBroadcast(new Intent("Finish_Activity"));
+                    startActivity(new Intent(SharingVideoScreen.this, RecordingVideoActivity.class));
+                    finish();
+                }
+            });
+
+            getBundleData();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void openDashboard() {
+        try {
+            if (CheckNetworkConnection.isNetworkAvailable(SharingVideoScreen.this)) {
+                List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
+                RequestBean requestBean = new RequestBean();
+                requestBean.setActivity(SharingVideoScreen.this);
+                requestBean.setUrl("get_sid.php");
+                requestBean.setParams(paramePairs);
+                requestBean.setIsProgressBarEnable(true);
+                RequestHandler requestHandler = new RequestHandler(requestBean, requestSid);
+                requestHandler.execute(null, null, null);
+            } else {
+                CustomDialogs.showOkDialog(SharingVideoScreen.this, "Please check network connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private RequestListner requestSid = new RequestListner() {
+
+        @Override
+        public void getResponse(JSONObject jsonObject) {
+            try {
+                String sid = "";
+                String url = "";
+                if (jsonObject != null) {
+                    if (!jsonObject.isNull("sid")) {
+                        sid = jsonObject.getString("sid");
+                    }
+
+                    url = "https://live.videomyjob.com/api/app_login.php?user_id=" + SharedPreferenceWriter.getInstance().getString(SPreferenceKey.USERID) + " & sid=" + sid + " & " + "redirect=1";
+
+
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(browserIntent);
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    public void setFont() {
+        try {
+
+            ((TextView) findViewById(R.id.tv_ImportantText)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+            ((TextView) findViewById(R.id.tv_OpenDashboard)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+            ((TextView) findViewById(R.id.tv_RecordNewVideo)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+
+
+            ((TextView) findViewById(R.id.tv_Or)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+            ((TextView) findViewById(R.id.tvVideoUrl)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+            ((TextView) findViewById(R.id.tv_ShareUrl)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+
+            ((TextView) findViewById(R.id.tvVideoUrlBtn)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+            ((TextView) findViewById(R.id.tvEmbedCodeBtn)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+            ((TextView) findViewById(R.id.tvVideTitle)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+            ((TextView) findViewById(R.id.tv_PostToPlatform)).setTypeface(FontTypeface.getTypeface(SharingVideoScreen.this, AppConstants.FONT_SUFI_REGULAR));
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,33 +225,46 @@ public class SharingVideoScreen extends Activity {
     }
 
 
-
-
-
-
-
-
-    public void shareVideo(String videoLink){
+    public void shareVideo(String videoLink) {
         try {
 
 
             if (CheckNetworkConnection.isNetworkAvailable(SharingVideoScreen.this)) {
                 List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
-                paramePairs.add(new BasicNameValuePair("c_facebook", "1"));
-                paramePairs.add(new BasicNameValuePair("c_twitter", "1"));
-                paramePairs.add(new BasicNameValuePair("c_linkedin", "1"));
 
-                //paramePairs.add(new BasicNameValuePair("p_facebook", );
-               // paramePairs.add(new BasicNameValuePair("p_twitter", MainApplication.getInstance().getTemplate().strDirectoryID));
-                //paramePairs.add(new BasicNameValuePair("p_linkedin", MainApplication.getInstance().getTemplate().strDirectoryID));
+                if (personal_facebook_message.length() > 0) {
+                    paramePairs.add(new BasicNameValuePair("p_facebook", "1"));
+                    paramePairs.add(new BasicNameValuePair("facebook_message", personal_facebook_message));
 
-                paramePairs.add(new BasicNameValuePair("facebook_message", "Hello Facebook  Message"));
-                paramePairs.add(new BasicNameValuePair("linkedin_message", "Hello LinkedIn Message"));
-                paramePairs.add(new BasicNameValuePair("twitter_message", "Hello Twitter Message"));
+                }
+                if (personal_LinkedIn_message.length() > 0) {
+                    paramePairs.add(new BasicNameValuePair("p_linkedin", "1"));
+                    paramePairs.add(new BasicNameValuePair("linkedin_message", personal_LinkedIn_message));
 
+                }
+                if (personal_Twitter_message.length() > 0) {
+                    paramePairs.add(new BasicNameValuePair("p_twitter", "1"));
+                    paramePairs.add(new BasicNameValuePair("twitter_message", personal_Twitter_message));
+
+                }
+                if (company_facebook_message.length() > 0) {
+                    paramePairs.add(new BasicNameValuePair("c_facebook", "1"));
+                    paramePairs.add(new BasicNameValuePair("facebook_message", company_facebook_message));
+
+                }
+                if (company_LinkedIn_message.length() > 0) {
+                    paramePairs.add(new BasicNameValuePair("c_linkedin", "1"));
+                    paramePairs.add(new BasicNameValuePair("linkedin_message", company_LinkedIn_message));
+
+                }
+                if (company_Twitter_message.length() > 0) {
+                    paramePairs.add(new BasicNameValuePair("c_twitter", "1"));
+                    paramePairs.add(new BasicNameValuePair("facebook_message", company_Twitter_message));
+
+                }
                 paramePairs.add(new BasicNameValuePair("link", videoLink));
 
-                paramePairs.add(new BasicNameValuePair("message", description));
+                paramePairs.add(new BasicNameValuePair("message", youTube_Message));
 
                 RequestBean requestBean = new RequestBean();
                 requestBean.setActivity(SharingVideoScreen.this);
@@ -181,16 +280,18 @@ public class SharingVideoScreen extends Activity {
             e.printStackTrace();
         }
     }
+
     private RequestListner listnerSocialPost = new RequestListner() {
 
         @Override
         public void getResponse(JSONObject jsonObject) {
             try {
-                String message =null;
-                String access_token="", refresh_token="";
-                String url = "";
+
                 if (jsonObject != null) {
-                    if(!jsonObject.isNull("success") && jsonObject.getBoolean("success")){
+                    if (!jsonObject.isNull("success") && jsonObject.getBoolean("success")) {
+
+                        findViewById(R.id.ll_BeforePost).setVisibility(View.GONE);
+                        findViewById(R.id.ll_AfterPost).setVisibility(View.VISIBLE);
 
                         showAlertDialog("Link shared successfully");
 
@@ -215,7 +316,6 @@ public class SharingVideoScreen extends Activity {
                 @Override
                 public void onClick(View v) {
                     optionDialog.dismiss();
-                    finish();
 
                 }
             });
@@ -254,23 +354,36 @@ public class SharingVideoScreen extends Activity {
             mVideoView.requestFocus();
             mVideoView.start();
 
-            videoTitle = getIntent().getExtras().getString("Title");
-            description= getIntent().getExtras().getString("Description");
+            if (getIntent().getExtras().containsKey("Title"))
 
+                videoTitle = getIntent().getExtras().getString("Title");
+            if (getIntent().getExtras().containsKey("Description"))
 
-            personal_facebook_message = getIntent().getExtras().getString("PersonalFacebookDescription");
-            personal_Twitter_message = getIntent().getExtras().getString("PersonalTwitterDescription");
-            personal_LinkedIn_message = getIntent().getExtras().getString("PersonalLinkedInDescription");
+                description = getIntent().getExtras().getString("Description");
 
-            company_facebook_message= getIntent().getExtras().getString("CompanyFacebookDescription");
-            company_Twitter_message = getIntent().getExtras().getString("CompanyTwitterDescription");
-            company_LinkedIn_message = getIntent().getExtras().getString("CompanyLinkedInDescription");
+            if (getIntent().getExtras().containsKey("PersonalFacebookDescription"))
+                personal_facebook_message = getIntent().getExtras().getString("PersonalFacebookDescription");
+            if (getIntent().getExtras().containsKey("PersonalTwitterDescription"))
 
+                personal_Twitter_message = getIntent().getExtras().getString("PersonalTwitterDescription");
+            if (getIntent().getExtras().containsKey("PersonalLinkedInDescription"))
 
-            youTube_Message = getIntent().getExtras().getString("YouTubeDescription");
+                personal_LinkedIn_message = getIntent().getExtras().getString("PersonalLinkedInDescription");
+            if (getIntent().getExtras().containsKey("CompanyFacebookDescription"))
 
+                company_facebook_message = getIntent().getExtras().getString("CompanyFacebookDescription");
+            if (getIntent().getExtras().containsKey("CompanyTwitterDescription"))
 
+                company_Twitter_message = getIntent().getExtras().getString("CompanyTwitterDescription");
+            if (getIntent().getExtras().containsKey("CompanyLinkedInDescription"))
 
+                company_LinkedIn_message = getIntent().getExtras().getString("CompanyLinkedInDescription");
+
+            if (getIntent().getExtras().containsKey("YouTubeDescription"))
+
+                youTube_Message = getIntent().getExtras().getString("YouTubeDescription");
+
+            ((TextView) findViewById(R.id.tvVideTitle)).setText(videoTitle);
         }
 
 
@@ -316,7 +429,10 @@ public class SharingVideoScreen extends Activity {
 
             ((TextView) findViewById(R.id.tvVideoUrlBtn)).setBackgroundColor(Color.parseColor("#00000000"));
             ((TextView) findViewById(R.id.tvVideoUrlBtn)).setTextColor(getResources().getColor(R.color.color_greyish));
-            ((TextView) findViewById(R.id.tvVideoUrl)).setText("");
+
+
+            String url = "<iframe width=\"560\"  height=\"315\" src = \" " + MainApplication.getInstance().getYoutubeUrl() + "\"" + " frameborder=\"0\" allowfullscreen></iframe>";
+            ((TextView) findViewById(R.id.tvVideoUrl)).setText(url);
 
         }
     }

@@ -159,6 +159,9 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
         findViewById(R.id.btnNext).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                setDescription();;
+
                 if (isScreenDataValidate() && checkUploading()) {
                     Intent intent = new Intent(UploadingVideoScreen.this, SharingVideoScreen.class);
                     intent.putExtra("uripath", uri.toString());
@@ -181,7 +184,8 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                     intent.putExtra("CompanyLinkedInDescription", compnayLinkedInkDescription);
 
                     intent.putExtra("Visibility", getVideType());
-
+                    setAllWhiteBackGround();
+                    ((RelativeLayout) findViewById(R.id.rl_youtube)).setBackgroundColor(getResources().getColor(R.color.color_blue));
                     startActivity(intent);
                     finish();
                 }
@@ -848,7 +852,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                 requestBean.setActivity(UploadingVideoScreen.this);
                 requestBean.setUrl("load_credentials.php");
                 requestBean.setParams(paramePairs);
-                requestBean.setIsProgressBarEnable(true);
+                requestBean.setIsProgressBarEnable(false);
                 RequestHandler requestHandler = new RequestHandler(requestBean, selectPlatform);
                 requestHandler.execute(null, null, null);
             } else {
@@ -873,7 +877,9 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("c_facebook").isNull("has_valid_auth")) {
 
                             selectPlatFromDataObject._has_valid_auth = jsonObject.getJSONObject("c_facebook").getBoolean("has_valid_auth");
-
+                            if(selectPlatFromDataObject._has_valid_auth){
+                                selectPlatFromDataObject._platformEnabled = true;
+                            }
                         }
                         if (!jsonObject.getJSONObject("c_facebook").isNull("message")) {
 
@@ -899,7 +905,9 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("c_twitter").isNull("has_valid_auth")) {
 
                             selectPlatFromDataObject._has_valid_auth = jsonObject.getJSONObject("c_twitter").getBoolean("has_valid_auth");
-
+                            if(selectPlatFromDataObject._has_valid_auth){
+                                selectPlatFromDataObject._platformEnabled = true;
+                            }
                         }
                         if (!jsonObject.getJSONObject("c_twitter").isNull("message")) {
 
@@ -927,7 +935,9 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("c_linkedin").isNull("has_valid_auth")) {
 
                             selectPlatFromDataObject._has_valid_auth = jsonObject.getJSONObject("c_linkedin").getBoolean("has_valid_auth");
-
+                            if(selectPlatFromDataObject._has_valid_auth){
+                                selectPlatFromDataObject._platformEnabled = true;
+                            }
                         }
                         if (!jsonObject.getJSONObject("c_linkedin").isNull("message")) {
 
@@ -955,7 +965,9 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("p_facebook").isNull("has_valid_auth")) {
 
                             selectPlatFromDataObject._has_valid_auth = jsonObject.getJSONObject("p_facebook").getBoolean("has_valid_auth");
-
+                            if(selectPlatFromDataObject._has_valid_auth){
+                                selectPlatFromDataObject._platformEnabled = true;
+                            }
                         }
                         if (!jsonObject.getJSONObject("p_facebook").isNull("message")) {
 
@@ -965,6 +977,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("p_facebook").isNull("character_limit")) {
 
                             selectPlatFromDataObject._character_limit = jsonObject.getJSONObject("p_facebook").getString("character_limit");
+
 
                         }
 
@@ -982,7 +995,9 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("p_twitter").isNull("has_valid_auth")) {
 
                             selectPlatFromDataObject._has_valid_auth = jsonObject.getJSONObject("p_twitter").getBoolean("has_valid_auth");
-
+                            if(selectPlatFromDataObject._has_valid_auth){
+                                selectPlatFromDataObject._platformEnabled = true;
+                            }
                         }
                         if (!jsonObject.getJSONObject("p_twitter").isNull("message")) {
 
@@ -1010,7 +1025,9 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("p_linkedin").isNull("has_valid_auth")) {
 
                             selectPlatFromDataObject._has_valid_auth = jsonObject.getJSONObject("p_linkedin").getBoolean("has_valid_auth");
-
+                            if(selectPlatFromDataObject._has_valid_auth){
+                                selectPlatFromDataObject._platformEnabled = true;
+                            }
                         }
                         if (!jsonObject.getJSONObject("p_linkedin").isNull("message")) {
 
@@ -1044,7 +1061,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
             for (int i = 0; i < selectPlatFromDataObjectList.size(); i++) {
                 if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("p_facebook")) {
 
-                    if (!selectPlatFromDataObjectList.get(i)._has_valid_auth) {
+                    if (!selectPlatFromDataObjectList.get(i)._platformEnabled) {
                         ((RelativeLayout) findViewById(R.id.rl_PerosnlFacebook)).setOnClickListener(null);
                         ((ImageView) findViewById(R.id.iv_PersonalFacebook)).setImageResource(R.drawable.facebook_icon);
                     } else {
@@ -1064,7 +1081,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
                 } else if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("p_twitter")) {
 
-                    if (!selectPlatFromDataObjectList.get(i)._has_valid_auth) {
+                    if (!selectPlatFromDataObjectList.get(i)._platformEnabled) {
                         ((RelativeLayout) findViewById(R.id.rl_PersonalTwitter)).setOnClickListener(null);
                         ((ImageView) findViewById(R.id.iv_PersonalTwitter)).setImageResource(R.drawable.twitter_icon);
                     } else {
@@ -1085,9 +1102,9 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
                 } else if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("p_linkedin")) {
 
-                    if (!selectPlatFromDataObjectList.get(i)._has_valid_auth) {
+                    if (!selectPlatFromDataObjectList.get(i)._platformEnabled) {
                         ((RelativeLayout) findViewById(R.id.rl_PerosnlLinkedIn)).setOnClickListener(null);
-                        ((ImageView) findViewById(R.id.iv_CompanyLinkedIn)).setImageResource(R.drawable.linekedin_icon);
+                        ((ImageView) findViewById(R.id.iv_PersonalLinkedIn)).setImageResource(R.drawable.linekedin_icon);
 
                     } else {
                         ((ImageView) findViewById(R.id.iv_PersonalLinkedIn)).setImageResource(R.drawable.enable_linked_in_icon);
@@ -1107,7 +1124,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
                 } else if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("c_facebook")) {
 
-                    if (!selectPlatFromDataObjectList.get(i)._has_valid_auth) {
+                    if (!selectPlatFromDataObjectList.get(i)._platformEnabled) {
                         ((RelativeLayout) findViewById(R.id.rl_CompnayFacebook)).setOnClickListener(null);
                     } else {
                         ((ImageView) findViewById(R.id.iv_CompnayFacebook)).setImageResource(R.drawable.enable_facebook_icon);
@@ -1126,11 +1143,11 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
                 } else if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("c_twitter")) {
 
-                    if (!selectPlatFromDataObjectList.get(i)._has_valid_auth) {
+                    if (!selectPlatFromDataObjectList.get(i)._platformEnabled) {
                         ((RelativeLayout) findViewById(R.id.rl_CompnayLinkedin)).setOnClickListener(null);
-                        ((ImageView) findViewById(R.id.iv_PersonalLinkedIn)).setImageResource(R.drawable.twitter_icon);
+                        ((ImageView) findViewById(R.id.iv_CompanyTwitter)).setImageResource(R.drawable.twitter_icon);
                     } else {
-                        ((ImageView) findViewById(R.id.iv_CompanyLinkedIn)).setImageResource(R.drawable.enable_twitter_icon);
+                        ((ImageView) findViewById(R.id.iv_CompanyTwitter)).setImageResource(R.drawable.enable_twitter_icon);
                         ENABLE_COMPANY_TWITTER = true;
                         findViewById(R.id.rl_CompnayTwitter).setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -1147,11 +1164,11 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
                 } else if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("c_linkedin")) {
 
-                    if (!selectPlatFromDataObjectList.get(i)._has_valid_auth) {
+                    if (!selectPlatFromDataObjectList.get(i)._platformEnabled) {
                         ((RelativeLayout) findViewById(R.id.rl_CompnayTwitter)).setOnClickListener(null);
-                        ((ImageView) findViewById(R.id.iv_PersonalTwitter)).setImageResource(R.drawable.linekedin_icon);
+                        ((ImageView) findViewById(R.id.iv_CompanyLinkedIn)).setImageResource(R.drawable.linekedin_icon);
                     } else {
-                        ((ImageView) findViewById(R.id.iv_CompanyTwitter)).setImageResource(R.drawable.enable_linked_in_icon);
+                        ((ImageView) findViewById(R.id.iv_CompanyLinkedIn)).setImageResource(R.drawable.enable_linked_in_icon);
                         ENABLE_COMPANY_LINKEDIN = true;
                         findViewById(R.id.rl_CompnayLinkedin).setOnClickListener(new View.OnClickListener() {
                             @Override

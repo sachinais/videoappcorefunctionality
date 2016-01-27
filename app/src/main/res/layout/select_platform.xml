@@ -121,6 +121,7 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/ll_CompnayFacebook"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:gravity="center_vertical"
@@ -200,6 +201,7 @@
                     android:background="#eeee" />
 
                 <LinearLayout
+                    android:id="@+id/ll_CompnayLinkedIn"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_weight="1"
@@ -279,6 +281,7 @@
                     android:background="#eeee" />
 
                 <LinearLayout
+                    android:id="@+id/ll_CompnayTwitter"
 
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
@@ -428,6 +431,7 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/ll_PerosnalFacebook"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_weight="1"
@@ -509,6 +513,8 @@
                     android:background="#eeee" />
 
                 <LinearLayout
+                    android:id="@+id/ll_PerosnalLinedIn"
+
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_weight="1"
@@ -575,6 +581,8 @@
                     android:background="#eeee" />
 
                 <LinearLayout
+                    android:id="@+id/ll_PerosnalTwitter"
+
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_weight="1"
