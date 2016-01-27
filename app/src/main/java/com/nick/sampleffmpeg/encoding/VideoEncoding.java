@@ -78,7 +78,7 @@ public class VideoEncoding {
 
         strVideoSize = Integer.toString(videoWidth) + "x" + Integer.toString(videoHeight);
         //String commands = "-y -threads 5 -i src.mp4 -crf 22 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s " + strVideoSize + " -r 25 -c:v libx264 dst.mp4";
-        String commands = "-y -threads 5 -i src.mp4 -c:a mp2 -b:a 192k -s " + strVideoSize + " -r 25 -c:v mpeg2video -qscale:v 2 dst.mp4";
+        String commands = "-y -threads 5 -i src.mp4 -c:a aac -strict experimental -crf 22 -preset ultrafast -r 25 -c:v libx264 -s " + strVideoSize + " dst.mp4";
         String srcVideoFilePath = "";
         String dstVideoFilePath = "";
         //progressDialog.show();

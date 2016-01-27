@@ -18,7 +18,7 @@ import com.nick.sampleffmpeg.bean.OverlayBean;
 /**
  * Created by baebae on 12/25/15.
  */
-public class ChildTextTimelineLayout extends LinearLayout{
+public class ChildTextTimelineLayout extends RelativeLayout{
     private float startTime = 0;
     private float endTime = 0;
     private OverlayBean.Overlay overlay = null;

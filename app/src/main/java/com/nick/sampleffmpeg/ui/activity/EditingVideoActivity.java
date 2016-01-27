@@ -507,7 +507,7 @@ public class EditingVideoActivity extends BaseActivity {
                     public void run() {
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
-                        intent.setDataAndType(Uri.parse(thumbNailUrl), "image/*");
+                        intent.setDataAndType(Uri.fromFile(new File(thumbNailUrl)), "image/*");
                         startActivity(intent);
                     }
                 });

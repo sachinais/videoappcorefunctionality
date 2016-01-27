@@ -2,19 +2,34 @@
 <com.nick.sampleffmpeg.ui.view.ChildTextTimelineLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_marginLeft="0sp"
-    android:layout_width="60sp"
+    android:layout_width="360sp"
     android:layout_height="match_parent"
     android:background="@drawable/rounded_thumb_title">
-    
+    <ImageView
+        android:layout_marginLeft="5sp"
+        android:layout_width="10sp"
+        android:layout_height="match_parent"
+        android:src="@drawable/caption_left"
+        android:scaleType="fitXY"/>
     <TextView
         android:id="@+id/txt_title"
         android:layout_marginTop="2sp"
+        android:layout_marginLeft="20sp"
+        android:layout_marginRight="20sp"
         android:layout_marginBottom="2sp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter"
-        android:gravity="center"
+        android:gravity="left"
         android:textColor="#ececec"
         android:text="Text"
         />
+
+    <ImageView
+        android:layout_width="10sp"
+        android:layout_marginRight="5sp"
+        android:layout_alignParentRight="true"
+        android:layout_height="match_parent"
+        android:src="@drawable/caption_right"
+        android:scaleType="fitXY"/>
 </com.nick.sampleffmpeg.ui.view.ChildTextTimelineLayout>

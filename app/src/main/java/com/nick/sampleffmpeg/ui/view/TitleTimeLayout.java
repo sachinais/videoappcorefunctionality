@@ -290,7 +290,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
 
         final OverlayBean template = MainApplication.getInstance().getTemplate();
         if (template.captions.size() == 0) {
-            parentActivity.showAlert(R.string.str_alert_title_information, "There's no caption templates.", "OK");
+            parentActivity.showAlert(R.string.str_alert_title_information, "There are no captions in your selected template.", "OK");
         } else {
             showSelectCaptionDialog(new SelectCaptionCallback() {
                 @Override
