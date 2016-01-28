@@ -113,15 +113,15 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginLeft="5dp"
-                            android:layout_marginRight="5dp"
                             android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/progress_encoding_text"
-                            android:layout_width="wrap_content"
+                            android:layout_width="40dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:text="0%"
+                            android:gravity="center"
                             android:textColor="@color/color_black"
 
                             android:textSize="16sp" />
@@ -150,15 +150,15 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginLeft="5dp"
-                            android:layout_marginRight="5dp"
                             android:layout_weight="1"
                             android:max="100" />
 
                         <TextView
                             android:id="@+id/tvUploaPercent"
-                            android:layout_width="wrap_content"
+                            android:layout_width="40dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
+                            android:gravity="center"
                             android:text="0%"
                             android:textColor="@color/color_black"
                             android:textSize="16sp" />

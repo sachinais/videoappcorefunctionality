@@ -135,7 +135,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.screen_upload);
-       if (getIntent() != null) {
+        if (getIntent() != null) {
             videoTitle = getIntent().getExtras().getString("parameter1");
             //   Toast.makeText(getBaseContext(),text,Toast.LENGTH_LONG).show();
             if (videoTitle != null) {
@@ -147,7 +147,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
         ((TextView) findViewById(R.id.btnNext)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_SEMIBOLD));
         ((TextView) findViewById(R.id.btnCancel)).setTypeface(FontTypeface.getTypeface(UploadingVideoScreen.this, AppConstants.FONT_SUFI_SEMIBOLD));
 
-       MainApplication.getInstance().setEncodeingProgres(0);
+        MainApplication.getInstance().setEncodeingProgres(0);
         MainApplication.getInstance().setUploadingProgress(0);
         MainApplication.getInstance().setYoutubeUrl("");
         IntentFilter intentfilter = new IntentFilter();
@@ -160,9 +160,10 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
             @Override
             public void onClick(View v) {
 
-                setDescription();;
+                setDescription();
+                ;
 
-                if (isScreenDataValidate() && checkUploading()) {
+                if (checkUploading() && isScreenDataValidate()) {
                     Intent intent = new Intent(UploadingVideoScreen.this, SharingVideoScreen.class);
                     intent.putExtra("uripath", uri.toString());
                     intent.putExtra("encoding_progress", encodingProgress);
@@ -170,7 +171,6 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                     intent.putExtra("video_link", videoLink);
                     intent.putExtra("Title", videoTitle);
                     intent.putExtra("Description", ((EditText) findViewById(R.id.et_Description)).getText());
-
 
 
                     intent.putExtra("YouTubeDescription", youtTubeDescription);
@@ -187,13 +187,13 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                     setAllWhiteBackGround();
                     ((RelativeLayout) findViewById(R.id.rl_youtube)).setBackgroundColor(getResources().getColor(R.color.color_blue));
                     startActivity(intent);
-                    finish();
+                    //finish();
                 }
 
             }
         });
 
-
+        registerReceiver(finishActivity, new IntentFilter("Finish_Activity"));
         SwitchCompat switchCompat = (SwitchCompat) findViewById(R.id.switch_compat);
         switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -223,9 +223,9 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
         findViewById(R.id.ll_SlectPlatform).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(MainApplication.getInstance().getDiffrentPlatformDataValue()!=null){
+                if (MainApplication.getInstance().getDiffrentPlatformDataValue() != null) {
                     startActivity(new Intent(UploadingVideoScreen.this, SelectPlatfom.class));
-                }else{
+                } else {
                     showAlertDialog("Please wait, Social accounts details still downloading");
                 }
 
@@ -381,8 +381,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                 }
             }
             return true;
-        }
-        else{
+        } else {
             if (((EditText) findViewById(R.id.et_Description)).getText().length() > 0) {
                 return true;
             } else {
@@ -392,23 +391,15 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
         }
 
 
-
-
     }
 
 
-    public  boolean checkUploading(){
+    public boolean checkUploading() {
         if (uri != null) {
 
-            if (videoLink != null) {
-
-                return true;
-            } else {
-                showAlertDialog("Please wait, uploading in progress");
-            }
-
+            return true;
         } else {
-            showAlertDialog("Please wait, encoding in progress");
+
         }
         return false;
     }
@@ -550,7 +541,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                 List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
                 RequestBean requestBean = new RequestBean();
                 requestBean.setActivity(UploadingVideoScreen.this);
-                requestBean.setUrl("load_credentials.php");
+                requestBean.setUrl("update_youtube_api_credentials.php");
                 requestBean.setParams(paramePairs);
                 requestBean.setIsProgressBarEnable(false);
                 RequestHandler requestHandler = new RequestHandler(requestBean, requestCredentials);
@@ -827,7 +818,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                     if (!jsonObject.isNull("message")) {
 
                         message = jsonObject.getString("message");
-                        showAlertDialog(message);
+                      //  showAlertDialog(message);
                     }
                 }
             } catch (JSONException e) {
@@ -877,7 +868,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("c_facebook").isNull("has_valid_auth")) {
 
                             selectPlatFromDataObject._has_valid_auth = jsonObject.getJSONObject("c_facebook").getBoolean("has_valid_auth");
-                            if(selectPlatFromDataObject._has_valid_auth){
+                            if (selectPlatFromDataObject._has_valid_auth) {
                                 selectPlatFromDataObject._platformEnabled = true;
                             }
                         }
@@ -905,7 +896,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("c_twitter").isNull("has_valid_auth")) {
 
                             selectPlatFromDataObject._has_valid_auth = jsonObject.getJSONObject("c_twitter").getBoolean("has_valid_auth");
-                            if(selectPlatFromDataObject._has_valid_auth){
+                            if (selectPlatFromDataObject._has_valid_auth) {
                                 selectPlatFromDataObject._platformEnabled = true;
                             }
                         }
@@ -935,7 +926,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("c_linkedin").isNull("has_valid_auth")) {
 
                             selectPlatFromDataObject._has_valid_auth = jsonObject.getJSONObject("c_linkedin").getBoolean("has_valid_auth");
-                            if(selectPlatFromDataObject._has_valid_auth){
+                            if (selectPlatFromDataObject._has_valid_auth) {
                                 selectPlatFromDataObject._platformEnabled = true;
                             }
                         }
@@ -965,7 +956,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("p_facebook").isNull("has_valid_auth")) {
 
                             selectPlatFromDataObject._has_valid_auth = jsonObject.getJSONObject("p_facebook").getBoolean("has_valid_auth");
-                            if(selectPlatFromDataObject._has_valid_auth){
+                            if (selectPlatFromDataObject._has_valid_auth) {
                                 selectPlatFromDataObject._platformEnabled = true;
                             }
                         }
@@ -995,7 +986,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("p_twitter").isNull("has_valid_auth")) {
 
                             selectPlatFromDataObject._has_valid_auth = jsonObject.getJSONObject("p_twitter").getBoolean("has_valid_auth");
-                            if(selectPlatFromDataObject._has_valid_auth){
+                            if (selectPlatFromDataObject._has_valid_auth) {
                                 selectPlatFromDataObject._platformEnabled = true;
                             }
                         }
@@ -1025,7 +1016,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                         if (!jsonObject.getJSONObject("p_linkedin").isNull("has_valid_auth")) {
 
                             selectPlatFromDataObject._has_valid_auth = jsonObject.getJSONObject("p_linkedin").getBoolean("has_valid_auth");
-                            if(selectPlatFromDataObject._has_valid_auth){
+                            if (selectPlatFromDataObject._has_valid_auth) {
                                 selectPlatFromDataObject._platformEnabled = true;
                             }
                         }
@@ -1192,6 +1183,15 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
         }
 
     }
+
+    BroadcastReceiver finishActivity = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            finish();
+
+        }
+    };
 
 
 }

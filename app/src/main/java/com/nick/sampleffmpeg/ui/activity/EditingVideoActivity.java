@@ -12,6 +12,7 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -166,6 +167,7 @@ public class EditingVideoActivity extends BaseActivity {
 
     private boolean flagTopVideoDownloaded = true;
     private boolean flagTailVideoDownloaded = true;
+    private String topImageThumbnailUrl , tailImageThumbUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,7 +183,7 @@ public class EditingVideoActivity extends BaseActivity {
 
         sharedPreferenceWriter = SharedPreferenceWriter.getInstance(this);
         initializeButtons();
-
+        getTopandTailThumbnailUrl();
         overlayView.setRecordingView(false, false);
         LogFile.clearLogText();
         mHandler = new Handler();
@@ -288,6 +290,54 @@ public class EditingVideoActivity extends BaseActivity {
 
         }
         return  "";
+    }
+    public void getTopandTailThumbnailUrl(){
+        try{
+
+            String thumbnailUrlDirectory = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"VideoEditorApp/"+MainApplication.getInstance().getTemplate().strDirectoryID;
+            File fileTop = new File(thumbnailUrlDirectory, "top_thumbnail.png");
+            File fileTail = new File(thumbnailUrlDirectory, "tail_thumbnail.png");
+
+            if(fileTop.exists()){
+                Bitmap bmTopThumb =null;
+                bmTopThumb = getPreview(Uri.fromFile(fileTop));
+
+                if (bmTopThumb != null) {
+                    imgThumbVideo2.setImageBitmap(bmTopThumb);
+                }
+            }
+
+
+            if (fileTail.exists()){
+                Bitmap bmTailThumb;
+                bmTailThumb = getPreview(Uri.fromFile(fileTail));
+                if (bmTailThumb != null) {
+                    imgThumbVideo3.setImageBitmap(bmTailThumb);
+                }
+            }
+
+
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    Bitmap getPreview(Uri uri) {
+        File image = new File(uri.getPath());
+
+        BitmapFactory.Options bounds = new BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(image.getPath(), bounds);
+        if ((bounds.outWidth == -1) || (bounds.outHeight == -1))
+            return null;
+
+        int originalSize = (bounds.outHeight > bounds.outWidth) ? bounds.outHeight
+                : bounds.outWidth;
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inSampleSize = 4;
+        return BitmapFactory.decodeFile(image.getPath(), opts);
     }
     public void downloadTopVideo() {
 
@@ -472,7 +522,7 @@ public class EditingVideoActivity extends BaseActivity {
                     }
                 });
 
-        UITouchButton.applyEffect(btnBack, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
+        UITouchButton.applyEffect(((View)findViewById(R.id.llBack)), UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
