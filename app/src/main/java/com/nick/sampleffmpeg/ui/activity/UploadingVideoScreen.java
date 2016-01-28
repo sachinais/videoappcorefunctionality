@@ -529,7 +529,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
             public void onFinish() {
 
                 uri = Uri.fromFile(new File(Constant.getMergedVideo()));
-
+                ((TextView) findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_sign_btn));
                 geyCredentials();
             }
         }, Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT);
