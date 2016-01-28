@@ -58,7 +58,7 @@ public class SharingVideoScreen extends Activity {
 
     private String youTube_Message;
     private static String videoLink;
-
+    String uriPath="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,6 +145,18 @@ public class SharingVideoScreen extends Activity {
                     finish();
                 }
             });
+
+            findViewById(R.id.videoview).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (uriPath.length() > 0) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriPath));
+                        intent.setDataAndType(Uri.parse(Constant.getDownloadTopVideo()), "video/mp4");
+                        startActivity(intent);
+                    }
+                }
+            });
+
 
             getBundleData();
             setFont();
@@ -336,7 +348,7 @@ public class SharingVideoScreen extends Activity {
 
     private void getBundleData() {
         if (getIntent() != null) {
-            String uriPath = getIntent().getExtras().getString("uripath");
+             uriPath = getIntent().getExtras().getString("uripath");
             Uri uri = Uri.parse(uriPath);
             mVideoView.setVideoURI(uri);
             mVideoView.requestFocus();
