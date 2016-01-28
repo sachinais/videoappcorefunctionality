@@ -193,7 +193,7 @@ public class EditingVideoActivity extends BaseActivity {
 
         sharedPreferenceWriter = SharedPreferenceWriter.getInstance(this);
         initializeButtons();
-        getTopandTailThumbnailUrl();
+
         overlayView.setRecordingView(false, false);
         LogFile.clearLogText();
         mHandler = new Handler();
@@ -986,8 +986,8 @@ public class EditingVideoActivity extends BaseActivity {
         protected void onPreExecute() {
             try {
                 if (!flagProgressDialogIsRunning) {
-                    progressDialog.setMessage("Preparing video...");
-                    progressDialog.show();
+                  /*  progressDialog.setMessage("Preparing video...");
+                    progressDialog.show();*/
                     flagProgressDialogIsRunning = true;
                 }
 
@@ -1121,7 +1121,8 @@ public class EditingVideoActivity extends BaseActivity {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             try {
-                progressDialog.dismiss();
+
+               // progressDialog.dismiss();
                 flagProgressDialogIsRunning = false;
                 flagTailVideoDownloaded = flagTopVideoDownloaded = true;
                 flagTopVideoConverted = flagTailVideoConverted = true;
@@ -1149,6 +1150,7 @@ public class EditingVideoActivity extends BaseActivity {
                     downloadTailVideo();
                 }
 
+                getTopandTailThumbnailUrl();
             } catch (Exception e) {
 
             }
