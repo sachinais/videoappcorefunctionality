@@ -15,6 +15,7 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
@@ -56,6 +57,7 @@ public class SharingVideoScreen extends Activity {
     private String company_LinkedIn_message = "";
 
     private String youTube_Message;
+    private static String videoLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +154,7 @@ public class SharingVideoScreen extends Activity {
             });
 
             getBundleData();
+            setFont();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -393,15 +396,27 @@ public class SharingVideoScreen extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() == ACTION_PROGRESS_UPDATE) {
+                if (intent.getExtras().getInt("progress") == 0) {
+                    ((ProgressBar) findViewById(R.id.pbarUploadVideo)).setIndeterminate(true);
+
+                } else {
+                    ((ProgressBar) findViewById(R.id.pbarUploadVideo)).setIndeterminate(false);
+
+                }
                 ((ProgressBar) findViewById(R.id.pbarUploadVideo)).setProgress(intent.getExtras().getInt("progress"));
                 ((TextView) findViewById(R.id.tvUploaPercent)).setText(intent.getExtras().getInt("progress") + "%");
+                if (intent.getExtras().getInt("progress") == 100) {
+                    findViewById(R.id.llProgressEncode).setVisibility(View.GONE);
+                    findViewById(R.id.llUploadComple).setVisibility(View.VISIBLE);
+                    //videoLink = intent.getExtras().getString("url");
+                    //Toast.makeText(UploadingVideoScreen.this, "Video uploaded successfully", Toast.LENGTH_LONG).show();
+                    //updateYoutubeKeyOnServer(videoLink);
+                }
             } else if (intent.getAction() == ACTION_UPLOAD_COMPLETED) {
-                ((TextView) findViewById(R.id.tvVideoUrl)).setText(intent.getExtras().getString("url"));
-
-            }
-            if (intent.getExtras().getInt("progress") == 100) {
-                findViewById(R.id.llProgress).setVisibility(View.GONE);
-                findViewById(R.id.llUploadComple).setVisibility(View.VISIBLE);
+                ((TextView) findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_sign_btn));
+                videoLink = intent.getExtras().getString("url");
+                ((TextView)findViewById(R.id.tvVideoUrl)).setText(videoLink);
+                //updateYoutubeKeyOnServer(videoLink);
 
             }
         }

@@ -8,6 +8,7 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
@@ -49,6 +50,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,6 +114,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     private SharedPreferenceWriter sharedPreferenceWriter = null;
     private  String RequestType = "";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,7 +134,6 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         showReadyForRecordingLayout();
 
         progressCountDown.setProgress(10);
-
         LogFile.clearLogText();
 //        try {
 //            FileUtils.copyAssets(this, Constant.getApplicationDirectory());
@@ -239,6 +241,10 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
         }
     }
+
+
+
+
 
     @Override
     protected void onResume() {
@@ -590,21 +596,21 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
         overlayview.updateOverlay();
 
-//        FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this, getTemplateUrl((int) options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(), options1Items.get(options1).getDirectoryId());
-//        findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
-//        fileDownloader.startDownload(new Runnable() {
-//            @Override
-//            public void run() {
-//                MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
-//                        overlayview.updateOverlay();
-//                    }
-//                });
-//            }
-//        });
+     FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this, getTemplateUrl((int) options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(), options1Items.get(options1).getDirectoryId());
+       findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
+        fileDownloader.startDownload(new Runnable() {
+           @Override
+            public void run() {
+              MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
+               runOnUiThread(new Runnable() {
+                    @Override
+                   public void run() {
+                        findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
+                        overlayview.updateOverlay();
+                   }
+                });
+           }
+        });
     }
 
 

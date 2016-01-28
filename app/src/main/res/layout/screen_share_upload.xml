@@ -92,15 +92,15 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
                     android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/progress_encoding_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="40dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="0%"
+                    android:gravity="center"
                     android:textColor="@color/color_greyish"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -127,14 +127,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
                     android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/tvUploaPercent"
-                    android:layout_width="wrap_content"
+                    android:layout_width="40dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical|center"
                     android:text="0%"
                     android:textColor="@color/color_greyish"
                     android:textSize="16sp" />
@@ -372,7 +372,7 @@
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/bg_select_plateform"
                     android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
+                    android:paddingRight="5dp"
                     android:visibility="visible">
 
                     <ImageView
@@ -429,15 +429,15 @@
 
                 <LinearLayout
                     android:id="@+id/ll_RecordVideo"
-                    android:layout_width="130dp"
+                    android:layout_width="135dp"
                     android:layout_height="40dp"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="5dp"
                     android:background="@color/color_red"
                     android:visibility="visible">
 
                     <ImageView
-                        android:layout_width="30dp"
+                        android:layout_width="25dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:src="@drawable/dot" />
