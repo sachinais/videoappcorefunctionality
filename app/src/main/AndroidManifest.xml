@@ -34,9 +34,9 @@
             android:keepScreenOn="true"
             android:name=".ui.activity.EditingVideoActivity"
             android:screenOrientation="landscape">
-            <!--<intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.activity.CompleteActivity"
@@ -47,7 +47,9 @@
             android:keepScreenOn="true"
             android:name=".ui.activity.RecordingVideoActivity"
             android:screenOrientation="landscape"/>
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
         <activity
             android:name=".ui.activity.UploadingVideoScreen"
             android:screenOrientation="portrait"

@@ -248,14 +248,32 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             float x = me.getX();
             if (Math.abs(x - lastDragX) > 5) {
                 if (flagDragging && (flagResizeLeft || flagResizeRight || flagMoving)) {
-                    if (flagResizeLeft) {
-                        selectedItem.setLayoutLeft(me.getX());
-                    } else if (flagResizeRight) {
-                        selectedItem.setLayoutRight(me.getX());
-                    } else if (flagMoving) {
-                        selectedItem.moveLayout(me.getX() + movingOffset);
+                    if (selectedItem.getStartTime() >= trimStart && selectedItem.getEndTime() <= trimEnd) {
+                        if (flagResizeLeft) {
+                            selectedItem.setLayoutLeft(me.getX());
+                        } else if (flagResizeRight) {
+                            selectedItem.setLayoutRight(me.getX());
+                        } else if (flagMoving) {
+                            selectedItem.moveLayout(me.getX() + movingOffset);
+                        }
+
+                        float startTime = selectedItem.getStartTime();
+                        float endTime = selectedItem.getEndTime();
+                        boolean flagUpdate = false;
+                        if (startTime < trimStart) {
+                            startTime = trimStart;
+                            flagUpdate = true;
+                        }
+                        if (endTime > trimEnd) {
+                            endTime = trimEnd;
+                            flagUpdate = true;
+                        }
+                        if (flagUpdate) {
+                            selectedItem.updateStartEndTime(startTime, endTime);
+                            flagDragging = false;
+                        }
+
                     }
-                    updateCaptionLayoutForTrimView(selectedItem, false);
                 }
             }
             lastDragX = x;
@@ -366,9 +384,9 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
 
         this.trimStart = trimStart / 1000.f;
         this.trimEnd = (trimEnd) / 1000.f;
-//        for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
-//            ChildTextTimelineLayout caption = timelineTitlesInformation.get(i);
-//            updateCaptionLayoutForTrimView(caption, true);
-//        }
+        for (int i = 0; i < timelineTitlesInformation.size(); i ++) {
+            ChildTextTimelineLayout caption = timelineTitlesInformation.get(i);
+            updateCaptionLayoutForTrimView(caption, true);
+        }
     }
 }

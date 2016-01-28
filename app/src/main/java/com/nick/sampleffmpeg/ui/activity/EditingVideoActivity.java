@@ -174,6 +174,9 @@ public class EditingVideoActivity extends BaseActivity {
 
     private boolean flagTopVideoDownloaded = true;
     private boolean flagTailVideoDownloaded = true;
+
+    private boolean flagTopVideoConverted = true;
+    private boolean flagTailVideoConverted = true;
     private String topImageThumbnailUrl , tailImageThumbUrl;
 
     @Override
@@ -240,7 +243,7 @@ public class EditingVideoActivity extends BaseActivity {
     private void updateTimelineAfterTrim() {
         int trimStart = MainApplication.getInstance().getVideoStart();
         int trimEnd = MainApplication.getInstance().getVideoEnd();
-        //titleThumbsLayout.setTrimLeftRight(trimStart, trimEnd);
+        titleThumbsLayout.setTrimLeftRight(trimStart, trimEnd);
         if (currentVideoSeekPosition < trimStart) {
             setCurrentSeekTime(trimStart);
         }
@@ -254,10 +257,12 @@ public class EditingVideoActivity extends BaseActivity {
                 VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, true, new Runnable() {
                     @Override
                     public void run() {
+                        flagTopVideoConverted = true;
                         if (mTask != null) {
                             VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, false, new Runnable() {
                                 @Override
                                 public void run() {
+                                    flagTailVideoConverted = true;
                                     findViewById(R.id.pb_Tail).setVisibility(View.GONE);
                                     findViewById(R.id.pb_Top).setVisibility(View.GONE);
                                     initializeThumbView();
@@ -541,7 +546,7 @@ public class EditingVideoActivity extends BaseActivity {
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        if (flagTopVideoDownloaded && flagTailVideoDownloaded) {
+                        if (flagTopVideoConverted && flagTailVideoConverted) {
                             if (((TextView) findViewById(R.id.txt_job_title)).getText().toString().length() > 0) {
                                 convertOverlaysPNG();
                             } else {
@@ -653,10 +658,13 @@ public class EditingVideoActivity extends BaseActivity {
                         if (lParams.width < trimBarWidth) {
                             lParams.width = (int) trimBarWidth;
                         }
-                        video_trim_left.setLayoutParams(lParams);
                         int trimStart = (int) ((lParams.width - trimBarWidth) / (float) Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity * 1000);
-                        MainApplication.getInstance().setVideoStart(trimStart);
-                        updateTimelineAfterTrim();
+                        if (trimStart + 1000 < MainApplication.getInstance().getVideoEnd()) {
+                            video_trim_left.setLayoutParams(lParams);
+                            MainApplication.getInstance().setVideoStart(trimStart);
+                            updateTimelineAfterTrim();
+                        }
+
                     }
                 }
 
@@ -687,14 +695,16 @@ public class EditingVideoActivity extends BaseActivity {
                         if (lParams.width < trimBarWidth) {
                             lParams.width = (int) trimBarWidth;
                         }
-                        Log.d("Width", Integer.toString(lParams.width) + " " + Integer.toString(X) + " " + Integer.toString(lastXTrimRight));
-                        int parentWidth = ((View) video_trim_right.getParent()).getWidth();
-                        lParams.leftMargin = parentWidth - lParams.width;
-                        video_trim_right.setLayoutParams(lParams);
 
                         int trimEnd = MainApplication.getInstance().getVideoLength() - (int) ((lParams.width - trimBarWidth) / (float) Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity * 1000);
-                        MainApplication.getInstance().setVideoEnd(trimEnd);
-                        updateTimelineAfterTrim();
+                        if (trimEnd > MainApplication.getInstance().getVideoStart() + 1000) {
+                            int parentWidth = ((View) video_trim_right.getParent()).getWidth();
+                            lParams.leftMargin = parentWidth - lParams.width;
+                            video_trim_right.setLayoutParams(lParams);
+
+                            MainApplication.getInstance().setVideoEnd(trimEnd);
+                            updateTimelineAfterTrim();
+                        }
                     }
                 }
 
@@ -901,7 +911,7 @@ public class EditingVideoActivity extends BaseActivity {
                     if (imgFile.exists()) {
                         Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                         imgThumbVideo1.setImageBitmap(myBitmap);
-                        imgThumbVideo1.setScaleType(ImageView.ScaleType.FIT_XY);
+                        imgThumbVideo1.setScaleType(ImageView.ScaleType.FIT_CENTER);
                     }
                 }
 
@@ -1114,11 +1124,13 @@ public class EditingVideoActivity extends BaseActivity {
                 progressDialog.dismiss();
                 flagProgressDialogIsRunning = false;
                 flagTailVideoDownloaded = flagTopVideoDownloaded = true;
+                flagTopVideoConverted = flagTailVideoConverted = true;
                 downloadThumbnail();
 
                 String extenstion = getTopTailVideoExtension(true);
                 if (extenstion != null && !extenstion.equalsIgnoreCase("")) {
                     if (!Constant.flagDebug) {
+                        flagTopVideoConverted = false;
                         flagTopVideoDownloaded = false;
                     }
                     findViewById(R.id.layout_no_top).setVisibility(View.GONE);
@@ -1128,6 +1140,7 @@ public class EditingVideoActivity extends BaseActivity {
                 if (extenstion != null && !extenstion.equalsIgnoreCase("")) {
                     findViewById(R.id.layout_no_tail).setVisibility(View.GONE);
                     if (!Constant.flagDebug) {
+                        flagTailVideoConverted = false;
                         flagTailVideoDownloaded = false;
                     }
                 }

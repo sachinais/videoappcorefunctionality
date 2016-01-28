@@ -106,6 +106,8 @@ public class VideoEncoding {
                     successCallback.run();
                 }
             });
+        } else {
+            successCallback.run();
         }
     }
 

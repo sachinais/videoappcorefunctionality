@@ -22,7 +22,7 @@
         android:layout_marginLeft="40dp"
         android:layout_below="@+id/ivLogo"
         android:layout_marginTop="60dp"
-        android:text="Login with yout VideoMyJob Account" />
+        android:text="Log in with your VideoMyJob Account" />
 
     <EditText
         android:id="@+id/etEmail"
