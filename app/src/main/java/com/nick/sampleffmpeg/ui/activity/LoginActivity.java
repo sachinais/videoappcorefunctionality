@@ -40,6 +40,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.tvSignInBtn).setOnClickListener(this);
         CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox);
         checkBox.setChecked(SharedPreferenceWriter.getInstance().getBoolean(SPreferenceKey.IS_REMEMBER_PSSWORD));
+        MainApplication.getInstance().setTemplateArray(null);
+        MainApplication.getInstance().setTemplate(0);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean value) {
@@ -193,6 +195,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     MainApplication.getInstance().setTemplateArray(jsonObject.getJSONArray("templates"));
                     SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.TEMPLATE_ARRAY, jsonObject.toString());
                 }
+
                 startActivity(new Intent(LoginActivity.this, RecordingVideoActivity.class));
                 LoginActivity.this.finish();
 
