@@ -105,8 +105,8 @@ public class Constant {
         return getApplicationDirectory() + "app.log";
     }
 
-    public static String downloadedTopVideoUrl = "";
-    public static String downloadedTailVideoUrl = "";
+    public static String downloadedTopVideoUrl = getApplicationDirectory() + "15940a9928a4e71d181b4e1f43b3d6a9/TopVideo.mp4";
+    public static String downloadedTailVideoUrl = getApplicationDirectory() + "15940a9928a4e71d181b4e1f43b3d6a9/TailVideo.mp4";;
 
     public synchronized static String getDownloadTopVideo() {
         return downloadedTopVideoUrl;

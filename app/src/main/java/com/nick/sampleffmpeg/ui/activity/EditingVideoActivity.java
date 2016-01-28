@@ -47,6 +47,7 @@ import com.nick.sampleffmpeg.ui.view.OverlayView;
 import com.nick.sampleffmpeg.ui.view.StretchVideoView;
 import com.nick.sampleffmpeg.ui.view.TitleTimeLayout;
 import com.nick.sampleffmpeg.ui.view.WaveformView;
+import com.nick.sampleffmpeg.utils.BitmapUtils;
 import com.nick.sampleffmpeg.utils.LogFile;
 import com.nick.sampleffmpeg.utils.StringUtils;
 import com.nick.sampleffmpeg.utils.TailDownloader;
@@ -237,32 +238,24 @@ public class EditingVideoActivity extends BaseActivity {
     private void convertTopVideoVideoFormat() {
         if (flagTopVideoDownloaded && flagTailVideoDownloaded) {
             if (mTask != null) {
-                runOnUiThread(new Runnable() {
+                VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, true, new Runnable() {
                     @Override
                     public void run() {
                         if (mTask != null) {
-                            VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, true, new Runnable() {
+                            VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, false, new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (mTask != null) {
-                                        VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, false, new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                findViewById(R.id.pb_Tail).setVisibility(View.GONE);
-                                                findViewById(R.id.pb_Top).setVisibility(View.GONE);
-                                                initializeThumbView();
+                                    findViewById(R.id.pb_Tail).setVisibility(View.GONE);
+                                    findViewById(R.id.pb_Top).setVisibility(View.GONE);
+                                    initializeThumbView();
 
-                                                mTask = null;
-                                            }
-                                        });
-                                    }
+                                    mTask = null;
                                 }
                             });
                         }
                     }
                 });
             }
-
         }
     }
 
@@ -947,8 +940,11 @@ public class EditingVideoActivity extends BaseActivity {
                                     imageView.setLayoutParams(param);
                                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                                 }
+
                                 if (bitmap != null && imageView != null) {
-                                    imageView.setImageBitmap(bitmap);
+                                    LinearLayout.LayoutParams param = (LinearLayout.LayoutParams)imageView.getLayoutParams();
+                                    Bitmap resizedBitmap = BitmapUtils.resizeBitmap(bitmap, param.width);
+                                    imageView.setImageBitmap(resizedBitmap);
                                     thumbImageLayout.setTag(tagObj / Constant.TIMELINE_UNIT_SECOND);
                                     videoThumbsLayout.addView(thumbImageLayout);
 
@@ -1048,6 +1044,7 @@ public class EditingVideoActivity extends BaseActivity {
                 }
                 downloadTopVideo();
                 downloadTailVideo();
+
             } catch (Exception e) {
 
             }

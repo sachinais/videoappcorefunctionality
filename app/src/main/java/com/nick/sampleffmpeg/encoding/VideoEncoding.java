@@ -91,7 +91,6 @@ public class VideoEncoding {
             dstVideoFilePath = Constant.getTailVideo();
         }
         if (srcVideoFilePath.length() > 0) {
-            final int videoLength = VideoUtils.getVideoLength(srcVideoFilePath);
             commands = commands.replace("src.mp4", srcVideoFilePath);
             commands = commands.replace("dst.mp4", dstVideoFilePath);
 

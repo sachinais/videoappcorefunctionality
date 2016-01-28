@@ -25,6 +25,7 @@ import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.ProvinceBean;
+import com.nick.sampleffmpeg.encoding.VideoEncoding;
 import com.nick.sampleffmpeg.network.CheckNetworkConnection;
 import com.nick.sampleffmpeg.network.CustomDialogs;
 import com.nick.sampleffmpeg.network.RequestBean;
@@ -417,8 +418,6 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
             @Override
             public void onFinish() {
-                progressDialog.dismiss();
-                RecordingVideoActivity.this.finish();
                 if (recordingTime > 15.f) {
                     Constant.updateTimeUnit(2);
                 }
@@ -430,6 +429,8 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                 if (recordingTime > 40) {
                     Constant.updateTimeUnit(4);
                 }
+
+                RecordingVideoActivity.this.finish();
                 showActivity(EditingVideoActivity.class, null);
             }
         });
