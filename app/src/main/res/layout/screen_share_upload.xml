@@ -362,8 +362,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp">
+                >
 
                 <LinearLayout
                     android:id="@+id/ll_OpenDashboard"
@@ -371,12 +370,12 @@
                     android:layout_height="40dp"
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/bg_select_plateform"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:visibility="visible">
 
                     <ImageView
-                        android:layout_width="30dp"
+                        android:layout_width="25dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:src="@drawable/dashboard_icon" />
@@ -386,18 +385,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="5dp"
                         android:gravity="center"
                         android:text="Open Dashboard"
                         android:textColor="@color/color_white"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="60dp"
+                    android:layout_width="50dp"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp">
+                    android:layout_marginLeft="5dp">
 
                     <View
                         android:layout_width="20dp"
@@ -429,16 +427,16 @@
 
                 <LinearLayout
                     android:id="@+id/ll_RecordVideo"
-                    android:layout_width="135dp"
+                    android:layout_width="140dp"
                     android:layout_height="40dp"
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="5dp"
-                    android:background="@color/color_red"
+                    android:background="@drawable/record_new_video_video"
                     android:visibility="visible">
 
                     <ImageView
                         android:layout_width="25dp"
-                        android:layout_height="match_parent"
+                        android:layout_height="25dp"
                         android:layout_gravity="center"
                         android:src="@drawable/dot" />
 
@@ -450,7 +448,7 @@
                         android:gravity="center"
                         android:text="Record New Video"
                         android:textColor="@color/color_white"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                 </LinearLayout>
             </LinearLayout>

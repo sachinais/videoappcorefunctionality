@@ -226,7 +226,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                 if (MainApplication.getInstance().getDiffrentPlatformDataValue() != null) {
                     startActivity(new Intent(UploadingVideoScreen.this, SelectPlatfom.class));
                 } else {
-                    showAlertDialog("Please wait, Social accounts details still downloading");
+                    showAlertDialog("Credentials are not loaded yet.");
                 }
 
 
