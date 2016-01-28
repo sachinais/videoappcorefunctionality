@@ -9,6 +9,7 @@ import java.io.File;
  * Created by baebae on 12/22/15.
  */
 public class Constant {
+    public static boolean           flagDebug = false;
     public static int               VIDEO_WIDTH = 1280;
     public static int               VIDEO_HEIGHT = 720;
     public final static int			BUTTON_NORMAL_ALPHA	= 100;
@@ -85,12 +86,8 @@ public class Constant {
         }
     }
 
-    public synchronized static String getConvertedVideo() {
-        return getUniqueFormatDirectory() + "recording.mp4";
-    };
-
     public synchronized static String getConvertedAudio() {
-        return getUniqueFormatDirectory() + "recording.wav";
+        return getApplicationDirectory() + "recording.wav";
     };
 
     public synchronized static String getEncodedVideo() {
@@ -105,8 +102,8 @@ public class Constant {
         return getApplicationDirectory() + "app.log";
     }
 
-    public static String downloadedTopVideoUrl = getApplicationDirectory() + "15940a9928a4e71d181b4e1f43b3d6a9/TopVideo.mp4";
-    public static String downloadedTailVideoUrl = getApplicationDirectory() + "15940a9928a4e71d181b4e1f43b3d6a9/TailVideo.mp4";;
+    public static String downloadedTopVideoUrl = "";
+    public static String downloadedTailVideoUrl = "";;
 
     public synchronized static String getDownloadTopVideo() {
         return downloadedTopVideoUrl;

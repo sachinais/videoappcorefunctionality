@@ -593,24 +593,26 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             return;
         }
 //
-        MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
-        overlayview.updateOverlay();
-
-     FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this, getTemplateUrl((int) options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(), options1Items.get(options1).getDirectoryId());
-       findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
-        fileDownloader.startDownload(new Runnable() {
-           @Override
-            public void run() {
-              MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
-               runOnUiThread(new Runnable() {
-                    @Override
-                   public void run() {
-                        findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
-                        overlayview.updateOverlay();
-                   }
-                });
-           }
-        });
+        if (Constant.flagDebug) {
+            MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
+            overlayview.updateOverlay();
+        } else {
+            FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this, getTemplateUrl((int) options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(), options1Items.get(options1).getDirectoryId());
+            findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
+            fileDownloader.startDownload(new Runnable() {
+               @Override
+                public void run() {
+                  MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
+                   runOnUiThread(new Runnable() {
+                        @Override
+                       public void run() {
+                            findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
+                            overlayview.updateOverlay();
+                       }
+                    });
+               }
+            });
+        }
     }
 
 

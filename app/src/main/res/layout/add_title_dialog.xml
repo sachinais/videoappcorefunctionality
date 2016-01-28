@@ -23,6 +23,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
     <EditText
         android:id="@+id/edit_title_name"
+        android:singleLine="true"
+        android:lines="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 

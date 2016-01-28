@@ -130,7 +130,7 @@ public class SharingVideoScreen extends Activity {
                     String uriPath = getIntent().getExtras().getString("uripath");
                     if (uriPath != null && uriPath.length() > 0) {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriPath));
-                        intent.setDataAndType(Uri.parse(Constant.getDownloadTopVideo()), "video/mp4");
+                        intent.setDataAndType(Uri.parse(uriPath), "video/mp4");
                         startActivity(intent);
                     }
 

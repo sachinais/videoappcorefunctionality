@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -49,10 +50,12 @@ import com.nick.sampleffmpeg.ui.view.StretchVideoView;
 import com.nick.sampleffmpeg.ui.view.TitleTimeLayout;
 import com.nick.sampleffmpeg.ui.view.WaveformView;
 import com.nick.sampleffmpeg.utils.BitmapUtils;
+import com.nick.sampleffmpeg.utils.FileUtils;
 import com.nick.sampleffmpeg.utils.LogFile;
 import com.nick.sampleffmpeg.utils.StringUtils;
 import com.nick.sampleffmpeg.utils.TailDownloader;
 import com.nick.sampleffmpeg.utils.TopDownloader;
+import com.nick.sampleffmpeg.utils.VideoUtils;
 import com.nick.sampleffmpeg.utils.audio.soundfile.SoundFile;
 import com.nick.sampleffmpeg.utils.ffmpeg.FFMpegUtils;
 import com.nick.sampleffmpeg.utils.youtube.FileDownloader;
@@ -75,7 +78,7 @@ import butterknife.InjectView;
 public class EditingVideoActivity extends BaseActivity {
 
     @InjectView(R.id.txt_job_title)
-    EditText editJobTitle;
+    TextView editJobTitle;
 
     @InjectView(R.id.video_view)
     StretchVideoView videoView;
@@ -147,6 +150,9 @@ public class EditingVideoActivity extends BaseActivity {
     @InjectView(R.id.trim_right)
     ImageView btnTrimRight;
 
+    @InjectView(R.id.layout_job_title)
+    LinearLayout layout_job_title;
+
     private int currentVideoSeekPosition = 0;
     private boolean flagPlay = false;
     private boolean flagTimelineInitialized = false;
@@ -191,6 +197,9 @@ public class EditingVideoActivity extends BaseActivity {
         if (savedInstanceState == null) {
             flagTimelineInitialized = false;
             flagFromBackground = false;
+            if (!Constant.flagDebug) {
+                FileUtils.DeleteFolder(Constant.getUniqueFormatDirectory());
+            }
             addTitle();
             initializeVideoView();
             initializeThumbView();
@@ -235,6 +244,8 @@ public class EditingVideoActivity extends BaseActivity {
         if (currentVideoSeekPosition < trimStart) {
             setCurrentSeekTime(trimStart);
         }
+
+        updateVideoDuration();
     }
 
     private void convertTopVideoVideoFormat() {
@@ -250,7 +261,6 @@ public class EditingVideoActivity extends BaseActivity {
                                     findViewById(R.id.pb_Tail).setVisibility(View.GONE);
                                     findViewById(R.id.pb_Top).setVisibility(View.GONE);
                                     initializeThumbView();
-
                                     mTask = null;
                                 }
                             });
@@ -358,7 +368,7 @@ public class EditingVideoActivity extends BaseActivity {
     }
 
 
-    public void downloadThumbNail() {
+    public void downloadThumbnail() {
         try {
             int pos = MainApplication.getInstance().getSelectedTemplePosition();
             if (MainApplication.getInstance().getTemplateArray() != null && MainApplication.getInstance().getTemplateArray().length() > 0) {
@@ -368,8 +378,6 @@ public class EditingVideoActivity extends BaseActivity {
                     options1Items.add(new ProvinceBean(i, jsonObject.optString("title"), jsonObject.optString("directory"), ""));
                 }
             }
-            JSONArray jsonArray = MainApplication.getInstance().getTemplateArray();
-
             findViewById(R.id.pb_Thumb).setVisibility(View.VISIBLE);
             FileDownloader fileDownloader = new FileDownloader(EditingVideoActivity.this, getThumbnailUrl((int) options1Items.get(pos).getId(), "tail"), options1Items.get(pos).getDirectoryId());
             fileDownloader.startDownload(new TopVideoDownload() {
@@ -534,7 +542,7 @@ public class EditingVideoActivity extends BaseActivity {
                     @Override
                     public void run() {
                         if (flagTopVideoDownloaded && flagTailVideoDownloaded) {
-                            if (((EditText) findViewById(R.id.txt_job_title)).getText().toString().length() > 0) {
+                            if (((TextView) findViewById(R.id.txt_job_title)).getText().toString().length() > 0) {
                                 convertOverlaysPNG();
                             } else {
                                 showAlert(R.string.str_alert_title_information, "Please enter video title", "Ok");
@@ -561,9 +569,9 @@ public class EditingVideoActivity extends BaseActivity {
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        if (Constant.getDownloadTopVideo().length() > 0) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constant.getDownloadTopVideo()));
-                            intent.setDataAndType(Uri.parse(Constant.getDownloadTopVideo()), "video/mp4");
+                        if (FileUtils.isExistFile(Constant.getTopVideo())) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constant.getTopVideo()));
+                            intent.setDataAndType(Uri.parse(Constant.getTopVideo()), "video/mp4");
                             startActivity(intent);
                         }
                     }
@@ -572,9 +580,9 @@ public class EditingVideoActivity extends BaseActivity {
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        if (Constant.getDownloadTailVideo().length() > 0) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constant.getDownloadTailVideo()));
-                            intent.setDataAndType(Uri.parse(Constant.getDownloadTailVideo()), "video/mp4");
+                        if (FileUtils.isExistFile(Constant.getTailVideo())) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constant.getTailVideo()));
+                            intent.setDataAndType(Uri.parse(Constant.getTailVideo()), "video/mp4");
                             startActivity(intent);
                         }
                     }
@@ -584,6 +592,14 @@ public class EditingVideoActivity extends BaseActivity {
                     @Override
                     public void run() {
                         getSid();
+                    }
+                });
+
+        UITouchButton.applyEffect(layout_job_title, UITouchButton.EFFECT_ALPHA, Constant.BUTTON_NORMAL_ALPHA,
+                Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
+                    @Override
+                    public void run() {
+                        addTitle();
                     }
                 });
 
@@ -800,6 +816,21 @@ public class EditingVideoActivity extends BaseActivity {
         }
     }
 
+    private void updateVideoDuration() {
+        int start = MainApplication.getInstance().getVideoStart();
+        int end = MainApplication.getInstance().getVideoEnd();
+
+        int topLength = 0;
+        if (FileUtils.isExistFile(Constant.getTopVideo())) {
+            topLength = VideoUtils.getVideoLength(Constant.getTopVideo());
+        }
+
+        int tailLength = 0;
+        if (FileUtils.isExistFile(Constant.getTailVideo())) {
+            tailLength = VideoUtils.getVideoLength(Constant.getTailVideo());
+        }
+        txtVideoDuration.setText(getString(R.string.label_total_length) + StringUtils.getMinuteSecondString((end - start) / 1000 + topLength + tailLength, false));
+    }
     /**
      * initialize video view
      * set media file for video view, once it is initialized control layout will be shown below video view
@@ -815,7 +846,7 @@ public class EditingVideoActivity extends BaseActivity {
                 int videoLength = videoView.getDuration();
                 MainApplication.getInstance().setVideoLength(videoLength);
                 videoView.seekTo(defaultVideoInitialTime);
-                txtVideoDuration.setText(getString(R.string.label_total_length) + StringUtils.getMinuteSecondString(videoLength / 1000, false));
+
                 videoControlLayout.setVisibility(View.VISIBLE);
 
                 if (!flagFromBackground && !flagTimelineInitialized) {
@@ -826,7 +857,7 @@ public class EditingVideoActivity extends BaseActivity {
                 if (!flagTimelineInitialized) {
                     initializeTimeLineView();
                 }
-
+                updateVideoDuration();
                 setCurrentSeekTime(0);
                 titleThumbsLayout.setTrimLeftRight(0, videoLength);
             }
@@ -849,17 +880,17 @@ public class EditingVideoActivity extends BaseActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (Constant.getDownloadTailVideo().length() > 0) {
+                if (FileUtils.isExistFile(Constant.getTailVideo())) {
                     Bitmap bmTailThumb;
-                    bmTailThumb = ThumbnailUtils.createVideoThumbnail(Constant.getDownloadTailVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
+                    bmTailThumb = ThumbnailUtils.createVideoThumbnail(Constant.getTailVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
                     if (bmTailThumb != null) {
                         imgThumbVideo3.setImageBitmap(bmTailThumb);
                     }
                 }
 
-                if (Constant.getDownloadTopVideo().length() > 0) {
+                if (FileUtils.isExistFile(Constant.getTopVideo())) {
                     Bitmap bmTopThumb;
-                    bmTopThumb = ThumbnailUtils.createVideoThumbnail(Constant.getDownloadTopVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
+                    bmTopThumb = ThumbnailUtils.createVideoThumbnail(Constant.getTopVideo(), MediaStore.Video.Thumbnails.MINI_KIND);
                     if (bmTopThumb != null) {
                         imgThumbVideo2.setImageBitmap(bmTopThumb);
                     }
@@ -873,6 +904,8 @@ public class EditingVideoActivity extends BaseActivity {
                         imgThumbVideo1.setScaleType(ImageView.ScaleType.FIT_XY);
                     }
                 }
+
+                updateVideoDuration();
             }
         });
     }
@@ -1081,19 +1114,27 @@ public class EditingVideoActivity extends BaseActivity {
                 progressDialog.dismiss();
                 flagProgressDialogIsRunning = false;
                 flagTailVideoDownloaded = flagTopVideoDownloaded = true;
-                downloadThumbNail();
+                downloadThumbnail();
 
                 String extenstion = getTopTailVideoExtension(true);
                 if (extenstion != null && !extenstion.equalsIgnoreCase("")) {
-                    flagTopVideoDownloaded = false;
+                    if (!Constant.flagDebug) {
+                        flagTopVideoDownloaded = false;
+                    }
+                    findViewById(R.id.layout_no_top).setVisibility(View.GONE);
                 }
 
                 extenstion = getTopTailVideoExtension(false);
                 if (extenstion != null && !extenstion.equalsIgnoreCase("")) {
-                    flagTailVideoDownloaded = false;
+                    findViewById(R.id.layout_no_tail).setVisibility(View.GONE);
+                    if (!Constant.flagDebug) {
+                        flagTailVideoDownloaded = false;
+                    }
                 }
-                downloadTopVideo();
-                downloadTailVideo();
+                if (!Constant.flagDebug) {
+                    downloadTopVideo();
+                    downloadTailVideo();
+                }
 
             } catch (Exception e) {
 

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.hardware.Camera;
+import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -32,8 +33,10 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
     private boolean flagFrontFaceCamera = true;
 
     private Runnable callback = null;
+    private Context context = null;
     public VideoCaptureView(Context context) {
         super(context);
+        this.context = context;
         if (!isInEditMode()) {
             initializeSurface();
         }
@@ -41,6 +44,7 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
 
     public VideoCaptureView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
         if (!isInEditMode()) {
             initializeSurface();
         }
@@ -48,6 +52,7 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
 
     public VideoCaptureView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        this.context = context;
         if (!isInEditMode()) {
             initializeSurface();
         }
@@ -237,6 +242,14 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
         } else {
             mCamera = CameraHelper.getDefaultBackFacingCameraInstance();
             cameraID = CameraHelper.getDefaultBackCameraID();
+        }
+
+        if (android.os.Build.VERSION.SDK_INT>=android.os.Build.VERSION_CODES.JELLY_BEAN_MR1){
+            mCamera.enableShutterSound(false);
+        }
+        else{
+            AudioManager audio= (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+            audio.setStreamVolume(AudioManager.STREAM_SYSTEM, 0,   AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
         }
         return cameraID;
     }

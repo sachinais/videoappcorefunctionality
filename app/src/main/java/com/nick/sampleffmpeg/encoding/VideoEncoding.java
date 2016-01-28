@@ -39,8 +39,8 @@ public class VideoEncoding {
         strVideoSize = Integer.toString(width) + "x" + Integer.toString(height);
 
         //skip convert recorded video if size is same...
-        progress = -48;
-        stepProgress = 48;
+        progress = 0;
+        stepProgress = 50;
         startEncodingVideo();
     }
 
@@ -113,12 +113,10 @@ public class VideoEncoding {
      * add overlay into recorded video.
      */
     private static void startEncodingVideo() {
-        progress += stepProgress;
-
         String strStart = Float.toString(MainApplication.getInstance().getVideoStart() / 1000.f);
         String strEnd = Float.toString(MainApplication.getInstance().getVideoEnd() / 1000.f);
         ArrayList<VideoOverlay> videoOverlayInformation = MainApplication.getInstance().getVideoOverlayInformation();
-        final int videoLength = (MainApplication.getInstance().getVideoEnd() - MainApplication.getInstance().getVideoStart()) / 1000;
+        final int videoLength = VideoUtils.getVideoLength(Constant.getSourceVideo());
         if (videoOverlayInformation.size() > 0) {
             //make ffmpeg command
             String command = "-y -threads 5 ";
@@ -161,7 +159,7 @@ public class VideoEncoding {
 
                 @Override
                 public void onFinish() {
-                    callback.onProgress(48);
+                    callback.onProgress(50);
                     mergeEncodingVideoWithTopTailVideo();
                 }
             });
@@ -175,20 +173,22 @@ public class VideoEncoding {
      */
     private static void mergeEncodingVideoWithTopTailVideo() {
         progress += stepProgress;
-        final int videoLength = (MainApplication.getInstance().getVideoEnd() - MainApplication.getInstance().getVideoStart()) / 1000;
+        int _videoLength = (MainApplication.getInstance().getVideoEnd() - MainApplication.getInstance().getVideoStart()) / 1000;
 
         //make ffmpeg command
 
         String command = "-y ";
         int fileCount = 1;
-        if (Constant.getDownloadTopVideo().length() != 0) {
+        if (FileUtils.isExistFile(Constant.getTopVideo())) {
             command = command + "-i" + " " + Constant.getTopVideo() +" ";
+            _videoLength = _videoLength + VideoUtils.getVideoLength(Constant.getTopVideo());
             fileCount ++;
         }
 
         command = command + "-i" + " " + Constant.getEncodedVideo() +" ";
-        if (Constant.getDownloadTailVideo().length() != 0) {
+        if (FileUtils.isExistFile(Constant.getTailVideo())) {
             command = command + "-i" + " " + Constant.getTailVideo() +" ";
+            _videoLength = _videoLength + VideoUtils.getVideoLength(Constant.getTailVideo());
             fileCount ++;
         }
 
@@ -223,6 +223,8 @@ public class VideoEncoding {
 
         commands[len - 1] = Constant.getMergedVideo();
         callback.onProgress(progress);
+
+        final int videoLength = _videoLength;
         FFMpegUtils.execFFmpegBinary(commands, new FFMpegUtils.Callback() {
             @Override
             public void onProgress(String msg) {

@@ -6,12 +6,11 @@
     android:background="#000">
 
     <RelativeLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <com.nick.sampleffmpeg.ui.view.VideoCaptureView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:id="@+id/surface_view" />
 
