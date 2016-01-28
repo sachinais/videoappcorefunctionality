@@ -58,7 +58,7 @@ public class SharingVideoScreen extends Activity {
 
     private String youTube_Message;
     private static String videoLink;
-
+    String uriPath="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,13 +95,6 @@ public class SharingVideoScreen extends Activity {
             });
 
 
-            registerReceiver(receiverToutubeLink, new IntentFilter("YouTube_Link"));
-
-                /*String id = MainApplication.getInstance().getYoutubeData().getId();
-                if (id != null && !id.equalsIgnoreCase("")) {
-                    String url = "https://www.youtube.com/watch?v=" + id;
-                    ((TextView) findViewById(R.id.tvVideoUrl)).setText(url);
-                }*/
 
             findViewById(R.id.ll_Post).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -152,6 +145,18 @@ public class SharingVideoScreen extends Activity {
                     finish();
                 }
             });
+
+            findViewById(R.id.videoview).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (uriPath.length() > 0) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriPath));
+                        intent.setDataAndType(Uri.parse(Constant.getDownloadTopVideo()), "video/mp4");
+                        startActivity(intent);
+                    }
+                }
+            });
+
 
             getBundleData();
             setFont();
@@ -330,16 +335,8 @@ public class SharingVideoScreen extends Activity {
         }
     }
 
-    BroadcastReceiver receiverToutubeLink = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String id = MainApplication.getInstance().getYoutubeData().getId();
 
-            String url = "https://www.youtube.com/watch?v=" + id;
 
-            ((TextView) findViewById(R.id.tvVideoUrl)).setText(url);
-        }
-    };
 
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -351,7 +348,7 @@ public class SharingVideoScreen extends Activity {
 
     private void getBundleData() {
         if (getIntent() != null) {
-            String uriPath = getIntent().getExtras().getString("uripath");
+             uriPath = getIntent().getExtras().getString("uripath");
             Uri uri = Uri.parse(uriPath);
             mVideoView.setVideoURI(uri);
             mVideoView.requestFocus();
@@ -406,14 +403,13 @@ public class SharingVideoScreen extends Activity {
                 ((ProgressBar) findViewById(R.id.pbarUploadVideo)).setProgress(intent.getExtras().getInt("progress"));
                 ((TextView) findViewById(R.id.tvUploaPercent)).setText(intent.getExtras().getInt("progress") + "%");
                 if (intent.getExtras().getInt("progress") == 100) {
-                    findViewById(R.id.llProgressEncode).setVisibility(View.GONE);
+                    findViewById(R.id.llProgress).setVisibility(View.GONE);
                     findViewById(R.id.llUploadComple).setVisibility(View.VISIBLE);
                     //videoLink = intent.getExtras().getString("url");
                     //Toast.makeText(UploadingVideoScreen.this, "Video uploaded successfully", Toast.LENGTH_LONG).show();
                     //updateYoutubeKeyOnServer(videoLink);
                 }
             } else if (intent.getAction() == ACTION_UPLOAD_COMPLETED) {
-                ((TextView) findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_sign_btn));
                 videoLink = intent.getExtras().getString("url");
                 ((TextView)findViewById(R.id.tvVideoUrl)).setText(videoLink);
                 //updateYoutubeKeyOnServer(videoLink);
