@@ -94,12 +94,14 @@ public class OverlayBean {
     }
 
     private String getFontFileName(String fontName) {
-        if (fontName.contains("OpenSans")) {
-            return AppConstants.FONT_OPEN_SANS;
-        }
+        String lowerCaseFontName = fontName.toLowerCase();
+        for (int i = 0 ; i < AppConstants.CAPTION_FONTS.length; i ++) {
+            AppConstants.FontMatch font = AppConstants.CAPTION_FONTS[i];
 
-        if (fontName.contains("sans-serif")) {
-            return AppConstants.FONT_SANS_SERIF;
+            String lowerMatchName = font.fontTypeName.toLowerCase();
+            if (lowerCaseFontName.contains(lowerMatchName)) {
+                return font.fontFileName;
+            }
         }
 
         return  "";

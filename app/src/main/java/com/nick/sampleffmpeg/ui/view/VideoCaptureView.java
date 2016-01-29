@@ -250,6 +250,14 @@ public class VideoCaptureView extends SurfaceView implements SurfaceHolder.Callb
         else{
             AudioManager audio= (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
             audio.setStreamVolume(AudioManager.STREAM_SYSTEM, 0,   AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+            ((AudioManager)context.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_SYSTEM,true);
+            ((AudioManager)context.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_ALARM,true);
+            ((AudioManager)context.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_DTMF,true);
+            ((AudioManager)context.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_MUSIC,true);
+            ((AudioManager)context.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_RING,true);
+            ((AudioManager)context.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_SYSTEM,true);
+            ((AudioManager)context.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_VOICE_CALL,true);
+
         }
         return cameraID;
     }
