@@ -541,7 +541,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                 List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
                 RequestBean requestBean = new RequestBean();
                 requestBean.setActivity(UploadingVideoScreen.this);
-                requestBean.setUrl("update_youtube_api_credentials.php");
+                requestBean.setUrl("load_credentials.php");
                 requestBean.setParams(paramePairs);
                 requestBean.setIsProgressBarEnable(false);
                 RequestHandler requestHandler = new RequestHandler(requestBean, requestCredentials);
@@ -565,7 +565,6 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                     if (!jsonObject.isNull("yt_credentials")) {
                         if (!jsonObject.getJSONObject("yt_credentials").isNull("access_token")) {
                             access_token = jsonObject.getJSONObject("yt_credentials").getString("access_token");
-
                         }
                         if (!jsonObject.getJSONObject("yt_credentials").isNull("refresh_token")) {
                             refresh_token = jsonObject.getJSONObject("yt_credentials").getString("refresh_token");

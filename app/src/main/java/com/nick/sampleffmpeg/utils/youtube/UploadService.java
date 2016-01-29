@@ -40,12 +40,22 @@ import com.google.common.collect.Lists;
 import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.YoutubeDataBean;
+import com.nick.sampleffmpeg.network.CheckNetworkConnection;
+import com.nick.sampleffmpeg.network.CustomDialogs;
+import com.nick.sampleffmpeg.network.RequestBean;
+import com.nick.sampleffmpeg.network.RequestHandler;
+import com.nick.sampleffmpeg.network.RequestListner;
 import com.nick.sampleffmpeg.ui.activity.LoginScreen;
 import com.nick.sampleffmpeg.ui.activity.UploadingVideoScreen;
+
+import org.apache.http.NameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -76,6 +86,7 @@ public class UploadService extends IntentService {
     /**
      * processing start time
      */
+
     private static long mStartTime;
     final HttpTransport transport = AndroidHttp.newCompatibleTransport();
     final JsonFactory jsonFactory = new GsonFactory();
@@ -84,11 +95,13 @@ public class UploadService extends IntentService {
      * tracks the number of upload attempts
      */
     private int mUploadAttemptCount;
-
+    GoogleCredential credential =null;
+    Intent intent;
+    Uri fileUri;
     public UploadService() {
         super("YTUploadService");
     }
-
+    YoutubeDataBean youtubeDataBean;
     private static void zzz(int duration) throws InterruptedException {
         Log.d(TAG, String.format("Sleeping for [%d] ms ...", duration));
         Thread.sleep(duration);
@@ -133,8 +146,9 @@ public class UploadService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Uri fileUri = intent.getData();
-        YoutubeDataBean youtubeDataBean = new YoutubeDataBean();
+        this.intent =intent;
+         fileUri = intent.getData();
+         youtubeDataBean = new YoutubeDataBean();
         youtubeDataBean.setVideoTitle(intent.getStringExtra(LoginScreen.VIDEO_TITLE));
         youtubeDataBean.setVideoType(intent.getStringExtra(LoginScreen.VIDEO_TYPE));
         youtubeDataBean.setVideoTags(intent.getStringExtra(UploadingVideoScreen.VIDEO_TAGS));
@@ -151,19 +165,17 @@ public class UploadService extends IntentService {
         */
 
 
-        /*GoogleCredential credential = new GoogleCredential.Builder()
+       /* GoogleCredential credential = new GoogleCredential.Builder()
                 .setTransport(com.nick.sampleffmpeg.ui.activity.Auth.HTTP_TRANSPORT).setJsonFactory(com.nick.sampleffmpeg.ui.activity.Auth.JSON_FACTORY)
                 .setClientSecrets(Constant.CLIENT_ID, Constant.CLIENT_SECRATE).build();
         credential.setAccessToken(intent.getStringExtra(UploadingVideoScreen.ACCESS_TOKEN));
         credential.setRefreshToken(intent.getStringExtra(UploadingVideoScreen.REFREST_TOKEN));*/
 
 
-        GoogleCredential credential = new GoogleCredential.Builder()
+        credential = new GoogleCredential.Builder()
                 .setTransport(com.nick.sampleffmpeg.ui.activity.Auth.HTTP_TRANSPORT).setJsonFactory(com.nick.sampleffmpeg.ui.activity.Auth.JSON_FACTORY)
-                .setClientSecrets("815107145608-2hc3kfand4bomob5thte673amk17k4c2.apps.googleusercontent.com","46ZZiJ5z01zj7Lgoz9f35Fd0").build();
+                .setClientSecrets("815107145608-2hc3kfand4bomob5thte673amk17k4c2.apps.googleusercontent.com", "46ZZiJ5z01zj7Lgoz9f35Fd0").build();
         credential.setAccessToken(intent.getStringExtra(UploadingVideoScreen.ACCESS_TOKEN));
-
-
 
 
         String appName = getResources().getString(R.string.app_name);
@@ -201,6 +213,10 @@ public class UploadService extends IntentService {
                 tryShowSelectableNotification(videoId, youtube);
                 return;
             } else {
+
+                geyCredentials();
+
+/*
                 Log.e(TAG, String.format("Failed to upload %s", fileUri.toString()));
                 if (mUploadAttemptCount++ < MAX_RETRY) {
                     Log.i(TAG, String.format("Will retry to upload the video ([%d] out of [%d] reattempts)",
@@ -210,10 +226,64 @@ public class UploadService extends IntentService {
                     Log.e(TAG, String.format("Giving up on trying to upload %s after %d attempts",
                             fileUri.toString(), mUploadAttemptCount));
                     return;
-                }
+                }*/
             }
         }
     }
+
+    public void geyCredentials() {
+        try {
+            if (CheckNetworkConnection.isNetworkAvailable(this)) {
+                List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
+                RequestBean requestBean = new RequestBean();
+                requestBean.setUrl("update_youtube_api_credentials.php");
+                requestBean.setParams(paramePairs);
+                requestBean.setIsProgressBarEnable(false);
+                RequestHandler requestHandler = new RequestHandler(requestBean, requestCredentials);
+                requestHandler.execute(null, null, null);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private RequestListner requestCredentials = new RequestListner() {
+
+        @Override
+        public void getResponse(JSONObject jsonObject) {
+            try {
+                String url = "";
+                if (jsonObject != null) {
+                    if (!jsonObject.isNull("yt_credentials")) {
+                        if (!jsonObject.getJSONObject("yt_credentials").isNull("access_token")) {
+                            credential = new GoogleCredential.Builder()
+                                    .setTransport(com.nick.sampleffmpeg.ui.activity.Auth.HTTP_TRANSPORT).setJsonFactory(com.nick.sampleffmpeg.ui.activity.Auth.JSON_FACTORY)
+                                    .setClientSecrets("815107145608-2hc3kfand4bomob5thte673amk17k4c2.apps.googleusercontent.com", "46ZZiJ5z01zj7Lgoz9f35Fd0").build();
+                            credential.setAccessToken(jsonObject.getJSONObject("yt_credentials").getString("access_token"));
+                            String appName = getResources().getString(R.string.app_name);
+                            final YouTube youtube =
+                                    new YouTube.Builder(transport, jsonFactory, credential).setApplicationName(
+                                            appName).build();
+                            try {
+
+
+                                tryUploadAndShowSelectableNotification(fileUri, youtube, youtubeDataBean);
+                            } catch (InterruptedException e) {
+                                // ignore
+                            }
+                        }
+
+
+
+                    }
+                }
+                //uploadVideo(access_token, refresh_token);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     private void tryShowSelectableNotification(final String videoId, final YouTube youtube)
             throws InterruptedException {
