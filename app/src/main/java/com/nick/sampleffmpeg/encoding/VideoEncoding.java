@@ -125,7 +125,8 @@ public class VideoEncoding {
             command = command + "-i" + " " + Constant.getSourceVideo() +" ";
 
             for (int i = 0; i < videoOverlayInformation.size(); i ++) {
-                command = command + "-i" + " " + Constant.getOverlayDirectory() + i + ".png ";
+                VideoOverlay title = videoOverlayInformation.get(i);
+                command = command + "-i" + " " + title.overlayImagePath + " ";
             }
 
             //command = command + "-c:a aac -strict experimental -threads 5 -crf 22 -preset ultrafast -r 25 -c:v libx264 -filter_complex";

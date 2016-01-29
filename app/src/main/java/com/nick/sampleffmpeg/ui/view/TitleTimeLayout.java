@@ -198,6 +198,8 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
         // Only capture drag events if we start
         // Touch begin and get title from selected position
         if (me.getAction() == MotionEvent.ACTION_DOWN) {
+            if (parentActivity == null)
+                return true;
             float seekVideoTime = ((float) me.getX() / (float) Constant.SP_PER_SECOND / parentActivity.getDisplayMetric().scaledDensity);
 
             if (seekVideoTime < trimEnd && seekVideoTime > trimStart) {

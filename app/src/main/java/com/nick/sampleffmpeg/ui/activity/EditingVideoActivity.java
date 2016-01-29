@@ -934,6 +934,7 @@ public class EditingVideoActivity extends BaseActivity {
         OverlayBean overlayBean = MainApplication.getInstance().getTemplate();
 
         //convert brand overlay into png
+
         if (overlayBean.brandLogo != null && overlayBean.brandLogo.backgroundImage.length() > 0) {
             OverlayBean.Overlay brandOverlay = overlayBean.brandLogo;
             String fileName = Constant.getOverlayDirectory() + "0.png";

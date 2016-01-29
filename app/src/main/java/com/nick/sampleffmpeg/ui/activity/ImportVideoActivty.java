@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.utils.AppConstants;
 import com.nick.sampleffmpeg.utils.FontTypeface;
@@ -92,6 +93,20 @@ public class ImportVideoActivty extends BaseActivity {
             if (VideoUtils.getVideoLength(filename) < 5) {
                 showAlertDialog("Be sure you have select video file at least 5 seconds of footage");
                 return;
+            }
+            Constant.setSourceVideo(filename);
+
+            int recordingTime = VideoUtils.getVideoLength(filename);
+            if (recordingTime > 15.f) {
+                Constant.updateTimeUnit(2);
+            }
+
+            if (recordingTime > 25) {
+                Constant.updateTimeUnit(3);
+            }
+
+            if (recordingTime > 40) {
+                Constant.updateTimeUnit(4);
             }
             ImportVideoActivty.this.finish();
             showActivity(EditingVideoActivity.class, null);
