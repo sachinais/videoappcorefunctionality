@@ -555,7 +555,7 @@ public class EditingVideoActivity extends BaseActivity {
 
                         } else {
                             // convertOverlaysPNG();
-                            showAlert(R.string.str_alert_title_information, "You have to wait until top/tail video is downloading", "Ok");
+                            showAlert(R.string.str_alert_title_information, "Please wait until your top/tail has been downloaded", "Ok");
                         }
 
                     }

@@ -214,19 +214,20 @@ public class UploadService extends IntentService {
                 return;
             } else {
 
-                geyCredentials();
 
-/*
+
+
                 Log.e(TAG, String.format("Failed to upload %s", fileUri.toString()));
                 if (mUploadAttemptCount++ < MAX_RETRY) {
                     Log.i(TAG, String.format("Will retry to upload the video ([%d] out of [%d] reattempts)",
                             mUploadAttemptCount, MAX_RETRY));
                     zzz(UPLOAD_REATTEMPT_DELAY_SEC * 1000);
+                    geyCredentials();
                 } else {
                     Log.e(TAG, String.format("Giving up on trying to upload %s after %d attempts",
                             fileUri.toString(), mUploadAttemptCount));
                     return;
-                }*/
+                }
             }
         }
     }

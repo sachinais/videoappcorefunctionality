@@ -226,7 +226,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                 if (MainApplication.getInstance().getDiffrentPlatformDataValue() != null) {
                     startActivity(new Intent(UploadingVideoScreen.this, SelectPlatfom.class));
                 } else {
-                    showAlertDialog("Credentials are not loaded yet.");
+                    showAccountAlertDialog("Error", "Credentials are not loaded yet.");
                 }
 
 
@@ -313,7 +313,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
             } else {
 
-                showAccountAlertDialog("Oops, We can't proceed with the provieded info", "Your YouTube description is too short");
+                showAccountAlertDialog("Oops, We can't proceed with the provieded info", "Your YouTube description is too short.");
                 return false;
             }
 
@@ -324,7 +324,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
                 } else {
 
-                    showAccountAlertDialog("Oops, We can't proceed with the provieded info", "You did not enter a description for your personal Facebook Post");
+                    showAccountAlertDialog("Oops, We can't proceed with the provieded info", "You did not enter a description for your personal Facebook Post.");
                     return false;
                 }
             }
@@ -335,7 +335,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
                 } else {
 
-                    showAccountAlertDialog("Oops, We can't proceed with the provieded info", "You did not enter a description for your personal LinkedIn Post");
+                    showAccountAlertDialog("Oops, We can't proceed with the provieded info", "You did not enter a description for your personal LinkedIn Post.");
                     return false;
                 }
             }
@@ -345,7 +345,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
                 } else {
 
-                    showAccountAlertDialog("Oops, We can't proceed with the provieded info", "You did not enter a description for your personal Twitter Post");
+                    showAccountAlertDialog("Oops, We can't proceed with the provieded info", "You did not enter a description for your personal Twitter Post.");
                     return false;
                 }
             }
@@ -355,7 +355,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
                 } else {
 
-                    showAccountAlertDialog("Oops, We can't proceed with the provieded info", "You did not enter a description for your company Facebook Post");
+                    showAccountAlertDialog("Oops, We can't proceed with the provieded info", "You did not enter a description for your company Facebook Post.");
                     return false;
                 }
             }
@@ -365,7 +365,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
                 } else {
 
-                    showAccountAlertDialog("Oops, We can't proceed with the provieded info", "You did not enter a description for your company LinkedIn Post");
+                    showAccountAlertDialog("Oops, We can't proceed with the provieded info", "You did not enter a description for your company LinkedIn Post.");
                     return false;
                 }
             }
@@ -376,7 +376,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
                 } else {
 
-                    showAccountAlertDialog("Oops, We can't proceed with the provieded info", "You did not enter a description for your company Twitter Post");
+                    showAccountAlertDialog("Oops, We can't proceed with the provieded info", "You did not enter a description for your company Twitter Post.");
                     return false;
                 }
             }
@@ -385,7 +385,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
             if (((EditText) findViewById(R.id.et_Description)).getText().length() > 0) {
                 return true;
             } else {
-                showAlertDialog("Please enter description");
+                showAccountAlertDialog("Oops, We can't proceed with the provieded info","Please enter description");
             }
             return false;
         }
@@ -412,7 +412,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
             optionDialog = new Dialog(UploadingVideoScreen.this);
             optionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             optionDialog.setContentView(R.layout.alert_dialog);
-
+            ((TextView) optionDialog.findViewById(R.id.textView1)).setText(title);
             ((TextView) optionDialog.findViewById(R.id.textView2)).setText(message);
             ((TextView) optionDialog.findViewById(R.id.buttonYes)).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -775,7 +775,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
             } else if (intent.getAction() == ACTION_UPLOAD_COMPLETED) {
                 ((TextView) findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_sign_btn));
                 videoLink = intent.getExtras().getString("url");
-                Toast.makeText(UploadingVideoScreen.this, "Video uploaded successfully", Toast.LENGTH_LONG).show();
+                showAccountAlertDialog("Success", "Video was uploaded.");
                 updateYoutubeKeyOnServer(videoLink);
             }
         }
@@ -787,7 +787,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
             if (CheckNetworkConnection.isNetworkAvailable(UploadingVideoScreen.this)) {
                 List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
-                paramePairs.add(new BasicNameValuePair("youtube_id", videoLink));
+                paramePairs.add(new BasicNameValuePair("youtube_id", videoLink.split("=")[1]));
                 paramePairs.add(new BasicNameValuePair("template_id", MainApplication.getInstance().getTemplate().strDirectoryID));
                 paramePairs.add(new BasicNameValuePair("title", ((EditText) findViewById(R.id.etVideTitle)).getText().toString()));
                 RequestBean requestBean = new RequestBean();

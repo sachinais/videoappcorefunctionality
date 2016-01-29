@@ -26,6 +26,13 @@ import com.nick.sampleffmpeg.utils.AppConstants;
 import com.nick.sampleffmpeg.utils.FontTypeface;
 import com.nick.sampleffmpeg.utils.VideoUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 
 /**
  * Created by Vindhya Pratap on 1/19/2016.
@@ -40,7 +47,7 @@ public class ImportVideoActivty extends BaseActivity {
     private Cursor _cursor;
     private int _columnIndex;
     private Uri _contentUri;
-    String filename;
+    String filename, finalPath;
     int flag = 0;
     private Dialog optionDialog;
     String[] projection = {
@@ -89,14 +96,22 @@ public class ImportVideoActivty extends BaseActivity {
             _cursor.moveToPosition(position);
             // And here we get the filename
             filename = _cursor.getString(_columnIndex);
-
             if (VideoUtils.getVideoLength(filename) < 5) {
-                showAlertDialog("Be sure you have select video file at least 5 seconds of footage");
+                showAlertDialog("Be sure your video is least 5 seconds long before importing.");
                 return;
             }
-            Constant.setSourceVideo(filename);
 
-            int recordingTime = VideoUtils.getVideoLength(filename);
+            try{
+                String s = filename.substring(filename.lastIndexOf(".") + 1);
+                finalPath = destinationFilePath(s).getAbsolutePath();
+                copyDirectory(new File(filename), new File(finalPath));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            Constant.setSourceVideo(finalPath);
+
+            int recordingTime = VideoUtils.getVideoLength(finalPath);
             if (recordingTime > 15.f) {
                 Constant.updateTimeUnit(2);
             }
@@ -109,13 +124,62 @@ public class ImportVideoActivty extends BaseActivity {
                 Constant.updateTimeUnit(4);
             }
             ImportVideoActivty.this.finish();
-            showActivity(EditingVideoActivity.class, null);
+            showActivity(EditingVideoActivity.class, finalPath);
 
             //*********** You can do anything when you know the file path :-)
-            showToast(filename);
+            showToast(finalPath);
+
+
+
+
       }
     };
 
+
+    public File destinationFilePath(String extention){
+
+        String dir= Constant.getApplicationDirectory()+"ImportedFiles";
+        String filemedia = System.currentTimeMillis()+"."+extention;
+        File file = new File(dir,filemedia);
+        return file  ;
+    }
+
+
+    // If targetLocation does not exist, it will be created.
+    public void copyDirectory(File sourceLocation , File targetLocation)
+            throws IOException {
+
+        if (sourceLocation.isDirectory()) {
+            if (!targetLocation.exists() && !targetLocation.mkdirs()) {
+                throw new IOException("Cannot create dir " + targetLocation.getAbsolutePath());
+            }
+
+            String[] children = sourceLocation.list();
+            for (int i=0; i<children.length; i++) {
+                copyDirectory(new File(sourceLocation, children[i]),
+                        new File(targetLocation, children[i]));
+            }
+        } else {
+
+            // make sure the directory we plan to store the recording in exists
+            File directory = targetLocation.getParentFile();
+            if (directory != null && !directory.exists() && !directory.mkdirs()) {
+                throw new IOException("Cannot create dir " + directory.getAbsolutePath());
+            }
+
+            InputStream in = new FileInputStream(sourceLocation);
+            OutputStream out = new FileOutputStream(targetLocation);
+
+            // Copy the bits from instream to outstream
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+        }
+    }
 
 
     private void showAlertDialog(String message) {
@@ -124,9 +188,9 @@ public class ImportVideoActivty extends BaseActivity {
 
             optionDialog = new Dialog(ImportVideoActivty.this);
             optionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            optionDialog.setContentView(R.layout.alert_chooce_video);
+            optionDialog.setContentView(R.layout.five_sec_video);
 
-            ((TextView) optionDialog.findViewById(R.id.textView1)).setText("Oopss, We can't let you do this");
+            ((TextView) optionDialog.findViewById(R.id.textView1)).setText("Oops, we can't let you do that");
             ((TextView) optionDialog.findViewById(R.id.textView2)).setText(message);
 
            // ((TextView)optionDialog.findViewById(R.id.textView1)).setTypeface(FontTypeface.getTypeface(ImportVideoActivty.this, AppConstants.FONT_SUFI_REGULAR));
