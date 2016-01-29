@@ -940,8 +940,11 @@ public class EditingVideoActivity extends BaseActivity {
             overlayView.convertOverlayToPNG("", brandOverlay, videoWidth, videoHeight, fileName);
             int x = (int) (videoWidth * (brandOverlay.x / 100.f));
             int y = (int) (videoHeight * (brandOverlay.y / 100.f));
-            VideoOverlay info = new VideoOverlay(0, MainApplication.getInstance().getVideoLength(), x, y, fileName);
-            videoOverlayInformation.add(info);
+            if (FileUtils.isExistFile(fileName)) {
+                VideoOverlay info = new VideoOverlay(0, MainApplication.getInstance().getVideoLength(), x, y, fileName);
+                videoOverlayInformation.add(info);
+            }
+
         }
 
         //convert caption overlay into image.
@@ -952,8 +955,10 @@ public class EditingVideoActivity extends BaseActivity {
 
             int x = (int) (videoWidth * (title.getCaptionOverlay().x / 100.f));
             int y = (int) (videoHeight * (title.getCaptionOverlay().y / 100.f));
-            VideoOverlay info = new VideoOverlay(title.getStartTime(), title.getEndTime(), x, y, fileName);
-            videoOverlayInformation.add(info);
+            if (FileUtils.isExistFile(fileName)) {
+                VideoOverlay info = new VideoOverlay(title.getStartTime(), title.getEndTime(), x, y, fileName);
+                videoOverlayInformation.add(info);
+            }
         }
 
         showActivity(UploadingVideoScreen.class, editJobTitle.getText().toString());
