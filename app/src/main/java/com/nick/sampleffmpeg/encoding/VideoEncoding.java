@@ -74,11 +74,13 @@ public class VideoEncoding {
         } else {
             progress += stepProgress;
         }
+        strVideoSize = "";
+        if (videoWidth != 0 && videoHeight != 0) {
+            strVideoSize = "-s " + Integer.toString(videoWidth) + "x" + Integer.toString(videoHeight) + " ";
+        }
 
-
-        strVideoSize = Integer.toString(videoWidth) + "x" + Integer.toString(videoHeight);
         //String commands = "-y -threads 5 -i src.mp4 -crf 22 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s " + strVideoSize + " -r 25 -c:v libx264 dst.mp4";
-        String commands = "-y -threads 5 -i src.mp4 -c:a aac -strict experimental -crf 22 -preset ultrafast -r 25 -c:v libx264 -s " + strVideoSize + " dst.mp4";
+        String commands = "-y -i src.mp4 -c:a aac -preset ultrafast -c:v libx264 " + strVideoSize + "dst.mp4";
         String srcVideoFilePath = "";
         String dstVideoFilePath = "";
         //progressDialog.show();
