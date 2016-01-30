@@ -28,6 +28,9 @@ public class TopDownloader {
     private  String extenstion;
     private  String _directoryName;
     String outPutFile;
+    final int TIMEOUT_CONNECTION = 5000;//5sec
+    private final int TIMEOUT_SOCKET = 30000;//30sec
+
     private EditingVideoActivity.TopVideoDownload topVideoDownload = null;
     public TopDownloader(Context context, String url, String extenstion, String _directoryName){
         this.url = url;
@@ -51,7 +54,7 @@ public class TopDownloader {
             super.onPreExecute();
         }
 
-        @Override
+/*        @Override
         protected String doInBackground(String... aurl) {
             int count;
 
@@ -84,11 +87,11 @@ public class TopDownloader {
                 output.close();
                 input.close();
 
-               /* String unzipLocation = getFilePath(_directoryName)+"/";
-                String zipFile = getFilePath(_directoryName)+"/"+"TopAndTail";*/
+               *//* String unzipLocation = getFilePath(_directoryName)+"/";
+                String zipFile = getFilePath(_directoryName)+"/"+"TopAndTail";*//*
 
-              /*  //Decompress d = new Decompress(zipFile, unzipLocation);
-                //d.unzip();*/
+              *//*  //Decompress d = new Decompress(zipFile, unzipLocation);
+                //d.unzip();*//*
 
 
             } catch (Exception e) {
@@ -96,7 +99,54 @@ public class TopDownloader {
             }
             return outPutFile;
 
-        }
+        }*/
+
+        @Override
+        protected String doInBackground(String... f_url) {
+            int count;
+            try {
+
+
+                URL url = new URL(f_url[0]);
+                long startTime = System.currentTimeMillis();
+                URLConnection ucon = url.openConnection();
+
+                //this timeout affects how long it takes for the app to realize there's a connection problem
+                ucon.setReadTimeout(TIMEOUT_CONNECTION);
+                ucon.setConnectTimeout(TIMEOUT_SOCKET);
+
+
+                //Define InputStreams to read from the URLConnection.
+                // uses 3KB download buffer
+                InputStream is = ucon.getInputStream();
+                BufferedInputStream inStream = new BufferedInputStream(is, 1024 * 5);
+                outPutFile = getFilePath(_directoryName)+"/"+"TopVideo." +extenstion;
+                FileOutputStream outStream = new FileOutputStream(outPutFile);
+                byte[] buff = new byte[5 * 1024];
+
+                //Read bytes (and store them) until there is nothing more to read(-1)
+                int len;
+                while ((len = inStream.read(buff)) != -1) {
+                    outStream.write(buff, 0, len);
+                }
+
+                //clean up
+                outStream.flush();
+                outStream.close();
+                inStream.close();
+
+
+
+                return null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return outPutFile;
+
+
+    }
+
+
         protected void onProgressUpdate(String... progress) {
             Log.d("ANDRO_ASYNC",progress[0]);
         }

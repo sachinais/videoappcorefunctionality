@@ -27,6 +27,10 @@ public class TailDownloader {
     private Context context;
     private  String extenstion;
     private  String _directoryName;
+    final int TIMEOUT_CONNECTION = 5000;//5sec
+    private final int TIMEOUT_SOCKET = 30000;//30sec
+
+
     String outPutFile;
     private EditingVideoActivity.TopVideoDownload topVideoDownload = null;
     public TailDownloader(Context context, String url, String extenstion, String _directoryName){
@@ -57,7 +61,7 @@ public class TailDownloader {
 
             try {
 
-                URL url = new URL(aurl[0]);
+               /* URL url = new URL(aurl[0]);
                 URLConnection conexion = url.openConnection();
                 conexion.connect();
 
@@ -82,7 +86,38 @@ public class TailDownloader {
 
                 output.flush();
                 output.close();
-                input.close();
+                input.close();*/
+
+
+
+
+                URL url = new URL(aurl[0]);
+                long startTime = System.currentTimeMillis();
+                URLConnection ucon = url.openConnection();
+
+                //this timeout affects how long it takes for the app to realize there's a connection problem
+                ucon.setReadTimeout(TIMEOUT_CONNECTION);
+                ucon.setConnectTimeout(TIMEOUT_SOCKET);
+
+
+                //Define InputStreams to read from the URLConnection.
+                // uses 3KB download buffer
+                InputStream is = ucon.getInputStream();
+                BufferedInputStream inStream = new BufferedInputStream(is, 1024 * 5);
+                outPutFile = getFilePath(_directoryName)+"/"+"TailVideo." +extenstion;
+                FileOutputStream outStream = new FileOutputStream(outPutFile);
+                byte[] buff = new byte[5 * 1024];
+
+                //Read bytes (and store them) until there is nothing more to read(-1)
+                int len;
+                while ((len = inStream.read(buff)) != -1) {
+                    outStream.write(buff, 0, len);
+                }
+
+                //clean up
+                outStream.flush();
+                outStream.close();
+                inStream.close();
 
                /* String unzipLocation = getFilePath(_directoryName)+"/";
                 String zipFile = getFilePath(_directoryName)+"/"+"TopAndTail";*/

@@ -222,8 +222,10 @@ public class UploadService extends IntentService {
                     Log.i(TAG, String.format("Will retry to upload the video ([%d] out of [%d] reattempts)",
                             mUploadAttemptCount, MAX_RETRY));
                     zzz(UPLOAD_REATTEMPT_DELAY_SEC * 1000);
-                    geyCredentials();
+                 //   geyCredentials();
                 } else {
+                    Intent intent1 = new Intent(UploadingVideoScreen.ACTION_CANCEL_UPLOAD);
+                    sendBroadcast(intent1);
                     Log.e(TAG, String.format("Giving up on trying to upload %s after %d attempts",
                             fileUri.toString(), mUploadAttemptCount));
                     return;

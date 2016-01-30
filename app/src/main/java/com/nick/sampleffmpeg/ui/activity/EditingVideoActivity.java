@@ -264,7 +264,7 @@ public class EditingVideoActivity extends BaseActivity {
                                 public void run() {
                                     flagTailVideoConverted = true;
                                     findViewById(R.id.pb_Tail).setVisibility(View.GONE);
-                                    findViewById(R.id.pb_Top).setVisibility(View.GONE);
+
                                     initializeThumbView();
                                     mTask = null;
                                 }
@@ -359,6 +359,7 @@ public class EditingVideoActivity extends BaseActivity {
                 fileDownloader.startDownload(new TopVideoDownload() {
                     @Override
                     public void getTopVideoUrl(final String url) {
+                        findViewById(R.id.pb_Top).setVisibility(View.GONE);
                         Constant.setDownloadTopVideo(url);
                         flagTopVideoDownloaded = true;
                         convertTopVideoVideoFormat();
@@ -413,6 +414,7 @@ public class EditingVideoActivity extends BaseActivity {
                     @Override
                     public void getTopVideoUrl(final String url) {
                         flagTailVideoDownloaded = true;
+                        findViewById(R.id.pb_Tail).setVisibility(View.GONE);
                         Constant.setDownloadTailVideo(url);
                         convertTopVideoVideoFormat();
                     }

@@ -153,6 +153,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
         IntentFilter intentfilter = new IntentFilter();
         intentfilter.addAction(ACTION_PROGRESS_UPDATE);
         intentfilter.addAction(ACTION_UPLOAD_COMPLETED);
+        intentfilter.addAction(ACTION_CANCEL_UPLOAD);
         registerReceiver(receiver, intentfilter);
         setFonts();
 
@@ -405,6 +406,40 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
     }
 
 
+    private void showYesNoMessage() {
+        try {
+
+
+            optionDialog = new Dialog(UploadingVideoScreen.this);
+            optionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            optionDialog.setCanceledOnTouchOutside(false);
+            optionDialog.setCancelable(false);
+            optionDialog.setContentView(R.layout.yes_no_alert);
+            ((TextView) optionDialog.findViewById(R.id.buttonOk)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    optionDialog.dismiss();
+                    getYouTubeCredentials();
+
+                }
+            });
+            ((TextView) optionDialog.findViewById(R.id.buttonCancel)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    optionDialog.dismiss();
+
+                }
+            });
+            optionDialog.show();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     private void showAccountAlertDialog(String title, String message) {
         try {
 
@@ -530,12 +565,12 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
                 uri = Uri.fromFile(new File(Constant.getMergedVideo()));
                 ((TextView) findViewById(R.id.btnNext)).setTextColor(getResources().getColor(R.color.color_sign_btn));
-                geyCredentials();
+                getYouTubeCredentials();
             }
         }, Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT);
     }
 
-    public void geyCredentials() {
+    public void getYouTubeCredentials() {
         try {
             if (CheckNetworkConnection.isNetworkAvailable(UploadingVideoScreen.this)) {
                 List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
@@ -777,6 +812,10 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
                 videoLink = intent.getExtras().getString("url");
                 showAccountAlertDialog("Success", "Video was uploaded.");
                 updateYoutubeKeyOnServer(videoLink);
+            }
+            else if (intent.getAction() == ACTION_CANCEL_UPLOAD) {
+
+                showYesNoMessage();
             }
         }
     };
