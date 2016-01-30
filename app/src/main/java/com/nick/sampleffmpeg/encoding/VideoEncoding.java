@@ -80,7 +80,7 @@ public class VideoEncoding {
         }
 
         //String commands = "-y -threads 5 -i src.mp4 -crf 22 -preset ultrafast -ar 44100 -c:a aac -strict experimental -s " + strVideoSize + " -r 25 -c:v libx264 dst.mp4";
-        String commands = "-y -i src.mp4 -c:a aac -preset ultrafast -c:v libx264 " + strVideoSize + "dst.mp4";
+        String commands = "-y -threads 5 -i src.mp4 -c:a aac -strict experimental -crf 22 -preset ultrafast -c:v libx264 " + strVideoSize + "dst.mp4";
         String srcVideoFilePath = "";
         String dstVideoFilePath = "";
         //progressDialog.show();
