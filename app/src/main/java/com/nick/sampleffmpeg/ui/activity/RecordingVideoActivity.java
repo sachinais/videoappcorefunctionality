@@ -588,6 +588,10 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     }
 
     private void selectTemplateItem(final int options1) {
+        ;
+        File fileOFTemplete = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp/"+options1Items.get(options1).getDirectoryId()) ;
+
+
         if (findViewById(R.id.layout_loading_template).getVisibility() == View.VISIBLE) {
             showAlert(R.string.str_alert_title_information, "Template is still loading.", "OK");
             return;
@@ -596,7 +600,15 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         if (Constant.flagDebug) {
             MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
             overlayview.updateOverlay();
-        } else {
+        }
+
+       else if (fileOFTemplete.exists()) {
+            MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
+            overlayview.updateOverlay();
+        }
+
+
+        else {
             FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this, getTemplateUrl((int) options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(), options1Items.get(options1).getDirectoryId());
             findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
             fileDownloader.startDownload(new Runnable() {
@@ -615,7 +627,24 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         }
     }
 
+    private String getFilePath(String _directorName){
+        File folder = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp");
+        File file2 = null;
+        boolean success = true;
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            if (!folder.exists()) {
+                folder.mkdir();
+            }
+            file2 = new File(folder.getAbsolutePath(),_directorName);
+            if(!file2.exists()){
+                file2.mkdir();
 
+            }
+
+        }
+        return file2.getAbsolutePath();
+    }
     private void sendTemplateRequest() {
         try {
             if (CheckNetworkConnection.isNetworkAvailable(RecordingVideoActivity.this)) {
