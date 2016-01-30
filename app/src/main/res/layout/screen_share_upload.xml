@@ -17,7 +17,7 @@
 
             <ImageView
                 android:id="@+id/btn_back"
-                android:layout_width="32dp"
+                android:layout_width="25dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/previous" />
@@ -59,7 +59,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -107,7 +107,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:orientation="horizontal">
@@ -289,6 +289,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:orientation="vertical"
+            android:layout_centerInParent="true"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:visibility="visible">
@@ -298,9 +299,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="30dp"
                 android:paddingLeft="10dp"
-                android:background="@drawable/bg_select_plateform"
+                android:background="@drawable/ripple_post_video"
                 android:paddingRight="10dp"
                 android:visibility="visible">
 
@@ -308,6 +309,7 @@
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
+                    android:alpha=".3"
                     android:src="@drawable/share_icon" />
 
                 <TextView
@@ -324,13 +326,147 @@
             </LinearLayout>
 
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/mlti_share"
-                android:layout_marginTop="20dp"
-                android:visibility="visible" />
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:orientation="vertical"
+              android:gravity="center_horizontal"
+              android:layout_marginTop="20dp"
+
+              android:layout_height="wrap_content">
+
+              <LinearLayout
+                  android:layout_gravity="center"
+                  android:layout_width="100dp"
+                  android:gravity="center"
+                  android:layout_height="wrap_content">
+
+                  <ImageView
+                      android:id="@+id/iv_CompanyYoutube"
+                      android:layout_width="25dp"
+                      android:src="@drawable/youtube_icon"
+                      android:layout_height="15dp" />
+                  <ImageView
+                      android:id="@+id/iv_CompnayFacebook"
+
+                      android:layout_width="25dp"
+                      android:src="@drawable/fb"
+                      android:layout_height="15dp" />
+                  <ImageView
+                      android:id="@+id/iv_CompanyLinkedIn"
+
+                      android:layout_width="25dp"
+                      android:src="@drawable/linkedin"
+                      android:layout_height="15dp" />
+                  <ImageView
+                      android:id="@+id/iv_CompanyTwitter"
+
+                      android:layout_width="25dp"
+                      android:src="@drawable/twitter"
+                      android:layout_height="15dp" />
+
+
+
+
+              </LinearLayout>
+
+              <LinearLayout
+                  android:layout_width="100dp"
+                  android:gravity="center"
+                  android:layout_marginRight="5dp"
+                  android:layout_marginLeft="8dp"
+                  android:layout_height="match_parent"
+                  >
+
+                  <View
+                      android:layout_width="30dp"
+                      android:layout_height="1dp"
+                      android:layout_gravity="center_horizontal|center"
+                      android:background="@color/color_black" />
+
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="center_horizontal|center"
+                      android:paddingLeft="5dp"
+                      android:paddingRight="5dp"
+                      android:text="company"
+                      android:textSize="8sp"
+                      android:textColor="@color/color_black" />
+
+                  <View
+                      android:layout_width="35dp"
+                      android:layout_height="1dp"
+                      android:layout_gravity="center_horizontal|center"
+                      android:background="@color/color_black">
+
+                  </View>
+
+
+              </LinearLayout>
+              <LinearLayout
+                  android:layout_width="100dp"
+                  android:layout_marginTop="5dp"
+                  android:gravity="center"
+                  android:layout_height="wrap_content">
+
+                  <ImageView
+                      android:id="@+id/iv_PersonalFacebook"
+                      android:layout_width="25dp"
+                      android:src="@drawable/fb"
+                      android:layout_height="15dp" />
+                  <ImageView
+                      android:id="@+id/iv_PersonalLinkedIn"
+                      android:layout_width="25dp"
+                      android:src="@drawable/linkedin"
+                      android:layout_height="15dp" />
+                  <ImageView
+                      android:id="@+id/iv_PersonalTwitter"
+                      android:layout_width="25dp"
+                      android:src="@drawable/twitter"
+                      android:layout_height="15dp" />
+
+
+
+
+
+
+              </LinearLayout>
+
+              <LinearLayout
+                  android:layout_width="80dp"
+                  android:layout_height="match_parent"
+                  android:layout_marginLeft="5dp">
+
+                  <View
+                      android:layout_width="15dp"
+                      android:layout_height="1dp"
+                      android:layout_gravity="center_horizontal|center"
+                      android:background="@color/color_black" />
+
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="center_horizontal|center"
+                      android:paddingLeft="5dp"
+                      android:paddingRight="5dp"
+                      android:text="personal"
+                      android:textSize="8sp"
+                      android:textColor="@color/color_black" />
+
+                  <View
+                      android:layout_width="15dp"
+                      android:layout_height="1dp"
+                      android:layout_gravity="center_horizontal|center"
+                      android:background="@color/color_black">
+
+                  </View>
+
+
+              </LinearLayout>
+
+          </LinearLayout>
+
+
 
         </LinearLayout>
 

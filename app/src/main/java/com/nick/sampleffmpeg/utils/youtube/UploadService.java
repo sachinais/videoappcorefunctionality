@@ -97,6 +97,7 @@ public class UploadService extends IntentService {
     private int mUploadAttemptCount;
     GoogleCredential credential =null;
     Intent intent;
+    boolean requestStatus;
     Uri fileUri;
     public UploadService() {
         super("YTUploadService");
@@ -222,7 +223,16 @@ public class UploadService extends IntentService {
                     Log.i(TAG, String.format("Will retry to upload the video ([%d] out of [%d] reattempts)",
                             mUploadAttemptCount, MAX_RETRY));
                     zzz(UPLOAD_REATTEMPT_DELAY_SEC * 1000);
-                    geyCredentials();
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            geyCredentials();
+                        }
+                    });
+                    thread.start();
+
+
+
                 } else {
                     Intent intent1 = new Intent(UploadingVideoScreen.ACTION_CANCEL_UPLOAD);
                     sendBroadcast(intent1);
@@ -236,7 +246,8 @@ public class UploadService extends IntentService {
 
     public void geyCredentials() {
         try {
-            if (CheckNetworkConnection.isNetworkAvailable(this)) {
+            if (CheckNetworkConnection.isNetworkAvailable(this) && !isRequestSend()) {
+                setRequestStatus(true);
                 List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
                 RequestBean requestBean = new RequestBean();
                 requestBean.setUrl("update_youtube_api_credentials.php");
@@ -251,11 +262,22 @@ public class UploadService extends IntentService {
         }
     }
 
+    public boolean isRequestSend(){
+
+        return requestStatus;
+    }
+
+    public void setRequestStatus(boolean requestSend){
+        requestStatus = requestSend;
+    }
+
+
     private RequestListner requestCredentials = new RequestListner() {
 
         @Override
         public void getResponse(JSONObject jsonObject) {
             try {
+                setRequestStatus(false);
                 String url = "";
                 if (jsonObject != null) {
                     if (!jsonObject.isNull("yt_credentials")) {
@@ -306,7 +328,7 @@ public class UploadService extends IntentService {
                     return;
                 }
             } else {
-                ResumableUpload.showSelectableNotification(videoId, getApplicationContext());
+               // ResumableUpload.showSelectableNotification(videoId, getApplicationContext());
                 return;
             }
         }

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
+import com.nick.sampleffmpeg.dataobject.SelectPlatFromDataObject;
 import com.nick.sampleffmpeg.network.CheckNetworkConnection;
 import com.nick.sampleffmpeg.network.CustomDialogs;
 import com.nick.sampleffmpeg.network.RequestBean;
@@ -160,6 +162,7 @@ public class SharingVideoScreen extends Activity {
 
             getBundleData();
             setFont();
+            setSocialAccountInfo();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -301,7 +304,7 @@ public class SharingVideoScreen extends Activity {
                         findViewById(R.id.ll_BeforePost).setVisibility(View.GONE);
                         findViewById(R.id.ll_AfterPost).setVisibility(View.VISIBLE);
 
-                        showAlertDialog("Link shared successfully");
+                        showAlertDialog("Success", "Video posted successfully.");
 
                     }
                 }
@@ -311,19 +314,20 @@ public class SharingVideoScreen extends Activity {
         }
     };
 
-    private void showAlertDialog(String message) {
+    private void showAlertDialog(String title, String message) {
         try {
+
+
             optionDialog = new Dialog(SharingVideoScreen.this);
             optionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            optionDialog.setCancelable(false);
-            optionDialog.setCanceledOnTouchOutside(false);
             optionDialog.setContentView(R.layout.alert_dialog);
-
+            ((TextView) optionDialog.findViewById(R.id.textView1)).setText(title);
             ((TextView) optionDialog.findViewById(R.id.textView2)).setText(message);
             ((TextView) optionDialog.findViewById(R.id.buttonYes)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     optionDialog.dismiss();
+                    //finish();
 
                 }
             });
@@ -447,4 +451,78 @@ public class SharingVideoScreen extends Activity {
 
         }
     }
+
+
+    public void setSocialAccountInfo(){
+        try{
+            List<SelectPlatFromDataObject> selectPlatFromDataObjectList = MainApplication.getInstance().getDiffrentPlatformDataValue();
+
+            for (int i = 0; i < selectPlatFromDataObjectList.size(); i++) {
+                if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("p_facebook")) {
+
+                    if (selectPlatFromDataObjectList.get(i)._has_valid_auth) {
+                        if (selectPlatFromDataObjectList.get(i)._platformEnabled)
+                            ((ImageView) findViewById(R.id.iv_PersonalFacebook)).setImageResource(R.drawable.enable_facebook_selectale_platfrom);
+                    }
+
+                } else if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("p_linkedin")) {
+
+                    if (selectPlatFromDataObjectList.get(i)._has_valid_auth) {
+                        if (selectPlatFromDataObjectList.get(i)._platformEnabled)
+                            ((ImageView) findViewById(R.id.iv_PersonalLinkedIn)).setImageResource(R.drawable.enable_linkedin_selectale_platfrom);
+
+                    }
+
+
+                } else if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("p_twitter")) {
+
+                    if (selectPlatFromDataObjectList.get(i)._has_valid_auth) {
+
+                        if (selectPlatFromDataObjectList.get(i)._platformEnabled)
+                            ((ImageView) findViewById(R.id.iv_PersonalTwitter)).setImageResource(R.drawable.enable_twitter_selectale_platfrom);
+                    }
+
+
+                }
+
+
+                if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("c_facebook")) {
+
+                    if (selectPlatFromDataObjectList.get(i)._has_valid_auth) {
+                        if (selectPlatFromDataObjectList.get(i)._platformEnabled)
+                            ((ImageView) findViewById(R.id.iv_CompnayFacebook)).setImageResource(R.drawable.enable_facebook_selectale_platfrom);
+
+                    }
+
+
+                } else if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("c_linkedin")) {
+
+                    if (selectPlatFromDataObjectList.get(i)._has_valid_auth) {
+                        if (selectPlatFromDataObjectList.get(i)._platformEnabled)
+                            ((ImageView) findViewById(R.id.iv_CompanyLinkedIn)).setImageResource(R.drawable.enable_linkedin_selectale_platfrom);
+
+                    }
+
+                } else if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("c_twitter")) {
+
+                    if (selectPlatFromDataObjectList.get(i)._has_valid_auth) {
+                        if (selectPlatFromDataObjectList.get(i)._platformEnabled)
+                            ((ImageView) findViewById(R.id.iv_CompanyTwitter)).setImageResource(R.drawable.enable_twitter_selectale_platfrom);
+
+                    }
+
+
+                }
+
+            }
+
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
 }
