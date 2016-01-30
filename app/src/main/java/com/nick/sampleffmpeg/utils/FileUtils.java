@@ -21,6 +21,7 @@ import android.view.View;
 import com.nick.sampleffmpeg.ui.view.OverlayView;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,6 +40,50 @@ public class FileUtils {
     public static final String PATH_SEPARATOR = System.getProperty("path.separator");
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
+    public static void copyFile(String inputPath, String inputFile, String outputPath) {
+
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+
+            //create output directory if it doesn't exist
+            File dir = new File (outputPath);
+            if (!dir.exists())
+            {
+                dir.mkdirs();
+            }
+
+
+            in = new FileInputStream(inputPath + inputFile);
+            out = new FileOutputStream(outputPath + inputFile);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            in.close();
+            in = null;
+
+            // write the output file (You have now copied the file)
+            out.flush();
+            out.close();
+
+        }  catch (FileNotFoundException fnfe1) {
+            Log.e("tag", fnfe1.getMessage());
+        }
+        catch (Exception e) {
+            Log.e("tag", e.getMessage());
+        }
+
+    }
+
+    public synchronized static boolean deleteFile(String fileName){
+        File file = new File(fileName);
+        if(file.exists())
+            file.deleteOnExit();
+        return false;
+    }
     /**
      * Delete all files in folder
      * @param fileOrDirectory
