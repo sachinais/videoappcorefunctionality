@@ -937,6 +937,7 @@ public class EditingVideoActivity extends BaseActivity {
 
         //convert brand overlay into png
 
+        int startIndex = 0;
         if (overlayBean.brandLogo != null && overlayBean.brandLogo.backgroundImage.length() > 0) {
             OverlayBean.Overlay brandOverlay = overlayBean.brandLogo;
             String fileName = Constant.getOverlayDirectory() + "0.png";
@@ -946,6 +947,7 @@ public class EditingVideoActivity extends BaseActivity {
             if (FileUtils.isExistFile(fileName)) {
                 VideoOverlay info = new VideoOverlay(0, MainApplication.getInstance().getVideoLength(), x, y, fileName);
                 videoOverlayInformation.add(info);
+                startIndex = 1;
             }
 
         }
@@ -953,7 +955,7 @@ public class EditingVideoActivity extends BaseActivity {
         //convert caption overlay into image.
         for (int i = 0; i < titleList.size(); i++) {
             ChildTextTimelineLayout title = titleList.get(i);
-            String fileName = Constant.getOverlayDirectory() + (i + 1) + ".png";
+            String fileName = Constant.getOverlayDirectory() + (i + startIndex) + ".png";
             overlayView.convertOverlayToPNG(title.getTitleText(), title.getCaptionOverlay(), videoWidth, videoHeight, fileName);
 
             int x = (int) (videoWidth * (title.getCaptionOverlay().x / 100.f));
