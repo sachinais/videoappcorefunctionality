@@ -118,8 +118,10 @@ public class MainApplication extends Application{
         try {
             JSONObject overlayObj = templateArray.getJSONObject(index).getJSONObject("data");
             String directoryID = templateArray.getJSONObject(index).getString("directory");
+            String id = templateArray.getJSONObject(index).getString("id");
+
             selectedOverlay = new OverlayBean();
-            selectedOverlay.parseFromJson(overlayObj, directoryID);
+            selectedOverlay.parseFromJson(overlayObj, directoryID,id);
         } catch (Exception e) {
             e.printStackTrace();
             LogFile.logText(e.getMessage(), null);

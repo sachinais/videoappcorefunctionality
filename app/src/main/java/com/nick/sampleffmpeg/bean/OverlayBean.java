@@ -64,6 +64,8 @@ public class OverlayBean {
     public Overlay contact = null;
 
     public String strDirectoryID = "";
+    public String id = "";
+
     public JSONObject debugJsonObj = null;
 
     private SharedPreferenceWriter sharedPreferenceWriter = null;
@@ -202,13 +204,14 @@ public class OverlayBean {
      * @param obj json object
      * @throws Exception if exception is occured, it will throw automatically.
      */
-    public void parseFromJson(JSONObject obj, String directoryID) throws Exception {
+    public void parseFromJson(JSONObject obj, String directoryID, String templateId) throws Exception {
         captions = new ArrayList<>();
         brandLogo = null;
         name = null;
         contact = null;
 
         debugJsonObj = obj;
+        id = templateId;
         strDirectoryID = directoryID;
 
         sharedPreferenceWriter = SharedPreferenceWriter.getInstance();

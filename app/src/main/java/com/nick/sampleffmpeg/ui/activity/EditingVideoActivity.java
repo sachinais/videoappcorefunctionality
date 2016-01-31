@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
@@ -51,6 +52,7 @@ import com.nick.sampleffmpeg.ui.view.TitleTimeLayout;
 import com.nick.sampleffmpeg.ui.view.WaveformView;
 import com.nick.sampleffmpeg.utils.BitmapUtils;
 import com.nick.sampleffmpeg.utils.FileUtils;
+import com.nick.sampleffmpeg.utils.GlideCircleTransform;
 import com.nick.sampleffmpeg.utils.LogFile;
 import com.nick.sampleffmpeg.utils.StringUtils;
 import com.nick.sampleffmpeg.utils.TailDownloader;
@@ -919,8 +921,11 @@ public class EditingVideoActivity extends BaseActivity {
                     File imgFile = new File(thumbNailUrl);
                     if (imgFile.exists()) {
                         Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                        imgThumbVideo1.setImageBitmap(myBitmap);
-                        imgThumbVideo1.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                       Glide.with(EditingVideoActivity.this).load(imgFile).transform(new GlideCircleTransform(EditingVideoActivity.this)).into((ImageView) findViewById(R.id.img_thumb_video1));
+                        File fileOFTemplete = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp/"+MainApplication.getInstance().getTemplate().strDirectoryID) ;
+                        File file = new File(fileOFTemplete, "brand.png");
+                        Bitmap brandBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        ((ImageView)findViewById(R.id.iv_BrandImage)).setImageBitmap(brandBitmap);
                     }
                 }
 

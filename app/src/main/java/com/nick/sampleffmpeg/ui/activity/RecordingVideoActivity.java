@@ -229,7 +229,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             e.printStackTrace();
         }
 
-        selectTemplateItem(0);
+        selectTemplateItem(0,false);
     }
 
     private void getStoredTemplateIfNull() {
@@ -569,7 +569,10 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
             @Override
             public void onOptionsSelect(final int options1, int option2, int options3) {
-                selectTemplateItem(options1);
+
+
+
+                selectTemplateItem(options1 , true);
                 MainApplication.getInstance().setSelectedTemplePosition(options1);
                 //返回的分别是三个级别的选中位置
                /* String tx = options1Items.get(options1).getPickerViewText()
@@ -587,7 +590,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
     }
 
-    private void selectTemplateItem(final int options1) {
+    private void selectTemplateItem(final int options1 , boolean slected) {
         ;
         File fileOFTemplete = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp/"+options1Items.get(options1).getDirectoryId()) ;
 
@@ -603,7 +606,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             overlayview.updateOverlay();
         }
 
-       else if (fileOFTemplete.exists() && contents != null &&contents.length!=0 ) {
+       else if (fileOFTemplete.exists() && contents != null &&contents.length!=0 && !slected ) {
             MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
             overlayview.updateOverlay();
         }

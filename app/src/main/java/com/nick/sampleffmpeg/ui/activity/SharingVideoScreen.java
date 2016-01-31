@@ -461,15 +461,19 @@ public class SharingVideoScreen extends Activity {
                 if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("p_facebook")) {
 
                     if (selectPlatFromDataObjectList.get(i)._has_valid_auth) {
-                        if (selectPlatFromDataObjectList.get(i)._platformEnabled)
                             ((ImageView) findViewById(R.id.iv_PersonalFacebook)).setImageResource(R.drawable.enable_facebook_selectale_platfrom);
+                    }else{
+                        ((ImageView) findViewById(R.id.iv_PersonalFacebook)).setImageResource(R.drawable.fb);
+
                     }
 
                 } else if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("p_linkedin")) {
 
                     if (selectPlatFromDataObjectList.get(i)._has_valid_auth) {
-                        if (selectPlatFromDataObjectList.get(i)._platformEnabled)
                             ((ImageView) findViewById(R.id.iv_PersonalLinkedIn)).setImageResource(R.drawable.enable_linkedin_selectale_platfrom);
+
+                    }else{
+                        ((ImageView) findViewById(R.id.iv_PersonalLinkedIn)).setImageResource(R.drawable.linkedin);
 
                     }
 
@@ -478,8 +482,10 @@ public class SharingVideoScreen extends Activity {
 
                     if (selectPlatFromDataObjectList.get(i)._has_valid_auth) {
 
-                        if (selectPlatFromDataObjectList.get(i)._platformEnabled)
                             ((ImageView) findViewById(R.id.iv_PersonalTwitter)).setImageResource(R.drawable.enable_twitter_selectale_platfrom);
+                    }else{
+                        ((ImageView) findViewById(R.id.iv_PersonalTwitter)).setImageResource(R.drawable.twitter);
+
                     }
 
 
@@ -489,8 +495,10 @@ public class SharingVideoScreen extends Activity {
                 if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("c_facebook")) {
 
                     if (selectPlatFromDataObjectList.get(i)._has_valid_auth) {
-                        if (selectPlatFromDataObjectList.get(i)._platformEnabled)
                             ((ImageView) findViewById(R.id.iv_CompnayFacebook)).setImageResource(R.drawable.enable_facebook_selectale_platfrom);
+
+                    }else{
+                        ((ImageView) findViewById(R.id.iv_CompnayFacebook)).setImageResource(R.drawable.fb);
 
                     }
 
@@ -498,16 +506,20 @@ public class SharingVideoScreen extends Activity {
                 } else if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("c_linkedin")) {
 
                     if (selectPlatFromDataObjectList.get(i)._has_valid_auth) {
-                        if (selectPlatFromDataObjectList.get(i)._platformEnabled)
                             ((ImageView) findViewById(R.id.iv_CompanyLinkedIn)).setImageResource(R.drawable.enable_linkedin_selectale_platfrom);
+
+                    }else{
+                        ((ImageView) findViewById(R.id.iv_CompanyLinkedIn)).setImageResource(R.drawable.linkedin);
 
                     }
 
                 } else if (selectPlatFromDataObjectList.get(i)._nameOfAccout.equalsIgnoreCase("c_twitter")) {
 
                     if (selectPlatFromDataObjectList.get(i)._has_valid_auth) {
-                        if (selectPlatFromDataObjectList.get(i)._platformEnabled)
                             ((ImageView) findViewById(R.id.iv_CompanyTwitter)).setImageResource(R.drawable.enable_twitter_selectale_platfrom);
+
+                    }else {
+                        ((ImageView) findViewById(R.id.iv_CompanyTwitter)).setImageResource(R.drawable.twitter);
 
                     }
 
