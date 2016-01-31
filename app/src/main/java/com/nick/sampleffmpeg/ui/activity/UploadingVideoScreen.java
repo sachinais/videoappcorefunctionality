@@ -618,6 +618,10 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
     public void uploadVideo(String accessToken, String refreshTocken) {
 
+
+
+
+
         if (uri != null) {
             Intent uploadIntent = new Intent(this, UploadService.class);
             uploadIntent.setData(uri);

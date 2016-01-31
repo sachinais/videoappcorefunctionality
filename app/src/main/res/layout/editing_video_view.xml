@@ -117,8 +117,8 @@
                     <ImageView
                         android:id="@+id/iv_BrandImage"
                         android:layout_width="40dp"
-                        android:layout_height="25dp"
-                        android:layout_margin="3dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="2dp"
                         android:scaleType="fitCenter"
                        />
                     <RelativeLayout
