@@ -98,8 +98,8 @@
                     android:layout_width="40dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="0%"
                     android:gravity="center"
+                    android:text="0%"
                     android:textColor="@color/color_greyish"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -286,22 +286,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:orientation="vertical"
             android:layout_centerInParent="true"
+            android:orientation="vertical"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:visibility="visible">
 
             <LinearLayout
                 android:id="@+id/ll_Post"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 android:layout_height="40dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"
-                android:paddingLeft="10dp"
                 android:background="@drawable/ripple_post_video"
+
+                android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="30dp"
@@ -323,147 +324,185 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/ll_Processing"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/ripple_post_video"
 
-          <LinearLayout
-              android:layout_width="match_parent"
-              android:orientation="vertical"
-              android:gravity="center_horizontal"
-              android:layout_marginTop="20dp"
 
-              android:layout_height="wrap_content">
+                android:visibility="visible">
 
-              <LinearLayout
-                  android:layout_gravity="center"
-                  android:layout_width="100dp"
-                  android:gravity="center"
-                  android:layout_height="wrap_content">
+                <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="fill_parent"
+                    android:layout_height="40dp">
 
-                  <ImageView
-                      android:id="@+id/iv_CompanyYoutube"
-                      android:layout_width="25dp"
-                      android:src="@drawable/youtube_icon"
-                      android:layout_height="15dp" />
-                  <ImageView
-                      android:id="@+id/iv_CompnayFacebook"
-
-                      android:layout_width="25dp"
-                      android:src="@drawable/fb"
-                      android:layout_height="15dp" />
-                  <ImageView
-                      android:id="@+id/iv_CompanyLinkedIn"
-
-                      android:layout_width="25dp"
-                      android:src="@drawable/linkedin"
-                      android:layout_height="15dp" />
-                  <ImageView
-                      android:id="@+id/iv_CompanyTwitter"
-
-                      android:layout_width="25dp"
-                      android:src="@drawable/twitter"
-                      android:layout_height="15dp" />
+                    <ProgressBar
+                        android:id="@+id/progressBar1"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_centerVertical="true"
+                        android:progressDrawable="@drawable/pb_color" />
+                    <TextView
+                        android:id="@+id/web_engine"
+                        android:layout_width="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/progressBar1"
+                        android:layout_centerVertical="true"
+                        android:text="Waiting for Upload"
+                        android:textColor="@color/color_greyish"
+                        android:textSize="14sp"
+                        android:visibility="visible" />
 
 
 
-
-              </LinearLayout>
-
-              <LinearLayout
-                  android:layout_width="100dp"
-                  android:gravity="center"
-                  android:layout_marginRight="5dp"
-                  android:layout_marginLeft="8dp"
-                  android:layout_height="match_parent"
-                  >
-
-                  <View
-                      android:layout_width="30dp"
-                      android:layout_height="1dp"
-                      android:layout_gravity="center_horizontal|center"
-                      android:background="@color/color_black" />
-
-                  <TextView
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_gravity="center_horizontal|center"
-                      android:paddingLeft="5dp"
-                      android:paddingRight="5dp"
-                      android:text="company"
-                      android:textSize="8sp"
-                      android:textColor="@color/color_black" />
-
-                  <View
-                      android:layout_width="35dp"
-                      android:layout_height="1dp"
-                      android:layout_gravity="center_horizontal|center"
-                      android:background="@color/color_black">
-
-                  </View>
+                </RelativeLayout>
 
 
-              </LinearLayout>
-              <LinearLayout
-                  android:layout_width="100dp"
-                  android:layout_marginTop="5dp"
-                  android:gravity="center"
-                  android:layout_height="wrap_content">
+            </LinearLayout>
 
-                  <ImageView
-                      android:id="@+id/iv_PersonalFacebook"
-                      android:layout_width="25dp"
-                      android:src="@drawable/fb"
-                      android:layout_height="15dp" />
-                  <ImageView
-                      android:id="@+id/iv_PersonalLinkedIn"
-                      android:layout_width="25dp"
-                      android:src="@drawable/linkedin"
-                      android:layout_height="15dp" />
-                  <ImageView
-                      android:id="@+id/iv_PersonalTwitter"
-                      android:layout_width="25dp"
-                      android:src="@drawable/twitter"
-                      android:layout_height="15dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal"
 
+                android:orientation="vertical">
 
+                <LinearLayout
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center">
 
+                    <ImageView
+                        android:id="@+id/iv_CompanyYoutube"
+                        android:layout_width="25dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/youtube_icon" />
 
+                    <ImageView
+                        android:id="@+id/iv_CompnayFacebook"
 
+                        android:layout_width="25dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/fb" />
 
-              </LinearLayout>
+                    <ImageView
+                        android:id="@+id/iv_CompanyLinkedIn"
 
-              <LinearLayout
-                  android:layout_width="80dp"
-                  android:layout_height="match_parent"
-                  android:layout_marginLeft="5dp">
+                        android:layout_width="25dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/linkedin" />
 
-                  <View
-                      android:layout_width="15dp"
-                      android:layout_height="1dp"
-                      android:layout_gravity="center_horizontal|center"
-                      android:background="@color/color_black" />
+                    <ImageView
+                        android:id="@+id/iv_CompanyTwitter"
 
-                  <TextView
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_gravity="center_horizontal|center"
-                      android:paddingLeft="5dp"
-                      android:paddingRight="5dp"
-                      android:text="personal"
-                      android:textSize="8sp"
-                      android:textColor="@color/color_black" />
-
-                  <View
-                      android:layout_width="15dp"
-                      android:layout_height="1dp"
-                      android:layout_gravity="center_horizontal|center"
-                      android:background="@color/color_black">
-
-                  </View>
+                        android:layout_width="25dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/twitter" />
 
 
-              </LinearLayout>
+                </LinearLayout>
 
-          </LinearLayout>
+                <LinearLayout
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center">
 
+                    <View
+                        android:layout_width="30dp"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center_horizontal|center"
+                        android:background="@color/color_black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|center"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="company"
+                        android:textColor="@color/color_black"
+                        android:textSize="8sp" />
+
+                    <View
+                        android:layout_width="35dp"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center_horizontal|center"
+                        android:background="@color/color_black">
+
+                    </View>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/iv_PersonalFacebook"
+                        android:layout_width="25dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/fb" />
+
+                    <ImageView
+                        android:id="@+id/iv_PersonalLinkedIn"
+                        android:layout_width="25dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/linkedin" />
+
+                    <ImageView
+                        android:id="@+id/iv_PersonalTwitter"
+                        android:layout_width="25dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/twitter" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp">
+
+                    <View
+                        android:layout_width="15dp"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center_horizontal|center"
+                        android:background="@color/color_black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|center"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="personal"
+                        android:textColor="@color/color_black"
+                        android:textSize="8sp" />
+
+                    <View
+                        android:layout_width="15dp"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center_horizontal|center"
+                        android:background="@color/color_black">
+
+                    </View>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
 
 
         </LinearLayout>
@@ -495,8 +534,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:id="@+id/ll_OpenDashboard"
@@ -545,8 +583,8 @@
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
                         android:text="or"
-                        android:textSize="14sp"
-                        android:textColor="@color/color_black" />
+                        android:textColor="@color/color_black"
+                        android:textSize="14sp" />
 
                     <View
                         android:layout_width="20dp"

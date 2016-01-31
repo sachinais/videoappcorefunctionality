@@ -43,6 +43,12 @@
             android:screenOrientation="landscape">
             <action android:name="android.intent.action.MAIN" />
         </activity>
+
+        <activity
+            android:name=".ui.activity.FullViewThumbNail"
+            android:screenOrientation="landscape">
+            <action android:name="android.intent.action.MAIN" />
+        </activity>
         <activity
             android:keepScreenOn="true"
             android:name=".ui.activity.RecordingVideoActivity"

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="vertical"
+       >
+
+
+        <LinearLayout
+            android:id="@+id/llBack"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true">
+
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/previous" />
+
+
+            <TextView
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Back"
+                android:textColor="@color/color_sign_btn"
+                android:textSize="18sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="YouTube Thumbnail"
+                android:textColor="@color/color_black"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        android:background="@color/light_grey"
+        android:layout_width="match_parent"
+        android:layout_height="1dp">
+
+    </View>
+    <RelativeLayout
+        android:id="@+id/rl_Thumb"
+        android:layout_marginLeft="15sp"
+        android:layout_marginRight="15sp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/iv_BrandImage"
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:layout_margin="15dp"
+            android:scaleType="fitCenter"
+            />
+        <RelativeLayout
+            android:layout_alignParentRight="true"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/circle"
+            >
+
+            <ImageView
+                android:id="@+id/img_thumb_video1"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerInParent="true"
+                android:scaleType="fitCenter"
+                />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:paddingBottom="20dp"
+            android:text="Watch the Video job ad"
+            android:gravity="center"
+            android:textColor="@color/color_blue"
+            ></TextView>
+    </RelativeLayout>
+
+</LinearLayout>

@@ -20,6 +20,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -86,6 +89,7 @@ public class UploadService extends IntentService {
     /**
      * processing start time
      */
+    String videoId = null;
 
     private static long mStartTime;
     final HttpTransport transport = AndroidHttp.newCompatibleTransport();
@@ -95,14 +99,19 @@ public class UploadService extends IntentService {
      * tracks the number of upload attempts
      */
     private int mUploadAttemptCount;
-    GoogleCredential credential =null;
+    GoogleCredential credential = null;
     Intent intent;
     boolean requestStatus;
     Uri fileUri;
+    long fileSize;
+    InputStream fileInputStream = null;
+
     public UploadService() {
         super("YTUploadService");
     }
+
     YoutubeDataBean youtubeDataBean;
+
     private static void zzz(int duration) throws InterruptedException {
         Log.d(TAG, String.format("Sleeping for [%d] ms ...", duration));
         Thread.sleep(duration);
@@ -147,9 +156,9 @@ public class UploadService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        this.intent =intent;
-         fileUri = intent.getData();
-         youtubeDataBean = new YoutubeDataBean();
+        this.intent = intent;
+        fileUri = intent.getData();
+        youtubeDataBean = new YoutubeDataBean();
         youtubeDataBean.setVideoTitle(intent.getStringExtra(LoginScreen.VIDEO_TITLE));
         youtubeDataBean.setVideoType(intent.getStringExtra(LoginScreen.VIDEO_TYPE));
         youtubeDataBean.setVideoTags(intent.getStringExtra(UploadingVideoScreen.VIDEO_TAGS));
@@ -216,21 +225,12 @@ public class UploadService extends IntentService {
             } else {
 
 
-
-
                 Log.e(TAG, String.format("Failed to upload %s", fileUri.toString()));
                 if (mUploadAttemptCount++ < MAX_RETRY) {
                     Log.i(TAG, String.format("Will retry to upload the video ([%d] out of [%d] reattempts)",
                             mUploadAttemptCount, MAX_RETRY));
                     zzz(UPLOAD_REATTEMPT_DELAY_SEC * 1000);
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            geyCredentials();
-                        }
-                    });
-                    thread.start();
-
+                    geyCredentials();
 
 
                 } else {
@@ -262,12 +262,12 @@ public class UploadService extends IntentService {
         }
     }
 
-    public boolean isRequestSend(){
+    public boolean isRequestSend() {
 
         return requestStatus;
     }
 
-    public void setRequestStatus(boolean requestSend){
+    public void setRequestStatus(boolean requestSend) {
         requestStatus = requestSend;
     }
 
@@ -300,7 +300,6 @@ public class UploadService extends IntentService {
                         }
 
 
-
                     }
                 }
                 //uploadVideo(access_token, refresh_token);
@@ -328,16 +327,14 @@ public class UploadService extends IntentService {
                     return;
                 }
             } else {
-               // ResumableUpload.showSelectableNotification(videoId, getApplicationContext());
+                // ResumableUpload.showSelectableNotification(videoId, getApplicationContext());
                 return;
             }
         }
     }
 
-    private String tryUpload(Uri mFileUri, YouTube youtube, YoutubeDataBean youtubeDataBean) {
-        long fileSize;
-        InputStream fileInputStream = null;
-        String videoId = null;
+    private String tryUpload(final Uri mFileUri, final YouTube youtube, final YoutubeDataBean youtubeDataBean) {
+
         try {
             fileSize = getContentResolver().openFileDescriptor(mFileUri, "r").getStatSize();
             fileInputStream = getContentResolver().openInputStream(mFileUri);
@@ -346,7 +343,12 @@ public class UploadService extends IntentService {
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();*/
 
+
+
+
             videoId = ResumableUpload.upload(youtube, fileInputStream, fileSize, getApplicationContext(), youtubeDataBean);
+
+
 
 
         } catch (FileNotFoundException e) {
@@ -359,6 +361,26 @@ public class UploadService extends IntentService {
             }
         }
         return videoId;
+    }
+    class LooperThread extends Thread {
+        public Handler mHandler;
+
+        @Override
+        public void run() {
+            // Initialize the current thread as a Looper
+            // (this thread can have a MessageQueue now)
+            Looper.prepare();
+
+            mHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    // process incoming messages here
+                }
+            };
+
+            // Run the message queue in this thread
+            Looper.loop();
+        }
     }
 
 }

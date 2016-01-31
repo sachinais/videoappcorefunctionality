@@ -87,7 +87,8 @@ public class SharingVideoScreen extends Activity {
             if (MainApplication.getInstance().getUploadingProgress() == 100) {
                 findViewById(R.id.llProgress).setVisibility(View.GONE);
                 findViewById(R.id.llUploadComple).setVisibility(View.VISIBLE);
-
+                findViewById(R.id.ll_Processing).setVisibility(View.GONE);
+                findViewById(R.id.ll_Post).setVisibility(View.VISIBLE );
             }
             findViewById(R.id.llBack).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -417,7 +418,8 @@ public class SharingVideoScreen extends Activity {
                 videoLink = intent.getExtras().getString("url");
                 ((TextView)findViewById(R.id.tvVideoUrl)).setText(videoLink);
                 //updateYoutubeKeyOnServer(videoLink);
-
+                findViewById(R.id.ll_Processing).setVisibility(View.GONE);
+                findViewById(R.id.ll_Post).setVisibility(View.VISIBLE );
             }
         }
     };

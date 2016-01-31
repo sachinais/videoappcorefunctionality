@@ -68,6 +68,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -216,6 +217,23 @@ public class EditingVideoActivity extends BaseActivity {
             initializeThumbView();
             editJobTitle.setText(strJobTitle);
         }
+
+        findViewById(R.id.rl_Thumb).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(thumbNailUrl!=null && thumbNailUrl.length()>0){
+                    Intent intent = new Intent(EditingVideoActivity.this, FullViewThumbNail.class);
+                    intent.putExtra("Url",thumbNailUrl );
+                    startActivity(intent);
+                }else{
+
+                    showAlert(R.string.str_alert_title_information, "Please wait until thumbnail downloaded.", "Ok");
+
+                }
+
+            }
+        });
+
     }
 
     @Override

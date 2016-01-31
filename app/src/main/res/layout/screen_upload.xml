@@ -538,7 +538,7 @@
                             android:paddingLeft="5dp"
                             android:paddingRight="5sp"
                             android:background="#eeee"
-                            android:text="Compnay"
+                            android:text="Company"
 
                             android:textSize="8sp" />
 
