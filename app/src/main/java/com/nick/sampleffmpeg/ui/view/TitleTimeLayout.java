@@ -3,6 +3,7 @@ package com.nick.sampleffmpeg.ui.view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -19,6 +20,7 @@ import com.nick.sampleffmpeg.R;
 import com.nick.sampleffmpeg.bean.OverlayBean;
 import com.nick.sampleffmpeg.ui.activity.EditingVideoActivity;
 import com.nick.sampleffmpeg.ui.adapter.CaptionPreviewAdapter;
+import com.nick.sampleffmpeg.utils.FontTypeface;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -326,8 +328,14 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
                             }
                         }
                     }, parentActivity.getString(R.string.str_cancel));
+                    int width = v.getWidth();
+                    width = ((View)v.getParent()).getWidth();
                     editTitle = (EditText)v.findViewById(R.id.edit_title_name);
                     editTitle.setTextColor(overlay.color);
+                    Typeface typeFace = FontTypeface.getTypeface(parentActivity, overlay.fontName);
+                    editTitle.setTypeface(typeFace);
+                    editTitle.setTextColor(overlay.color);
+
                     ImageView overlayBackground = (ImageView)v.findViewById(R.id.overlay_background);
                     String filePath = Constant.getApplicationDirectory() + MainApplication.getInstance().getTemplate().strDirectoryID + File.separator + overlay.backgroundImage;;
 
@@ -337,6 +345,14 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
                         overlayBackground.setImageBitmap(myBitmap);
                         overlayBackground.setScaleType(ImageView.ScaleType.FIT_XY);
                     }
+
+                    RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams)editTitle.getLayoutParams();
+
+                    int marginLeft = (int) ((overlay.marginLeft / 100) * relativeParams.width) ;
+                    int marginTop = (int)((overlay.marginTop / 100) * relativeParams.height);
+
+                    relativeParams.setMargins(marginLeft, marginTop, 10, 10);
+                    editTitle.setLayoutParams(relativeParams);
                 }
             });
 

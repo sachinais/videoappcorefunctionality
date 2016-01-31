@@ -92,7 +92,7 @@ public class VideoEncoding {
             srcVideoFilePath = Constant.getDownloadTailVideo();
             dstVideoFilePath = Constant.getTailVideo();
         }
-        if (srcVideoFilePath.length() > 0) {
+        if (srcVideoFilePath != null && srcVideoFilePath.length() > 0) {
             commands = commands.replace("src.mp4", srcVideoFilePath);
             commands = commands.replace("dst.mp4", dstVideoFilePath);
 

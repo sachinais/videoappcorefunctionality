@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="320sp"
     android:layout_height="200sp"
     android:orientation="vertical"
     android:padding="10sp" >
     <ImageView
         android:id="@+id/overlay_background"
-        android:layout_width="match_parent"
+        android:layout_width="320sp"
         android:layout_margin="5sp"
         android:scaleType="fitXY"
         android:layout_height="200sp" />
     <EditText
         android:id="@+id/edit_title_name"
         android:text="Caption text."
-        android:gravity="center"
-        android:layout_centerInParent="true"
+        android:gravity="top"
         android:background="@null"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_width="320sp"
+        android:layout_height="200sp" >
         <requestFocus />
     </EditText>
 

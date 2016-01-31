@@ -577,7 +577,7 @@ public class EditingVideoActivity extends BaseActivity {
 
                             } else {
                                 // convertOverlaysPNG();
-                                showAlert(R.string.str_alert_title_information, "Please wait until top/tail video been processing.", "Ok");
+                                showAlert(R.string.str_alert_title_information, "Please wait until top/tail video been processed.", "Ok");
 
                             }
                         }else{
