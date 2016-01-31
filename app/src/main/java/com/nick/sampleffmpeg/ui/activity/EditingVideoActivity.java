@@ -546,17 +546,26 @@ public class EditingVideoActivity extends BaseActivity {
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        if (flagTopVideoConverted && flagTailVideoConverted) {
-                            if (((TextView) findViewById(R.id.txt_job_title)).getText().toString().length() > 0) {
-                                convertOverlaysPNG();
-                            } else {
-                                showAlert(R.string.str_alert_title_information, "Please enter video title", "Ok");
-                            }
 
-                        } else {
-                            // convertOverlaysPNG();
-                            showAlert(R.string.str_alert_title_information, "Please wait until your top/tail has been downloaded", "Ok");
+                        if(flagTopVideoDownloaded && flagTailVideoDownloaded){
+                            if (flagTopVideoConverted && flagTailVideoConverted) {
+                                if (((TextView) findViewById(R.id.txt_job_title)).getText().toString().length() > 0) {
+                                    convertOverlaysPNG();
+                                } else {
+                                    showAlert(R.string.str_alert_title_information, "Please enter video title.", "Ok");
+                                }
+
+                            } else {
+                                // convertOverlaysPNG();
+                                showAlert(R.string.str_alert_title_information, "Please wait until top/tail video been processing.", "Ok");
+
+                            }
+                        }else{
+                            showAlert(R.string.str_alert_title_information, "Please wait until your top/tail has been downloaded.", "Ok");
                         }
+
+
+
 
                     }
                 });

@@ -591,6 +591,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         ;
         File fileOFTemplete = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp/"+options1Items.get(options1).getDirectoryId()) ;
 
+        File[] contents = fileOFTemplete.listFiles();
 
         if (findViewById(R.id.layout_loading_template).getVisibility() == View.VISIBLE) {
             showAlert(R.string.str_alert_title_information, "Template is still loading.", "OK");
@@ -602,7 +603,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             overlayview.updateOverlay();
         }
 
-       else if (fileOFTemplete.exists()) {
+       else if (fileOFTemplete.exists() && contents != null &&contents.length!=0 ) {
             MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
             overlayview.updateOverlay();
         }
