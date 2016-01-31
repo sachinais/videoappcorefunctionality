@@ -10,24 +10,29 @@
         android:layout_height="50dp"
         android:orientation="horizontal">
 
-        <RelativeLayout
-            android:id="@+id/ll_Cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp">
+        <LinearLayout
+            android:id="@+id/llBack"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true">
+
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/previous" />
+
 
             <TextView
                 android:id="@+id/btnCancel"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:layout_marginLeft="10dp"
-                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:text="Back"
                 android:textColor="@color/color_sign_btn"
                 android:textSize="18sp" />
-        </RelativeLayout>
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -27,7 +27,7 @@ public class AppConstants {
             new FontMatch("OpenSans", "OpenSans-Regular.ttf"),
             new FontMatch("DroidSans", "DroidSans.ttf"),
             new FontMatch("DroidSerif", "DroidSerif.ttf"),
-            new FontMatch("sans-serif", "DroidSerif.ttf"),
+            new FontMatch("sans-serif", "Arimo-Regular.ttf"),
             new FontMatch("ArchitectsDaughter", "ArchitectsDaughter.ttf"),
             new FontMatch("Arimo", "Arimo-Regular.ttf"),
             new FontMatch("Arvo", "Arvo-Regular.ttf"),

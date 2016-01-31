@@ -229,7 +229,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             e.printStackTrace();
         }
 
-        selectTemplateItem(0);
+        selectTemplateItem(0,false);
     }
 
     private void getStoredTemplateIfNull() {
@@ -569,7 +569,10 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
             @Override
             public void onOptionsSelect(final int options1, int option2, int options3) {
-                selectTemplateItem(options1);
+
+
+
+                selectTemplateItem(options1 , true);
                 MainApplication.getInstance().setSelectedTemplePosition(options1);
                 //返回的分别是三个级别的选中位置
                /* String tx = options1Items.get(options1).getPickerViewText()
@@ -587,7 +590,12 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
     }
 
-    private void selectTemplateItem(final int options1) {
+    private void selectTemplateItem(final int options1 , boolean slected) {
+        ;
+        File fileOFTemplete = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp/"+options1Items.get(options1).getDirectoryId()) ;
+
+        File[] contents = fileOFTemplete.listFiles();
+
         if (findViewById(R.id.layout_loading_template).getVisibility() == View.VISIBLE) {
             showAlert(R.string.str_alert_title_information, "Template is still loading.", "OK");
             return;
@@ -596,7 +604,15 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         if (Constant.flagDebug) {
             MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
             overlayview.updateOverlay();
-        } else {
+        }
+
+       else if (fileOFTemplete.exists() && contents != null &&contents.length!=0 && !slected ) {
+            MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
+            overlayview.updateOverlay();
+        }
+
+
+        else {
             FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this, getTemplateUrl((int) options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(), options1Items.get(options1).getDirectoryId());
             findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
             fileDownloader.startDownload(new Runnable() {
@@ -615,7 +631,24 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         }
     }
 
+    private String getFilePath(String _directorName){
+        File folder = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp");
+        File file2 = null;
+        boolean success = true;
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            if (!folder.exists()) {
+                folder.mkdir();
+            }
+            file2 = new File(folder.getAbsolutePath(),_directorName);
+            if(!file2.exists()){
+                file2.mkdir();
 
+            }
+
+        }
+        return file2.getAbsolutePath();
+    }
     private void sendTemplateRequest() {
         try {
             if (CheckNetworkConnection.isNetworkAvailable(RecordingVideoActivity.this)) {

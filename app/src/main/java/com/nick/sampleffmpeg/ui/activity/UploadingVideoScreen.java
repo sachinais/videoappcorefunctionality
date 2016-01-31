@@ -618,6 +618,10 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
 
     public void uploadVideo(String accessToken, String refreshTocken) {
 
+
+
+
+
         if (uri != null) {
             Intent uploadIntent = new Intent(this, UploadService.class);
             uploadIntent.setData(uri);
@@ -827,7 +831,7 @@ public class UploadingVideoScreen extends AppCompatActivity implements GoogleApi
             if (CheckNetworkConnection.isNetworkAvailable(UploadingVideoScreen.this)) {
                 List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
                 paramePairs.add(new BasicNameValuePair("youtube_id", videoLink.split("=")[1]));
-                paramePairs.add(new BasicNameValuePair("template_id", MainApplication.getInstance().getTemplate().strDirectoryID));
+                paramePairs.add(new BasicNameValuePair("template_id", MainApplication.getInstance().getTemplate().id));
                 paramePairs.add(new BasicNameValuePair("title", ((EditText) findViewById(R.id.etVideTitle)).getText().toString()));
                 RequestBean requestBean = new RequestBean();
                 requestBean.setActivity(UploadingVideoScreen.this);

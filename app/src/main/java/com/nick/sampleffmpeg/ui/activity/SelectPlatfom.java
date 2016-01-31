@@ -267,7 +267,7 @@ public class SelectPlatfom extends Activity {
         });
 
 
-        findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.llBack).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();

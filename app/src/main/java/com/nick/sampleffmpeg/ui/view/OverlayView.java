@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -130,15 +131,32 @@ public class OverlayView extends View {
      * create text Bitmap for overlay
      * @param overlay
      */
+
+    void drawMultilineText(String str, int x, int y, Paint paint, Canvas canvas, int fontSize) {
+        int      lineHeight = 0;
+        int      yoffset    = 0;
+        String[] lines      = str.split("\n");
+
+        Rect mBounds = new Rect();
+        // set height of each line (height of text + 20%)
+        paint.getTextBounds("Ig", 0, 2, mBounds);
+        lineHeight = (int) ((float) mBounds.height() * 1.5);
+        // draw each line
+        for (int i = 0; i < lines.length; ++i) {
+            canvas.drawText(lines[i], x, y + yoffset + fontSize, paint);
+            yoffset = yoffset + lineHeight;
+        }
+    }
+
     private Bitmap createOverlayTextBitmap(OverlayBean.Overlay overlay, Bitmap backgroundBitmap, String title) {
         Bitmap ret = null;
         if (backgroundBitmap != null) {
             int width = backgroundBitmap.getWidth();
             int height = backgroundBitmap.getHeight();
 
-            int marginLeft = (int) ((overlay.marginLeft / 360) * width) ;
-            int marginTop = (int)((overlay.marginTop / 360) * height);
-            int fontSize = (int) (((double)overlay.fontSize / 360) * height) ;
+            int marginLeft = (int) ((overlay.marginLeft / 100) * width) ;
+            int marginTop = (int)((overlay.marginTop / 100) * height);
+            int fontSize = (int) (((double)overlay.fontSize / 360) * this.height) ;
             Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(image);
 
@@ -150,15 +168,15 @@ public class OverlayView extends View {
                 Typeface typeFace = FontTypeface.getTypeface(appContext, overlay.fontName);
                 mTextPaint.setTypeface(typeFace);
             }
-
             mTextPaint.setAntiAlias(true);
-            StaticLayout mTextLayout = new StaticLayout(title, mTextPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
-
-            canvas.save();
-
-            canvas.translate(marginLeft, marginTop);
-            mTextLayout.draw(canvas);
-            canvas.restore();
+            drawMultilineText(title, marginLeft, marginTop, mTextPaint, canvas, fontSize);
+//            StaticLayout mTextLayout = new StaticLayout(title, mTextPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+//
+//            canvas.save();
+//
+//            canvas.translate(marginLeft, marginTop);
+//            mTextLayout.draw(canvas);
+//            canvas.restore();
 
             ret = image;
         }

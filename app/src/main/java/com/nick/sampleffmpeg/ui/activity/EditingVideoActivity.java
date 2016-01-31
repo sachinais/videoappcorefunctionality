@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
@@ -51,6 +52,7 @@ import com.nick.sampleffmpeg.ui.view.TitleTimeLayout;
 import com.nick.sampleffmpeg.ui.view.WaveformView;
 import com.nick.sampleffmpeg.utils.BitmapUtils;
 import com.nick.sampleffmpeg.utils.FileUtils;
+import com.nick.sampleffmpeg.utils.GlideCircleTransform;
 import com.nick.sampleffmpeg.utils.LogFile;
 import com.nick.sampleffmpeg.utils.StringUtils;
 import com.nick.sampleffmpeg.utils.TailDownloader;
@@ -66,6 +68,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -214,6 +217,23 @@ public class EditingVideoActivity extends BaseActivity {
             initializeThumbView();
             editJobTitle.setText(strJobTitle);
         }
+
+        findViewById(R.id.rl_Thumb).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(thumbNailUrl!=null && thumbNailUrl.length()>0){
+                    Intent intent = new Intent(EditingVideoActivity.this, FullViewThumbNail.class);
+                    intent.putExtra("Url",thumbNailUrl );
+                    startActivity(intent);
+                }else{
+
+                    showAlert(R.string.str_alert_title_information, "Please wait until thumbnail downloaded.", "Ok");
+
+                }
+
+            }
+        });
+
     }
 
     @Override
@@ -546,17 +566,26 @@ public class EditingVideoActivity extends BaseActivity {
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        if (flagTopVideoConverted && flagTailVideoConverted) {
-                            if (((TextView) findViewById(R.id.txt_job_title)).getText().toString().length() > 0) {
-                                convertOverlaysPNG();
-                            } else {
-                                showAlert(R.string.str_alert_title_information, "Please enter video title", "Ok");
-                            }
 
-                        } else {
-                            // convertOverlaysPNG();
-                            showAlert(R.string.str_alert_title_information, "Please wait until the top/tail videos have been processed.", "Ok");
+                        if(flagTopVideoDownloaded && flagTailVideoDownloaded){
+                            if (flagTopVideoConverted && flagTailVideoConverted) {
+                                if (((TextView) findViewById(R.id.txt_job_title)).getText().toString().length() > 0) {
+                                    convertOverlaysPNG();
+                                } else {
+                                    showAlert(R.string.str_alert_title_information, "Please enter video title.", "Ok");
+                                }
+
+                            } else {
+                                // convertOverlaysPNG();
+                                showAlert(R.string.str_alert_title_information, "Please wait until top/tail video been processing.", "Ok");
+
+                            }
+                        }else{
+                            showAlert(R.string.str_alert_title_information, "Please wait until your top/tail has been downloaded.", "Ok");
                         }
+
+
+
 
                     }
                 });
@@ -910,8 +939,11 @@ public class EditingVideoActivity extends BaseActivity {
                     File imgFile = new File(thumbNailUrl);
                     if (imgFile.exists()) {
                         Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                        imgThumbVideo1.setImageBitmap(myBitmap);
-                        imgThumbVideo1.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                       Glide.with(EditingVideoActivity.this).load(imgFile).transform(new GlideCircleTransform(EditingVideoActivity.this)).into((ImageView) findViewById(R.id.img_thumb_video1));
+                        File fileOFTemplete = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp/"+MainApplication.getInstance().getTemplate().strDirectoryID) ;
+                        File file = new File(fileOFTemplete, "brand.png");
+                        Bitmap brandBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        ((ImageView)findViewById(R.id.iv_BrandImage)).setImageBitmap(brandBitmap);
                     }
                 }
 
