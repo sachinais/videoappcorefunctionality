@@ -505,7 +505,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             @Override
             public void onClick(View v) {
                 optionDialog.dismiss();
-
+                finish();
                 startActivity(new Intent(RecordingVideoActivity.this, ImportVideoActivty.class));
             }
         });

@@ -156,28 +156,11 @@ public class ImportVideoActivty extends BaseActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
-
-
                 filename = getPath(this, selectedImageUri);
-                if (filename != null ) {
+                if (filename != null) {
+                    Constant.setSourceVideo(filename);
 
-
-                    if (VideoUtils.getVideoLength(filename) < 5) {
-                        showAccountAlertDialog("Opps, We can't let you do that", "Be sure your video is least 5 seconds long before importing.");
-                        return;
-                    }
-
-                    try{
-                        String s = filename.substring(filename.lastIndexOf(".") + 1);
-                        finalPath = destinationFilePath(s).getAbsolutePath();
-                        copyDirectory(new File(filename), new File(finalPath));
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-
-                    Constant.setSourceVideo(finalPath);
-
-                    int recordingTime = VideoUtils.getVideoLength(finalPath);
+                    int recordingTime = VideoUtils.getVideoLength(filename);
                     if (recordingTime > 15.f) {
                         Constant.updateTimeUnit(2);
                     }
@@ -190,16 +173,13 @@ public class ImportVideoActivty extends BaseActivity {
                         Constant.updateTimeUnit(4);
                     }
                     ImportVideoActivty.this.finish();
-                    showActivity(EditingVideoActivity.class, finalPath);
-
-                    //*********** You can do anything when you know the file path :-)
-                    showToast(finalPath);
-
+                    showActivity(EditingVideoActivity.class, filename);
+                    return;
                 }
             }
-        }else{
-            finish();
         }
+        showActivity(RecordingVideoActivity.class, null);
+        finish();
     }
 
     private void showAccountAlertDialog(String title, String message) {
@@ -230,6 +210,7 @@ public class ImportVideoActivty extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     optionDialog.dismiss();
+                    showActivity(RecordingVideoActivity.class, null);
                     finish();
 
                 }

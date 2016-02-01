@@ -123,9 +123,10 @@ public class VideoEncoding {
         final int videoLength = VideoUtils.getVideoLength(Constant.getSourceVideo());
         if (videoOverlayInformation.size() > 0) {
             //make ffmpeg command
-            String command = "-y -threads 5 ";
-            command = command + "-i" + " " + Constant.getSourceVideo() +" ";
+            String firstCommand = "-y -threads 5 -i ";
+//            command = command + Constant.getSourceVideo() + " ";
 
+            String command = "";
             for (int i = 0; i < videoOverlayInformation.size(); i ++) {
                 VideoOverlay title = videoOverlayInformation.get(i);
                 command = command + "-i" + " " + title.overlayImagePath + " ";
@@ -143,14 +144,21 @@ public class VideoEncoding {
                         ":enable='between(t," + title.startTime + "," + + title.endTime + ")' ";
             }
 
+            String[] firstSubCommand = firstCommand.split(" ");
             String[] subCommands = command.split(" ");
 
-            String[] commands = new String[subCommands.length + 2];
-            for (int i = 0; i < subCommands.length; i ++) {
-                commands[i] = subCommands[i];
+            String[] commands = new String[firstSubCommand.length + 1 + subCommands.length + 2];
+            int firstSubCommandLen = firstSubCommand.length;
+
+            for (int i = 0; i < firstSubCommandLen; i ++) {
+                commands[i] = firstSubCommand[i];
             }
-            commands[subCommands.length] = strFilterComplex;
-            commands[subCommands.length + 1] = Constant.getEncodedVideo();
+            commands[firstSubCommandLen] = Constant.getSourceVideo();
+            for (int i = 0; i < subCommands.length; i ++) {
+                commands[i + firstSubCommandLen + 1] = subCommands[i];
+            }
+            commands[firstSubCommandLen + 1 + subCommands.length] = strFilterComplex;
+            commands[firstSubCommandLen + 1 + subCommands.length + 1] = Constant.getEncodedVideo();
 
             callback.onProgress(progress);
             FFMpegUtils.execFFmpegBinary(commands, new FFMpegUtils.Callback() {

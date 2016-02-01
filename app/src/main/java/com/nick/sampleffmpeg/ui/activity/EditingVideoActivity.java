@@ -239,6 +239,7 @@ public class EditingVideoActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(finishActivity);
     }
 
     /**
