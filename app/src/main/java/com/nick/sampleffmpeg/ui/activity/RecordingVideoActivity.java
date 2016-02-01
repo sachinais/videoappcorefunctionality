@@ -612,7 +612,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         } else {
             FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this, getTemplateUrl((int) options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(), options1Items.get(options1).getDirectoryId());
             findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
-
+            tv_LoadingTempletes.setText("Loading templates...");
 
             fileDownloader.startDownload(new Runnable1() {
                 @Override
