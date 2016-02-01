@@ -332,19 +332,57 @@ public class SharingVideoScreen extends Activity {
         @Override
         public void getResponse(JSONObject jsonObject) {
             try {
-
+                int count =0;
                 if (jsonObject != null) {
                     if (!jsonObject.isNull("success") && jsonObject.getBoolean("success")) {
 
                         findViewById(R.id.ll_BeforePost).setVisibility(View.GONE);
                         findViewById(R.id.ll_AfterPost).setVisibility(View.VISIBLE);
 
-                        showAlertDialog("Success", "Video posted successfully.");
+
+                        if(!jsonObject.isNull("c_facebook") && !jsonObject.getJSONObject("c_facebook").getBoolean("success")){
+
+                            count++;
+
+                        }
+                        if(!jsonObject.isNull("p_facebook") && !jsonObject.getJSONObject("p_facebook").getBoolean("success")){
+
+                            count++;
+
+                        }
+
+
+                        if(!jsonObject.isNull("c_linkedin") && !jsonObject.getJSONObject("c_linkedin").getBoolean("success")){
+
+                            count++;
+
+                        }
+                        if(!jsonObject.isNull("p_linkedin") && !jsonObject.getJSONObject("p_linkedin").getBoolean("success")){
+
+                            count++;
+
+                        }
+                        if(!jsonObject.isNull("c_twitter") && !jsonObject.getJSONObject("c_twitter").getBoolean("success")){
+
+                            count++;
+
+                        }
+                        if(!jsonObject.isNull("p_twitter") && !jsonObject.getJSONObject("p_twitter").getBoolean("success")){
+
+                            count++;
+
+                        }
+                        if(count>=2)
+                            showAlertDialog("Error", "Oops, something may have gone wrong, please manually check.");
+                        else
+                            showAlertDialog("Success!","");
+
 
                     }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                showAlertDialog("Error", "Oops, something may have gone wrong, please manually check.");
             }
         }
     };
