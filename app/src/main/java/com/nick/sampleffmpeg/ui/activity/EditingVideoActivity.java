@@ -1075,7 +1075,7 @@ public class EditingVideoActivity extends BaseActivity {
                             public void run() {
                                 final View thumbImageLayout = getLayoutInflater().inflate(R.layout.video_timeline_thumb_layout, null);
                                 ImageView imageView = (ImageView) thumbImageLayout.findViewById(R.id.img_thumb);
-                                if ( (int) (videoLength / 1000) - tagObj < Constant.TIMELINE_UNIT_SECOND) {
+                                if ( (int) (videoLength / 1000) - tagObj <= Constant.TIMELINE_UNIT_SECOND) {
                                     float offset = (float) videoLength / 1000 - (float) tagObj;
                                     int width = (int) (offset * 60 * getDisplayMetric().scaledDensity / Constant.TIMELINE_UNIT_SECOND);
                                     LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.MATCH_PARENT);
