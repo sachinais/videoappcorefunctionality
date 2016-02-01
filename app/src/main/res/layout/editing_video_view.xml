@@ -381,7 +381,7 @@
                     android:layout_marginLeft="8sp"
                     android:layout_marginRight="8sp"
                     android:layout_width="match_parent"
-                    android:layout_height="60sp"
+                    android:layout_height="75sp"
                     android:scaleType="fitXY"
                     android:src="@drawable/btn_tutorial"/>
                 <View
@@ -433,22 +433,9 @@
                 android:layout_marginTop="5sp"
                 android:text="@string/edit_video_description"/>
 
-            <TextView
-                android:id="@+id/txt_video_duration"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:textColor="#000"
-                android:layout_marginLeft="5sp"
-                android:layout_marginRight="5sp"
-                android:textSize="10sp"
-                android:gravity="center"
-                android:textAlignment="center"
-                android:text="Total Length: 1min 24sec"/>
 
             <ImageView
-                android:layout_below="@id/txtLabel2"
-                android:layout_above="@id/txt_video_duration"
+                android:layout_alignParentBottom="true"
                 android:id="@+id/btn_encode_video"
                 android:layout_width="wrap_content"
                 android:layout_height="40sp"
@@ -495,7 +482,19 @@
                 android:layout_height="25sp"
                 android:layout_alignParentBottom="true"
                 android:src="@drawable/btn_next"/>
+
         </RelativeLayout>
+        <TextView
+            android:id="@+id/txt_video_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:textColor="#000"
+            android:layout_marginLeft="5sp"
+            android:layout_marginRight="5sp"
+            android:textSize="13sp"
+            android:text="Total Length: 1min 24sec"/>
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/timeline_layout"

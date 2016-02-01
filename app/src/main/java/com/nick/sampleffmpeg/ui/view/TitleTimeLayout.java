@@ -370,7 +370,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             showSelectCaptionDialog(new SelectCaptionCallback() {
                 @Override
                 public void onCaptionThemeSelected(final OverlayBean.Overlay overlay) {
-                    showCaptionEditDialog(true, overlay, time, "Caption");
+                    showCaptionEditDialog(true, overlay, time, "Caption text.");
                 }
             });
 
