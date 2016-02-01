@@ -730,7 +730,7 @@ public class EditingVideoActivity extends BaseActivity {
                             lParams.width = (int) trimBarWidth;
                         }
 
-                        int trimEnd = MainApplication.getInstance().getVideoLength() - (int) ((lParams.width - trimBarWidth) / (float) Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity * 1000);
+                        int trimEnd = MainApplication.getInstance().getVideoLength() - (int) ((lParams.width - trimBarWidth ) / (float) Constant.SP_PER_SECOND / getDisplayMetric().scaledDensity * 1000);
                         if (trimEnd > MainApplication.getInstance().getVideoStart() + 1000) {
                             int parentWidth = ((View) video_trim_right.getParent()).getWidth();
                             lParams.leftMargin = parentWidth - lParams.width;
@@ -1075,8 +1075,7 @@ public class EditingVideoActivity extends BaseActivity {
                             public void run() {
                                 final View thumbImageLayout = getLayoutInflater().inflate(R.layout.video_timeline_thumb_layout, null);
                                 ImageView imageView = (ImageView) thumbImageLayout.findViewById(R.id.img_thumb);
-
-                                if (tagObj == (int) videoLength / 1000 - Constant.TIMELINE_UNIT_SECOND) {
+                                if ( (int) (videoLength / 1000) - tagObj < Constant.TIMELINE_UNIT_SECOND) {
                                     float offset = (float) videoLength / 1000 - (float) tagObj;
                                     int width = (int) (offset * 60 * getDisplayMetric().scaledDensity / Constant.TIMELINE_UNIT_SECOND);
                                     LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.MATCH_PARENT);
