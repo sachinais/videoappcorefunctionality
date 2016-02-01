@@ -207,6 +207,8 @@ public class ImportVideoActivty extends BaseActivity {
             optionDialog = new Dialog(ImportVideoActivty.this);
             optionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             optionDialog.setContentView(R.layout.select_video);
+            optionDialog.setCancelable(false);
+            optionDialog.setCanceledOnTouchOutside(false);
             ((TextView) optionDialog.findViewById(R.id.textView1)).setText(title);
             ((TextView) optionDialog.findViewById(R.id.textView2)).setText(message);
             ((TextView) optionDialog.findViewById(R.id.retry)).setOnClickListener(new View.OnClickListener() {
