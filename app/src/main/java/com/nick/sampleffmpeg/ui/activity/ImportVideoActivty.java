@@ -197,6 +197,8 @@ public class ImportVideoActivty extends BaseActivity {
 
                 }
             }
+        }else{
+            finish();
         }
     }
 

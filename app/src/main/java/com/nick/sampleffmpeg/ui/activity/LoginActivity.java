@@ -24,6 +24,7 @@ import com.nick.sampleffmpeg.utils.AppConstants;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -192,7 +193,14 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     SharedPreferenceWriter.getInstance().writeStringValue(SPreferenceKey.LAST_PASSWORD, "");
                 }
                 if (!jsonObject.isNull("templates")) {
-                    MainApplication.getInstance().setTemplateArray(jsonObject.getJSONArray("templates"));
+                    JSONArray finalArray = new JSONArray();
+                    JSONArray newJsonArray = jsonObject.getJSONArray("templates");
+                    for (int i = newJsonArray.length()-1; i>=0; i--) {
+                        finalArray.put(newJsonArray.get(i));
+                    }
+
+
+                    MainApplication.getInstance().setTemplateArray(finalArray);
                     SharedPreferenceWriter.getInstance(LoginActivity.this).writeStringValue(SPreferenceKey.TEMPLATE_ARRAY, jsonObject.toString());
                 }
 

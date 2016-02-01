@@ -104,6 +104,7 @@ public class Constant {
 
     public static String downloadedTopVideoUrl = "";
     public static String downloadedTailVideoUrl = "";;
+    public static String downloadedThumbnailImageUrl = "";;
 
     public synchronized static String getDownloadTopVideo() {
         return downloadedTopVideoUrl;
@@ -114,6 +115,14 @@ public class Constant {
 
     public synchronized static void setDownloadTopVideo(String url) {
         downloadedTopVideoUrl = url;
+    }
+
+    public synchronized static void setThumbanulImageUrl(String url) {
+        downloadedThumbnailImageUrl = url;
+    }
+
+    public static synchronized String getThumbnailImageUrl(){
+        return downloadedThumbnailImageUrl;
     }
 
     public synchronized static void setDownloadTailVideo(String url) {

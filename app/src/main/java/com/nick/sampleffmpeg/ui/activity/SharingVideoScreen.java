@@ -6,9 +6,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -18,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.nick.sampleffmpeg.Define.Constant;
 import com.nick.sampleffmpeg.MainApplication;
 import com.nick.sampleffmpeg.R;
@@ -31,25 +37,27 @@ import com.nick.sampleffmpeg.sharedpreference.SPreferenceKey;
 import com.nick.sampleffmpeg.sharedpreference.SharedPreferenceWriter;
 import com.nick.sampleffmpeg.ui.view.StretchVideoView;
 import com.nick.sampleffmpeg.utils.AppConstants;
+import com.nick.sampleffmpeg.utils.FileUtils;
 import com.nick.sampleffmpeg.utils.FontTypeface;
+import com.nick.sampleffmpeg.utils.GlideCircleTransform;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SharingVideoScreen extends Activity {
     public static String ACTION_PROGRESS_UPDATE = "ACTION_PROGRESS_UPDATE";
     public static String ACTION_UPLOAD_COMPLETED = "ACTION_UPLOAD_COMPLETED";
-    private StretchVideoView mVideoView;
     private String description;
     private Dialog optionDialog;
     private String videoTitle = "";
 
-
+   static String    thumbNailUr;
     private String personal_facebook_message = "";
     private String personal_Twitter_message = "";
     private String personal_LinkedIn_message = "";
@@ -72,7 +80,6 @@ public class SharingVideoScreen extends Activity {
             intentfilter.addAction(ACTION_PROGRESS_UPDATE);
             intentfilter.addAction(ACTION_UPLOAD_COMPLETED);
             registerReceiver(receiver, intentfilter);
-            mVideoView = (StretchVideoView) findViewById(R.id.videoview);
             findViewById(R.id.tvVideoUrlBtn).setOnClickListener(onClickListener);
             findViewById(R.id.tvEmbedCodeBtn).setOnClickListener(onClickListener);
 
@@ -149,6 +156,8 @@ public class SharingVideoScreen extends Activity {
                 }
             });
 
+
+
             findViewById(R.id.videoview).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -160,14 +169,39 @@ public class SharingVideoScreen extends Activity {
                 }
             });
 
-
             getBundleData();
             setFont();
             setSocialAccountInfo();
+            setThumbNail();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public void setThumbNail(){
+        try {
+
+            thumbNailUr = Constant.getThumbnailImageUrl();
+            ((TextView)findViewById(R.id.tv_ThumnailTitle)).setText(videoTitle);
+
+            if (null!=thumbNailUr && thumbNailUr.length() > 0) {
+                File imgFile = new File(thumbNailUr);
+                if (imgFile.exists()) {
+                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    Glide.with(SharingVideoScreen.this).load(imgFile).transform(new GlideCircleTransform(SharingVideoScreen.this)).into((ImageView) findViewById(R.id.img_thumb_video1));
+                    File fileOFTemplete = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp/"+MainApplication.getInstance().getTemplate().strDirectoryID) ;
+                    File file = new File(fileOFTemplete, "brand.png");
+                    Bitmap brandBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                    ((ImageView)findViewById(R.id.iv_BrandImage)).setImageBitmap(brandBitmap);
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
 
     public void openDashboard() {
         try {
@@ -354,10 +388,6 @@ public class SharingVideoScreen extends Activity {
     private void getBundleData() {
         if (getIntent() != null) {
              uriPath = getIntent().getExtras().getString("uripath");
-            Uri uri = Uri.parse(uriPath);
-            mVideoView.setVideoURI(uri);
-            mVideoView.requestFocus();
-            mVideoView.start();
 
             if (getIntent().getExtras().containsKey("Title"))
 

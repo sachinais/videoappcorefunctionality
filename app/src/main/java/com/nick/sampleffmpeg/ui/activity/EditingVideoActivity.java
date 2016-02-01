@@ -416,6 +416,7 @@ public class EditingVideoActivity extends BaseActivity {
                 @Override
                 public void getTopVideoUrl(String url) {
                     findViewById(R.id.pb_Thumb).setVisibility(View.GONE);
+                    Constant.setThumbanulImageUrl(url);
                     thumbNailUrl = url;
                     initializeThumbView();
                 }
