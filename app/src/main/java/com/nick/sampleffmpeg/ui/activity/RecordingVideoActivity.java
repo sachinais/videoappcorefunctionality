@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
@@ -112,8 +113,8 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
     private int countDownValue = -1000;
     private SharedPreferenceWriter sharedPreferenceWriter = null;
-    private  String RequestType = "";
-
+    private String RequestType = "";
+    private TextView tv_LoadingTempletes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +141,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 //        } catch (Exception e) {
 //            LogFile.logText("Error on copy assets" + e.getMessage(), null);
 //        }
-
+        tv_LoadingTempletes = (TextView)findViewById(R.id.tv_LoadingTempletes);
         sharedPreferenceWriter = SharedPreferenceWriter.getInstance(this);
         timerThread = (new Thread(new Runnable() {
             @Override
@@ -156,10 +157,10 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
                                     if (recordingTime > 90.f) {
                                         imgRecordingFrameBorderLayout.setImageDrawable(getResources().getDrawable(R.drawable.frame_recording_border_red));
                                         txtRecordingTime.setTextColor(Color.argb(255, 255, 0, 0));
-                                    }else if (recordingTime > 75 ) {
+                                    } else if (recordingTime > 75) {
                                         imgRecordingFrameBorderLayout.setImageDrawable(getResources().getDrawable(R.drawable.frame_recording_border_orange));
                                         txtRecordingTime.setTextColor(Color.argb(255, 255, 138, 0));
-                                    }else {
+                                    } else {
                                         imgRecordingFrameBorderLayout.setImageDrawable(getResources().getDrawable(R.drawable.frame_recording_border_green));
                                         txtRecordingTime.setTextColor(Color.argb(255, 255, 255, 255));
                                     }
@@ -229,7 +230,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             e.printStackTrace();
         }
 
-        selectTemplateItem(0,false);
+        selectTemplateItem(0, false);
     }
 
     private void getStoredTemplateIfNull() {
@@ -241,9 +242,6 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
         }
     }
-
-
-
 
 
     @Override
@@ -425,7 +423,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             @Override
             public void onFinish() {
 
-                int unit = (int)(recordingTime / 10);
+                int unit = (int) (recordingTime / 10);
                 if (unit < 1) {
                     unit = 1;
                 }
@@ -474,7 +472,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             public void onClick(View v) {
                 optionDialog.dismiss();
                 RequestType = "DashBoard";
-               getSid();
+                getSid();
             }
         });
         ((Button) optionDialog.findViewById(R.id.btnAddUser)).setOnClickListener(new View.OnClickListener() {
@@ -529,9 +527,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
     }
 
 
-
-
-    public void getSid(){
+    public void getSid() {
         try {
             if (CheckNetworkConnection.isNetworkAvailable(RecordingVideoActivity.this)) {
                 List<NameValuePair> paramePairs = new ArrayList<NameValuePair>();
@@ -549,7 +545,6 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             e.printStackTrace();
         }
     }
-
 
 
     private void showPicker() throws JSONException {
@@ -579,8 +574,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             public void onOptionsSelect(final int options1, int option2, int options3) {
 
 
-
-                selectTemplateItem(options1 , true);
+                selectTemplateItem(options1, true);
                 MainApplication.getInstance().setSelectedTemplePosition(options1);
                 //返回的分别是三个级别的选中位置
                /* String tx = options1Items.get(options1).getPickerViewText()
@@ -598,9 +592,9 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
     }
 
-    private void selectTemplateItem(final int options1 , boolean slected) {
+    private void selectTemplateItem(final int options1, boolean slected) {
         ;
-        File fileOFTemplete = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp/"+options1Items.get(options1).getDirectoryId()) ;
+        File fileOFTemplete = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp/" + options1Items.get(options1).getDirectoryId());
 
         File[] contents = fileOFTemplete.listFiles();
 
@@ -612,34 +606,61 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         if (Constant.flagDebug) {
             MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
             overlayview.updateOverlay();
-        }
-
-       else if (fileOFTemplete.exists() && contents != null &&contents.length!=0 && !slected ) {
+        } else if (fileOFTemplete.exists() && contents != null && contents.length != 0 && !slected) {
             MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
             overlayview.updateOverlay();
-        }
-
-
-        else {
+        } else {
             FileDownloader fileDownloader = new FileDownloader(RecordingVideoActivity.this, getTemplateUrl((int) options1Items.get(options1).getId()), options1Items.get(options1).getPickerViewText(), options1Items.get(options1).getDirectoryId());
             findViewById(R.id.layout_loading_template).setVisibility(View.VISIBLE);
-            fileDownloader.startDownload(new Runnable() {
-               @Override
-                public void run() {
-                  MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
-                   runOnUiThread(new Runnable() {
-                        @Override
-                       public void run() {
-                            findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
-                            overlayview.updateOverlay();
-                       }
-                    });
-               }
+
+
+            fileDownloader.startDownload(new Runnable1() {
+                @Override
+                public void run(int value) {
+                    if(value == 1){
+
+                        RecordingVideoActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                tv_LoadingTempletes.setText("Unzipping templates...");
+                            }
+                        });
+
+
+
+
+                    }
+                    else{
+                        RecordingVideoActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                MainApplication.getInstance().setTemplate((int) options1Items.get(options1).getId());
+                                findViewById(R.id.layout_loading_template).setVisibility(View.GONE);
+                                overlayview.updateOverlay();
+                            }
+                        });
+
+
+                    }
+
+
+
+                }
             });
         }
     }
 
-    private String getFilePath(String _directorName){
+
+    public interface Runnable1 {
+
+
+        public void run(int value);
+    }
+
+
+    private String getFilePath(String _directorName) {
         File folder = new File(Environment.getExternalStorageDirectory() + "/VideoEditorApp");
         File file2 = null;
         boolean success = true;
@@ -648,8 +669,8 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             if (!folder.exists()) {
                 folder.mkdir();
             }
-            file2 = new File(folder.getAbsolutePath(),_directorName);
-            if(!file2.exists()){
+            file2 = new File(folder.getAbsolutePath(), _directorName);
+            if (!file2.exists()) {
                 file2.mkdir();
 
             }
@@ -657,6 +678,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         }
         return file2.getAbsolutePath();
     }
+
     private void sendTemplateRequest() {
         try {
             if (CheckNetworkConnection.isNetworkAvailable(RecordingVideoActivity.this)) {
@@ -677,30 +699,31 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             e.printStackTrace();
         }
     }
+
     private RequestListner requestSid = new RequestListner() {
 
         @Override
         public void getResponse(JSONObject jsonObject) {
             try {
-                String sid="";
+                String sid = "";
                 String url = "";
                 if (jsonObject != null) {
-                    if(!jsonObject.isNull("sid")){
-                     sid=   jsonObject.getString("sid");
+                    if (!jsonObject.isNull("sid")) {
+                        sid = jsonObject.getString("sid");
                     }
 
-                    if(RequestType.equalsIgnoreCase("DashBoard")){
-                        url = "https://live.videomyjob.com/api/app_login.php?user_id="+SharedPreferenceWriter.getInstance().getString(SPreferenceKey.USERID)+" & sid="+sid+" & "+"redirect=1";
+                    if (RequestType.equalsIgnoreCase("DashBoard")) {
+                        url = "https://live.videomyjob.com/api/app_login.php?user_id=" + SharedPreferenceWriter.getInstance().getString(SPreferenceKey.USERID) + " & sid=" + sid + " & " + "redirect=1";
 
-                    } else if(RequestType.equalsIgnoreCase("AddUser")){
-                        url = "https://live.videomyjob.com/api/app_login.php?user_id="+SharedPreferenceWriter.getInstance().getString(SPreferenceKey.USERID)+" & sid="+sid+" & "+"redirect=2";
+                    } else if (RequestType.equalsIgnoreCase("AddUser")) {
+                        url = "https://live.videomyjob.com/api/app_login.php?user_id=" + SharedPreferenceWriter.getInstance().getString(SPreferenceKey.USERID) + " & sid=" + sid + " & " + "redirect=2";
 
-                    }else  if(RequestType.equalsIgnoreCase("Tutorial")){
-                        url = "https://live.videomyjob.com/api/app_login.php?user_id="+SharedPreferenceWriter.getInstance().getString(SPreferenceKey.USERID)+" & sid="+sid+" & "+"redirect=3";
+                    } else if (RequestType.equalsIgnoreCase("Tutorial")) {
+                        url = "https://live.videomyjob.com/api/app_login.php?user_id=" + SharedPreferenceWriter.getInstance().getString(SPreferenceKey.USERID) + " & sid=" + sid + " & " + "redirect=3";
 
                     }
 
-                  //  https://live.videomyjob.com/api/app_login.php?user_id=5 & sid=95a65aadd8c905bcc2c0751d96f77aa0 & redirect=1
+                    //  https://live.videomyjob.com/api/app_login.php?user_id=5 & sid=95a65aadd8c905bcc2c0751d96f77aa0 & redirect=1
 
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(browserIntent);

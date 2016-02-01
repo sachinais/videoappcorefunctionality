@@ -8,6 +8,8 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Button;
 
+import com.nick.sampleffmpeg.ui.activity.RecordingVideoActivity;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,7 +29,7 @@ public class FileDownloader {
     private  String fileName;
     private  String _directoryName;
 
-    private Runnable runnable = null;
+    private RecordingVideoActivity.Runnable1 runnable = null;
     public FileDownloader(Context context, String url, String fileName, String _directoryName){
         this.url = url;
         this.context = context;
@@ -35,7 +37,7 @@ public class FileDownloader {
         this._directoryName = _directoryName;
     }
 
-    public void startDownload(Runnable callback) {
+    public void startDownload(RecordingVideoActivity.Runnable1 callback) {
         new DownloadFileAsync().execute(url);
         this.runnable = callback;
     }
@@ -78,19 +80,23 @@ public class FileDownloader {
                 output.close();
                 input.close();
 
+
+
+                if (runnable != null) {
+                    runnable.run(1);
+                }
                 String unzipLocation = getFilePath(_directoryName)+"/";
                 String zipFile = getFilePath(_directoryName)+"/"+fileName+".zip";
 
                 Decompress d = new Decompress(zipFile, unzipLocation);
                 d.unzip();
-
                 if (runnable != null) {
-                    runnable.run();
+                    runnable.run(2);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 if (runnable != null) {
-                    runnable.run();
+                    runnable.run(1);
                 }
             }
             return null;
