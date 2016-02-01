@@ -86,7 +86,7 @@ public class MainApplication extends Application{
     public void onCreate() {
         super.onCreate();
         mainApplication =(MainApplication)getApplicationContext();
-        ACRA.init(MainApplication.this);
+      //  ACRA.init(MainApplication.this);
     }
 
     public void setCookieStore(CookieStore cookieStore){
