@@ -184,14 +184,73 @@
         android:textSize="16sp" />
 
 
-    <com.nick.sampleffmpeg.ui.view.StretchVideoView
+   <!-- <com.nick.sampleffmpeg.ui.view.StretchVideoView
         android:id="@+id/videoview"
         android:layout_width="fill_parent"
         android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp" />-->
+    <RelativeLayout
+        android:id="@+id/videoview"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+        <ImageView
+            android:id="@+id/iv_BrandImage"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            android:scaleType="fitCenter"
+            />
+        <RelativeLayout
+            android:layout_alignParentRight="true"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/circle"
+            >
+
+            <ImageView
+                android:id="@+id/img_thumb_video1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true"
+                android:scaleType="fitCenter"
+                />
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/tv_ThumnailTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:paddingBottom="20dp"
+            android:layout_marginBottom="10dp"
+
+            android:text="Video Title"
+            android:gravity="center"
+            android:textColor="@color/color_blue"
+            ></TextView>
+        <TextView
+            android:id="@+id/tv_ThumnNailText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:text="Watch the Video job ad"
+            android:gravity="center"
+            android:textColor="@color/color_blue"
+            ></TextView>
+
+    </RelativeLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
