@@ -246,7 +246,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             float x = me.getX();
             if (Math.abs(x - lastDragX) > 5) {
                 if (flagDragging && (flagResizeLeft || flagResizeRight || flagMoving)) {
-                    if (selectedItem.getStartTime() >= trimStart && selectedItem.getEndTime() <= trimEnd + 0.1f) {
+                    if (selectedItem.getStartTime() >= trimStart && selectedItem.getEndTime() <= trimEnd + 0.01f) {
                         if (flagResizeLeft) {
                             selectedItem.setLayoutLeft(me.getX());
                         } else if (flagResizeRight) {
