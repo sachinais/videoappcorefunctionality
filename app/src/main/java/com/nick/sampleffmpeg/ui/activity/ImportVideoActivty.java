@@ -161,6 +161,10 @@ public class ImportVideoActivty extends BaseActivity {
                     Constant.setSourceVideo(filename);
 
                     int recordingTime = VideoUtils.getVideoLength(filename);
+                    int videoWidth = VideoUtils.getVideoWidth(filename);
+                    int videoHeight = VideoUtils.getVideoHeight(filename);
+
+                    Constant.setVideoSize(videoWidth, videoHeight);
                     if (recordingTime > 15.f) {
                         Constant.updateTimeUnit(2);
                     }

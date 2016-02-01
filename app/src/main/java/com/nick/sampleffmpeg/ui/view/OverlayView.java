@@ -103,7 +103,7 @@ public class OverlayView extends View {
             Bitmap backgroundBitmap = createBackgroundBitmap(overlay, videoWidth, videoHeight);
             Bitmap textBitmap = null;
             if (text.length() > 0) {
-                textBitmap = createOverlayTextBitmap(overlay, backgroundBitmap, text);
+                textBitmap = createOverlayTextBitmap(overlay, backgroundBitmap, text, videoWidth, videoHeight);
             }
 
             if (backgroundBitmap != null ) {
@@ -148,7 +148,7 @@ public class OverlayView extends View {
         }
     }
 
-    private Bitmap createOverlayTextBitmap(OverlayBean.Overlay overlay, Bitmap backgroundBitmap, String title) {
+    private Bitmap createOverlayTextBitmap(OverlayBean.Overlay overlay, Bitmap backgroundBitmap, String title, int VideoWidth, int videoHeight) {
         Bitmap ret = null;
         if (backgroundBitmap != null) {
             int width = backgroundBitmap.getWidth();
@@ -156,7 +156,7 @@ public class OverlayView extends View {
 
             int marginLeft = (int) ((overlay.marginLeft / 100) * width) ;
             int marginTop = (int)((overlay.marginTop / 100) * height);
-            int fontSize = (int) (((double)overlay.fontSize / 360) * this.height) ;
+            int fontSize = (int) (((double)overlay.fontSize / 360) * videoHeight) ;
             Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(image);
 
@@ -282,7 +282,7 @@ public class OverlayView extends View {
                             OverlayBean.Overlay overlay = caption.getCaptionOverlay();
                             if (overlay != null) {
                                 Bitmap backgroundBitmap = createBackgroundBitmap(overlay, width, height);
-                                Bitmap textBitmap = createOverlayTextBitmap(overlay, backgroundBitmap, caption.getTitleText());
+                                Bitmap textBitmap = createOverlayTextBitmap(overlay, backgroundBitmap, caption.getTitleText(), width, height);
                                 drawOverlayBackground(canvas, overlay, backgroundBitmap, textBitmap);
                             }
                         }
