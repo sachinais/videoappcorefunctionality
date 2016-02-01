@@ -13,11 +13,17 @@ public class VideoUtils {
      * @return video length
      */
     public static int getVideoLength(String path) {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(path);
-        String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        int timeInmillisec = Integer.parseInt( time );
-        int duration = timeInmillisec / 1000;
+        int duration = 0;
+        try {
+
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(path);
+            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            int timeInmillisec = Integer.parseInt( time );
+            duration = timeInmillisec / 1000;
+        } catch (Exception e) {
+
+        }
         return duration;
     }
 

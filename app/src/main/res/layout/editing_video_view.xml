@@ -224,6 +224,17 @@
                     android:layout_height="30dp" />
 
                 <TextView
+                    android:id="@+id/pb_Top_Title"
+                    android:layout_marginLeft="15sp"
+                    android:layout_marginRight="15sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:text="Processing..."
+                    android:textColor="#FFF"
+                    android:layout_centerInParent="true" />
+                <TextView
                     android:id="@+id/layout_no_top"
                     android:layout_marginLeft="15sp"
                     android:layout_marginRight="15sp"
@@ -278,7 +289,17 @@
                     android:visibility="gone"
                     android:layout_centerInParent="true"
                     android:layout_height="30dp" />
-
+                <TextView
+                    android:id="@+id/pb_Tail_Title"
+                    android:layout_marginLeft="15sp"
+                    android:layout_marginRight="15sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:text="Processing..."
+                    android:textColor="#FFF"
+                    android:layout_centerInParent="true" />
                 <TextView
                     android:id="@+id/layout_no_tail"
                     android:layout_marginLeft="15sp"

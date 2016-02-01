@@ -227,7 +227,7 @@ public class EditingVideoActivity extends BaseActivity {
                     startActivity(intent);
                 }else{
 
-                    showAlert(R.string.str_alert_title_information, "Please wait until thumbnail downloaded.", "Ok");
+                    showAlert(R.string.str_alert_title_information, "Please wait until the thumbnail has downloaded.", "Ok");
 
                 }
 
@@ -274,19 +274,24 @@ public class EditingVideoActivity extends BaseActivity {
     }
 
     private void convertTopVideoVideoFormat() {
+        findViewById(R.id.pb_Top).setVisibility(View.GONE);
+        findViewById(R.id.pb_Tail).setVisibility(View.GONE);
+
+        findViewById(R.id.pb_Top_Title).setVisibility(View.VISIBLE);
+        findViewById(R.id.pb_Tail_Title).setVisibility(View.VISIBLE);
         if (flagTopVideoDownloaded && flagTailVideoDownloaded) {
             if (mTask != null) {
                 VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, true, new Runnable() {
                     @Override
                     public void run() {
-                        flagTopVideoConverted = true;
                         if (mTask != null) {
                             VideoEncoding.convertTopTailVideoToUniqueFormat(Constant.VIDEO_WIDTH, Constant.VIDEO_HEIGHT, false, new Runnable() {
                                 @Override
                                 public void run() {
+                                    flagTopVideoConverted = true;
                                     flagTailVideoConverted = true;
-                                    findViewById(R.id.pb_Tail).setVisibility(View.GONE);
-
+                                    findViewById(R.id.pb_Top_Title).setVisibility(View.GONE);
+                                    findViewById(R.id.pb_Tail_Title).setVisibility(View.GONE);
                                     initializeThumbView();
                                     mTask = null;
                                 }
@@ -381,7 +386,6 @@ public class EditingVideoActivity extends BaseActivity {
                 fileDownloader.startDownload(new TopVideoDownload() {
                     @Override
                     public void getTopVideoUrl(final String url) {
-                        findViewById(R.id.pb_Top).setVisibility(View.GONE);
                         Constant.setDownloadTopVideo(url);
                         flagTopVideoDownloaded = true;
                         convertTopVideoVideoFormat();
@@ -436,7 +440,6 @@ public class EditingVideoActivity extends BaseActivity {
                     @Override
                     public void getTopVideoUrl(final String url) {
                         flagTailVideoDownloaded = true;
-                        findViewById(R.id.pb_Tail).setVisibility(View.GONE);
                         Constant.setDownloadTailVideo(url);
                         convertTopVideoVideoFormat();
                     }
@@ -603,7 +606,7 @@ public class EditingVideoActivity extends BaseActivity {
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        if (FileUtils.isExistFile(Constant.getTopVideo())) {
+                        if (FileUtils.isExistFile(Constant.getTopVideo()) && flagTopVideoConverted) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constant.getTopVideo()));
                             intent.setDataAndType(Uri.parse(Constant.getTopVideo()), "video/mp4");
                             startActivity(intent);
@@ -614,7 +617,7 @@ public class EditingVideoActivity extends BaseActivity {
                 Constant.BUTTON_FOCUS_ALPHA, new Runnable() {
                     @Override
                     public void run() {
-                        if (FileUtils.isExistFile(Constant.getTailVideo())) {
+                        if (FileUtils.isExistFile(Constant.getTailVideo()) && flagTailVideoConverted) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constant.getTailVideo()));
                             intent.setDataAndType(Uri.parse(Constant.getTailVideo()), "video/mp4");
                             startActivity(intent);
