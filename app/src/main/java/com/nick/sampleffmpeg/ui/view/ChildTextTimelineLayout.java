@@ -169,6 +169,9 @@ public class ChildTextTimelineLayout extends RelativeLayout{
         setLayoutParameters(newLeft, newRight);
     }
 
+    public void updateTitle(String title) {
+        this.titleText = title;
+    }
 
     public long getChildTagID() {
         return childTagID;

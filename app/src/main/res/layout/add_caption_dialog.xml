@@ -9,10 +9,13 @@
         android:layout_width="320sp"
         android:layout_margin="5sp"
         android:scaleType="fitXY"
+        android:layout_centerInParent="true"
         android:layout_height="200sp" />
     <EditText
         android:id="@+id/edit_title_name"
         android:text="Caption text."
+        android:layout_alignLeft="@id/overlay_background"
+        android:layout_alignTop="@id/overlay_background"
         android:gravity="top"
         android:background="@null"
         android:layout_width="320sp"

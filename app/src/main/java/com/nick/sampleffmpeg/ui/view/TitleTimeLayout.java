@@ -225,13 +225,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
 
                     if (selectedItem != null) {
                         if (selectedItem.isRemovable()) {
-                            parentActivity.showAlert(R.string.str_alert_title_information, R.string.str_delete_time_line,
-                                    parentActivity.getString(R.string.str_yes), new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            removeChildLayout(selectedItem);
-                                        }
-                                    }, parentActivity.getString(R.string.str_no));
+                            showCaptionEditDialog(false,  selectedItem.getCaptionOverlay(), 0, selectedItem.getTitleText());
                         }
                     } else {
                         addNewTitleToTimeline((int)(seekVideoTime * 1000));
@@ -308,6 +302,65 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
      */
     private static EditText editTitle = null;
 
+    private void showCaptionEditDialog(boolean flagAdd, final OverlayBean.Overlay overlay, final int time, String text) {
+        View v = null;
+        if (flagAdd) {
+            v = parentActivity.showViewContentDialog(R.layout.add_caption_dialog, parentActivity.getString(R.string.str_add), new Runnable() {
+                @Override
+                public void run() {
+                    if (editTitle != null) {
+                        String strCaption = editTitle.getText().toString();
+                        if (strCaption.length() > 0) {
+                            addNewTitleInformation(strCaption, overlay, time);
+                        }
+                    }
+                }
+            }, parentActivity.getString(R.string.str_cancel));
+        } else {
+            v = parentActivity.showViewContentDialog(R.layout.add_caption_dialog, parentActivity.getString(R.string.str_edit), new Runnable() {
+                @Override
+                public void run() {
+                    if (editTitle != null) {
+                        String strCaption = editTitle.getText().toString();
+                        selectedItem.updateTitle(strCaption);
+                        parentActivity.updateOverlayView();
+                    }
+                }
+            }, parentActivity.getString(R.string.str_delete), new Runnable() {
+                @Override
+                public void run() {
+                    removeChildLayout(selectedItem);
+                    parentActivity.updateOverlayView();
+                }
+            }, parentActivity.getString(R.string.str_cancel));
+        }
+
+        editTitle = (EditText)v.findViewById(R.id.edit_title_name);
+        editTitle.setText(text);
+        editTitle.setTextColor(overlay.color);
+        Typeface typeFace = FontTypeface.getTypeface(parentActivity, overlay.fontName);
+        editTitle.setTypeface(typeFace);
+        editTitle.setTextColor(overlay.color);
+
+        ImageView overlayBackground = (ImageView)v.findViewById(R.id.overlay_background);
+        String filePath = Constant.getApplicationDirectory() + MainApplication.getInstance().getTemplate().strDirectoryID + File.separator + overlay.backgroundImage;;
+
+        File imgFile = new  File(filePath);
+        if(imgFile.exists()){
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            overlayBackground.setImageBitmap(myBitmap);
+            overlayBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+        }
+
+        RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams)editTitle.getLayoutParams();
+
+        int marginLeft = (int) ((overlay.marginLeft / 100) * relativeParams.width) ;
+        int marginTop = (int)((overlay.marginTop / 100) * relativeParams.height);
+
+        relativeParams.setMargins(marginLeft, marginTop, 10, 10);
+        editTitle.setLayoutParams(relativeParams);
+    }
+
     private void addNewTitleToTimeline(final int time) {
 
         final OverlayBean template = MainApplication.getInstance().getTemplate();
@@ -317,42 +370,7 @@ public class TitleTimeLayout extends RelativeLayout  implements View.OnTouchList
             showSelectCaptionDialog(new SelectCaptionCallback() {
                 @Override
                 public void onCaptionThemeSelected(final OverlayBean.Overlay overlay) {
-                    View v = parentActivity.showViewContentDialog(R.layout.add_caption_dialog, parentActivity.getString(R.string.str_add), new Runnable() {
-                        @Override
-                        public void run() {
-                            if (editTitle != null) {
-                                String strCaption = editTitle.getText().toString();
-                                if (strCaption.length() > 0) {
-                                    addNewTitleInformation(strCaption, overlay, time);
-                                }
-                            }
-                        }
-                    }, parentActivity.getString(R.string.str_cancel));
-                    int width = v.getWidth();
-                    width = ((View)v.getParent()).getWidth();
-                    editTitle = (EditText)v.findViewById(R.id.edit_title_name);
-                    editTitle.setTextColor(overlay.color);
-                    Typeface typeFace = FontTypeface.getTypeface(parentActivity, overlay.fontName);
-                    editTitle.setTypeface(typeFace);
-                    editTitle.setTextColor(overlay.color);
-
-                    ImageView overlayBackground = (ImageView)v.findViewById(R.id.overlay_background);
-                    String filePath = Constant.getApplicationDirectory() + MainApplication.getInstance().getTemplate().strDirectoryID + File.separator + overlay.backgroundImage;;
-
-                    File imgFile = new  File(filePath);
-                    if(imgFile.exists()){
-                        Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                        overlayBackground.setImageBitmap(myBitmap);
-                        overlayBackground.setScaleType(ImageView.ScaleType.FIT_XY);
-                    }
-
-                    RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams)editTitle.getLayoutParams();
-
-                    int marginLeft = (int) ((overlay.marginLeft / 100) * relativeParams.width) ;
-                    int marginTop = (int)((overlay.marginTop / 100) * relativeParams.height);
-
-                    relativeParams.setMargins(marginLeft, marginTop, 10, 10);
-                    editTitle.setLayoutParams(relativeParams);
+                    showCaptionEditDialog(true, overlay, time, "Caption");
                 }
             });
 

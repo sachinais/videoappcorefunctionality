@@ -424,17 +424,25 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
 
             @Override
             public void onFinish() {
-                if (recordingTime > 15.f) {
-                    Constant.updateTimeUnit(2);
-                }
 
-                if (recordingTime > 25) {
-                    Constant.updateTimeUnit(3);
+                int unit = (int)(recordingTime / 10);
+                if (unit < 1) {
+                    unit = 1;
                 }
+                Constant.updateTimeUnit(unit);
 
-                if (recordingTime > 40) {
-                    Constant.updateTimeUnit(4);
-                }
+//                if (recordingTime > 15.f) {
+//                    Constant.updateTimeUnit(2);
+//                } else {
+//                }
+//
+//                if (recordingTime > 25) {
+//                    Constant.updateTimeUnit(3);
+//                }
+//
+//                if (recordingTime > 40) {
+//                    Constant.updateTimeUnit(4);
+//                }
 
                 RecordingVideoActivity.this.finish();
                 showActivity(EditingVideoActivity.class, null);

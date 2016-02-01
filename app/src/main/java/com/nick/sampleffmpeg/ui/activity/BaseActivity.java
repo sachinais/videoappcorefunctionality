@@ -96,10 +96,10 @@ public class BaseActivity extends Activity {
             }
         }
 
-        if (parameters.length == 4 || parameters.length == 3) {
+        if (parameters.length > 2) {
             runnable = null;
             String strNegativeButton = (String)parameters[2];
-            if (parameters.length == 4) {
+            if (parameters.length > 3) {
                 runnable = (Runnable)parameters[3];
             }
             final Runnable runnableNegative = runnable;
@@ -116,7 +116,28 @@ public class BaseActivity extends Activity {
                             }
                         });
             }
+        }
 
+        if (parameters.length > 4) {
+            runnable = null;
+            String strNegativeButton = (String)parameters[4];
+            if (parameters.length > 5) {
+                runnable = (Runnable)parameters[5];
+            }
+            final Runnable runnableNegative = runnable;
+
+            if (strNegativeButton != null && strNegativeButton.length() > 0) {
+                alertDialogBuilder.setNeutralButton(strNegativeButton,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                if (runnableNegative != null) {
+                                    runnableNegative.run();
+                                }
+                                dialog.dismiss();
+                                currentAlertDialog = null;
+                            }
+                        });
+            }
         }
     }
     protected AlertDialog currentAlertDialog = null;

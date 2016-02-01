@@ -26,6 +26,8 @@
     <string name="str_alert_okay">Ok</string>
     <string name="str_title_already_exist">Title already exist in current timeline. Please select another timeline and add it.</string>
     <string name="str_add">Add</string>
+    <string name="str_edit">Edit</string>
+    <string name="str_delete">Delete</string>
     <string name="str_delete_time_line">Do you want delete selected title now?</string>
     <string name="str_yes">Yes</string>
     <string name="str_no">No</string>
