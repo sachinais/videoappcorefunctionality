@@ -130,7 +130,6 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         initializeUIControls();
         showReadyForRecordingLayout();
 
@@ -230,7 +229,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             e.printStackTrace();
         }
 
-        selectTemplateItem(0, false);
+        selectTemplateItem(MainApplication.getInstance().getSelectedTemplePosition(), false);
     }
 
     private void getStoredTemplateIfNull() {
@@ -461,6 +460,7 @@ public class RecordingVideoActivity extends BaseActivity implements ActivityComp
             @Override
             public void onClick(View v) {
                 optionDialog.dismiss();
+                pvOptions.setSelectOptions(MainApplication.getInstance().getSelectedTemplePosition());
                 pvOptions.show();
                 //sendTemplateRequest();
 

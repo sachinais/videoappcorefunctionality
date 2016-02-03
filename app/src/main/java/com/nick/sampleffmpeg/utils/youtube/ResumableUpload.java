@@ -77,7 +77,7 @@ public class ResumableUpload {
      * Global instance of the format used for the video being uploaded (MIME type).
      */
     private static String VIDEO_FILE_FORMAT = "video/*";
-    private static ProgressDialog progress;
+
 
     /**
      * Uploads user selected video in the project folder to the user's YouTube account using OAuth2
@@ -90,21 +90,7 @@ public class ResumableUpload {
         final NotificationManager notifyManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        progress = new ProgressDialog(context);
-        progress.setMessage("");
-        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progress.setIndeterminate(true);
-/*
-        Intent notificationIntent = new Intent(context, ReviewActivity.class);
-        notificationIntent.setData(mFileUri);
-        notificationIntent.setAction(Intent.ACTION_VIEW);
-        Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(path, Thumbnails.MICRO_KIND);
-        PendingIntent contentIntent = PendingIntent.getActivity(context,
-                0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-        builder.setContentTitle(context.getString(R.string.youtube_upload))
-                .setContentText(context.getString(R.string.youtube_upload_started))
-                .setSmallIcon(R.drawable.ic_stat_device_access_video).setContentIntent(contentIntent).setStyle(new NotificationCompat.BigPictureStyle().bigPicture(thumbnail));
-        notifyManager.notify(UPLOAD_NOTIFICATION_ID, builder.build());*/
+
 
         String videoId = null;
         try {

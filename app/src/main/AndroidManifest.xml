@@ -33,6 +33,7 @@
         <activity
             android:keepScreenOn="true"
             android:name=".ui.activity.EditingVideoActivity"
+            android:configChanges="orientation"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,6 +52,7 @@
         </activity>
         <activity
             android:keepScreenOn="true"
+            android:configChanges="orientation"
             android:name=".ui.activity.RecordingVideoActivity"
             android:screenOrientation="landscape"/>
             <intent-filter>

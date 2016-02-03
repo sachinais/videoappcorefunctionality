@@ -304,6 +304,19 @@ public class EditingVideoActivity extends BaseActivity {
         }
     }
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        FFMpegUtils.killProcesses();
+        if (mTask != null) {
+            mTask.cancel(true);
+            mTask = null;
+        }
+        EditingVideoActivity.this.finish();
+        startActivity(new Intent(EditingVideoActivity.this, RecordingVideoActivity.class));
+    }
+
     private String getTopTailVideoExtension(boolean flagTop) {
         try {
             int pos = MainApplication.getInstance().getSelectedTemplePosition();
